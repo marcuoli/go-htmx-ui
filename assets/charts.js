@@ -53,7 +53,11 @@
      entry.signature=signature;entry.chart.data=config.data;entry.chart.options=config.options;entry.chart.update("none");
     }
    } catch(_) {
-    destroy(canvas);canvas.parentElement.classList.add("is-empty");
+    destroy(canvas);
+    // Chart.js registers before construction completes; release that partial
+    // instance too so the next valid snapshot can reuse the same canvas.
+    window.Chart.getChart?.(canvas)?.destroy();
+    canvas.parentElement.classList.add("is-empty");
     const message=canvas.parentElement.nextElementSibling;
     if(message) message.textContent="Chart unavailable. Open the chart data table below.";
    }
