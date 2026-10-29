@@ -8,7 +8,7 @@ function fixture() {
  class Chart {static getChart(c){return registered.get(c)}constructor(c,config){if(registered.has(c))throw new Error("Canvas is already in use");registered.set(c,this);this.canvas=c;this.config=config;this.data=config.data;this.options=config.options;this.updates=0;this.destroyed=false;instances.push(this);if(config.data.datasets.some(d=>d.type==="bogus"))throw new Error("Invalid dataset type")}update(mode){assert.equal(mode,'none');this.updates++}destroy(){this.destroyed=true;registered.delete(this.canvas)}}
  const document={readyState:'complete',querySelectorAll:()=>[canvas],addEventListener:(name,fn)=>events[name]=fn};
  const context={Chart,document,Intl,Map,JSON,getComputedStyle:()=>({fontFamily:'system-ui',getPropertyValue:name=>name==='--ghtui-muted'?theme:''})};context.window=context;
- vm.runInNewContext(fs.readFileSync('assets/charts.js','utf8'),context);
+ vm.runInNewContext(fs.readFileSync(new URL('../assets/charts.js',import.meta.url),'utf8'),context);
  return {api:context.GoHTMXUI?.charts,instances,canvas,events,setTheme:value=>theme=value};
 }
 test('reuses canvas and chart, recomputes data/options/theme, skips unchanged snapshots',()=>{

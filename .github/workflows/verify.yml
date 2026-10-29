@@ -14,9 +14,10 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+          cache-dependency-path: web/package-lock.json
       - run: go mod download
       - run: go run github.com/a-h/templ/cmd/templ@v0.3.1070 generate
-      - run: npm ci && npm run build && npm test
+      - run: npm --prefix web ci && npm --prefix web run build && npm --prefix web test
       - run: git diff --exit-code
       - run: go test ./... && go vet ./... && go mod verify
-      - run: go build ./examples/showcase
+      - run: go build -o "$RUNNER_TEMP/go-htmx-ui-showcase" ./examples/showcase
