@@ -1,0 +1,82 @@
+package ui
+
+import versioning "github.com/marcuoli/go-versioning"
+
+templ PageHeader(props PageHeaderProps) {
+ <header class={ "ghtui-page-header", props.Class } { props.Attributes... }>
+  <div><h1>{ props.Title }</h1>
+   if props.Description != "" {
+    <p>{ props.Description }</p>
+   }
+  </div>
+  { children... }
+ </header>
+}
+
+templ Actions() {
+ <div class="ghtui-actions">{ children... }</div>
+}
+
+templ Tabs(label string) {
+ <nav class="ghtui-tabs" aria-label={ label }>{ children... }</nav>
+}
+
+templ Tab(props TabProps) {
+ <a class={ "ghtui-tab", props.Class, templ.KV("is-active",props.Active) } href={ templ.URL(props.Href) } { currentAttributes(props.Active)... } { props.Attributes... }>{ props.Label }</a>
+}
+
+templ Button(props ButtonProps) {
+ <button type={ buttonType(props.Type) } class={ "ghtui-button", buttonClass(props.Kind), props.Class } disabled?={ props.Disabled } { props.Attributes... }>{ children... }</button>
+}
+
+templ LinkButton(props LinkButtonProps) {
+ <a class={ "ghtui-button", buttonClass(props.Kind), props.Class } href={ templ.URL(props.Href) } { props.Attributes... }>{ children... }</a>
+}
+
+templ Field(props FieldProps) {
+ <div class={ "ghtui-field", props.Class } { props.Attributes... }>
+  <label for={ props.For }>{ props.Label }</label>
+  { children... }
+  if props.Hint != "" {
+   <p class="ghtui-hint">{ props.Hint }</p>
+  }
+ </div>
+}
+
+templ Input(props InputProps) {
+ <input class={ "ghtui-input", props.Class } type={ inputType(props.Type) } id={ props.ID } name={ props.Name } value={ props.Value } placeholder={ props.Placeholder } required?={ props.Required } disabled?={ props.Disabled } { props.Attributes... }/>
+}
+
+templ Select(props SelectProps) {
+ <select class={ "ghtui-input", props.Class } id={ props.ID } name={ props.Name } required?={ props.Required } disabled?={ props.Disabled } { props.Attributes... }>
+  for _,option := range props.Options {
+   <option value={ option.Value } selected?={ props.Value==option.Value } disabled?={ option.Disabled }>{ option.Label }</option>
+  }
+ </select>
+}
+
+// Dialog supplies the native shell; apps explicitly open it and own close/focus
+// behavior, form submission and authorization. No content is moved or fetched here.
+templ Dialog(props DialogProps) {
+ <dialog id={ props.ID } aria-labelledby={ props.TitleID } class={ "ghtui-dialog", props.Class } { props.Attributes... }>{ children... }</dialog>
+}
+
+templ DialogHeader(props DialogHeaderProps) {
+ <div class="ghtui-dialog-header"><div><h2 id={ props.TitleID }>{ props.Title }</h2>
+  if props.Description != "" {
+   <p>{ props.Description }</p>
+  }
+ </div>{ children... }</div>
+}
+
+templ DialogBody() {
+ <div class="ghtui-dialog-body">{ children... }</div>
+}
+
+templ Badge() {
+ <span class="ghtui-badge">{ children... }</span>
+}
+
+templ VersionLabel(info versioning.Info) {
+ <span class="ghtui-version">{ versionText(info) }</span>
+}

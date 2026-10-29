@@ -1,0 +1,75 @@
+package main
+
+import (
+ ui "github.com/marcuoli/go-htmx-ui"
+ table "github.com/marcuoli/go-htmx-table"
+ versioning "github.com/marcuoli/go-versioning"
+)
+
+templ Page(info versioning.Info) {
+ <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>UI component showcase</title><link rel="stylesheet" href="/assets/ui.css"/>
+ <style>
+ body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form{display:grid;gap:18px}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}a{color:var(--ghtui-accent,#79c0ff)}
+ </style><script src="/assets/chart.umd.js" defer></script><script src="/assets/charts.js" defer></script></head><body><main>
+ @ui.PageHeader(ui.PageHeaderProps{Title:"Component showcase",Description:"Synthetic examples · no account or production data"}) {
+  @ui.Actions() {
+   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"theme-toggle"}}) { Toggle theme }
+   @ui.Button(ui.ButtonProps{Attributes:templ.Attributes{"id":"edit-button"}}) { Edit example }
+  }
+ }
+ @ui.VersionLabel(info)
+ @ui.Tabs("Example sections") {
+  @ui.Tab(ui.TabProps{Label:"Overview",Href:"/",Active:true})
+  @ui.Tab(ui.TabProps{Label:"Forms",Href:"#forms"})
+ }
+ <div class="metrics">
+  @ui.WidgetMetric("Requests","123456","Synthetic count")
+  @ui.WidgetMetric("Input tokens","682888","Includes cached input")
+  @ui.WidgetMetric("Output tokens","16398","Reported usage")
+  @ui.WidgetMetric("Estimated value","USD 1234.56 (partial)","Example only")
+ </div>
+ <div class="charts">
+ @ui.Widget(ui.WidgetProps{}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Volume",Description:"Update preserves the canvas"}) {
+   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"update-chart"}}) { Update }
+  }
+  @ui.WidgetChart(ui.WidgetChartProps{ID:"volume",Label:"Synthetic request volume",Spec:`{"type":"line","labels":["Mon","Tue","Wed"],"datasets":[{"label":"Requests","data":[3,7,5],"borderColor":"#58a6ff"}]}`,NoScriptNote:"Chart data follows."})
+  @ui.WidgetData("View chart data") { <p>Monday: 3, Tuesday: 7, Wednesday: 5.</p> }
+ }
+ @ui.Widget(ui.WidgetProps{Attributes:templ.Attributes{"id":"forms"}}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Form controls",Description:"Labels and options use typed props"})
+  <div class="form">
+  @ui.Field(ui.FieldProps{For:"name",Label:"Display name",Hint:"A synthetic example"}) {
+   @ui.Input(ui.InputProps{ID:"name",Name:"name",Value:"Example application"})
+  }
+  @ui.Field(ui.FieldProps{For:"mode",Label:"Mode"}) {
+   @ui.Select(ui.SelectProps{ID:"mode",Name:"mode",Value:"standard",Options:[]ui.Option{{Value:"standard",Label:"Standard"},{Value:"extended",Label:"Extended"}}})
+  }
+  @ui.Badge() { Ready }
+  </div>
+ }
+ </div>
+ <br/>
+ @ui.Widget(ui.WidgetProps{}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Table composition",Description:"Rendered by go-htmx-table; this example supplies its table styling"})
+  @table.DataTable(table.DataTableProps{ID:"example-table"}) {
+   @table.DataTableHead() { @table.Col("Application") @table.Col("Status") @table.Col("Tokens") }
+   @table.DataTableBody(table.BodyProps{}) {
+    @table.Row() { @table.Cell() { Example A } @table.Cell() { Ready } @table.Cell() { 1.23K } }
+    @table.Row() { @table.Cell() { Example B } @table.Cell() { Ready } @table.Cell() { 4.56K } }
+   }
+  }
+ }
+ @ui.Dialog(ui.DialogProps{ID:"example-dialog",TitleID:"example-title"}) {
+  @ui.DialogHeader(ui.DialogHeaderProps{TitleID:"example-title",Title:"Edit example"}) {
+   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"close-dialog"}}) { Close }
+  }
+  @ui.DialogBody() { <p>Applications own modal actions and form submission.</p> }
+ }
+ </main><script>
+ document.getElementById('edit-button').onclick=()=>document.getElementById('example-dialog').showModal();
+ document.getElementById('close-dialog').onclick=()=>document.getElementById('example-dialog').close();
+ document.getElementById('theme-toggle').onclick=()=>{document.body.classList.toggle('light');GoHTMXUI.charts.render();};
+ document.getElementById('update-chart').onclick=()=>{const c=document.getElementById('volume'),s=JSON.parse(c.dataset.uiChart);s.datasets[0].data=s.datasets[0].data.map(n=>n+1);c.dataset.uiChart=JSON.stringify(s);GoHTMXUI.charts.render();};
+ </script></body></html>
+}

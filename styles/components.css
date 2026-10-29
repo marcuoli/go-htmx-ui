@@ -1,0 +1,46 @@
+@reference "tailwindcss";
+.ghtui-widget,.ghtui-metric-card,.ghtui-dialog { box-sizing:border-box; color:var(--ghtui-text,#f0f6fc); background:var(--ghtui-surface,#161b22); border:1px solid var(--ghtui-border,#30363d); border-radius:8px; }
+.ghtui-widget { @apply min-w-0 px-5 py-[18px]; }
+.ghtui-widget-heading { @apply flex items-start justify-between gap-3 mb-4; }
+.ghtui-widget-heading h2,.ghtui-widget-heading h3 { @apply m-0 text-[14px] font-semibold; line-height:1.5; }
+.ghtui-widget-heading p,.ghtui-note { @apply mt-1 mb-0 text-[11px] leading-[1.6]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-widget-heading a { @apply text-[11px] whitespace-nowrap; }
+.ghtui-accent { color:var(--ghtui-accent,#79c0ff); }
+.ghtui-metric-card { @apply min-w-0 px-5 py-[17px]; }
+.ghtui-metric-label { @apply m-0 text-[11px] leading-[1.5]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-metric-value { @apply m-0 text-[29px] font-semibold tracking-[-.03em] leading-[1.4] tabular-nums; }
+.ghtui-metric-note { @apply m-0 text-[10px] leading-[1.5]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-chart-frame { @apply relative min-w-0; height:var(--ghtui-chart-height,238px); }
+.ghtui-chart-frame canvas { display:block; }
+.ghtui-chart-compact { height:24px; width:24px; }
+.ghtui-chart-empty { @apply hidden m-0; color:var(--ghtui-muted,#8b949e); font-size:12px; text-align:center; padding:48px 0; }
+.ghtui-chart-frame.is-empty { display:none; }
+.ghtui-chart-frame.is-empty + .ghtui-chart-empty { display:block; }
+.ghtui-empty { @apply m-0 text-center text-[12px]; padding:48px 0; color:var(--ghtui-muted,#8b949e); }
+.ghtui-data { @apply mt-4 text-[10px]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-data summary { @apply cursor-pointer; }
+.ghtui-page-header { @apply flex items-start justify-between gap-5 mb-5; }
+.ghtui-page-header h1 { @apply m-0 text-[28px] tracking-[-.025em] leading-[1.25]; font-weight:650; }
+.ghtui-page-header p { @apply mt-[7px] mb-0 text-[12px]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-actions { @apply flex items-center gap-3; }
+.ghtui-tabs { @apply flex gap-2 mb-5 text-[12px]; }
+.ghtui-tab { @apply rounded-[7px] px-4 py-[9px] no-underline; color:var(--ghtui-muted,#8b949e); }
+.ghtui-tab.is-active { color:var(--ghtui-accent,#79c0ff); background:var(--ghtui-raised,#21262d); }
+.ghtui-button { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium no-underline cursor-pointer; box-sizing:border-box; font:inherit; min-height:36px; border:1px solid transparent; }
+.ghtui-button-primary { color:#fff; background:var(--ghtui-primary,#0969da); }
+.ghtui-button-secondary { color:var(--ghtui-text,#f0f6fc); background:var(--ghtui-raised,#21262d); border-color:var(--ghtui-border,#30363d); }
+.ghtui-button-danger { color:#fff; background:var(--ghtui-danger,#b42335); }
+.ghtui-button:hover { filter:brightness(1.1); }
+.ghtui-button:disabled,.ghtui-input:disabled { opacity:.6; cursor:not-allowed; }
+.ghtui-button:focus-visible,.ghtui-input:focus-visible,.ghtui-tab:focus-visible { outline:2px solid var(--ghtui-accent,#79c0ff); outline-offset:3px; }
+.ghtui-field { @apply grid gap-[6px]; min-width:0; }
+.ghtui-field label,.ghtui-hint { @apply m-0 text-[11px]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-input { @apply min-w-0 rounded-lg px-3 py-2; box-sizing:border-box; width:100%; min-height:36px; font:inherit; border:1px solid var(--ghtui-border,#30363d); background:var(--ghtui-surface,#161b22); color:var(--ghtui-text,#f0f6fc); }
+.ghtui-dialog { @apply p-0 fixed; inset:0; width:min(1080px,85vw); max-height:88dvh; margin:auto; overflow:auto; }
+.ghtui-dialog::backdrop { background:rgb(1 4 9 / .82); }
+.ghtui-dialog-header { @apply sticky top-0 flex items-center justify-between; z-index:1; padding:20px 26px; border-bottom:1px solid var(--ghtui-border,#30363d); background:var(--ghtui-surface,#161b22); }
+.ghtui-dialog-header h2 { @apply m-0 text-[18px] font-semibold; }
+.ghtui-dialog-header p { @apply mt-[6px] mb-0 text-[11px]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-dialog-body { padding:24px 26px; }
+.ghtui-badge { @apply inline-flex items-center gap-[6px] rounded-[6px] px-2 py-[3px] text-[10px] leading-[1.5] whitespace-nowrap; border:1px solid var(--ghtui-border,#30363d); }
+.ghtui-version { @apply block text-[11px] italic font-normal leading-[1.25] text-right tabular-nums; color:var(--ghtui-muted,#8b949e); overflow-wrap:anywhere; }

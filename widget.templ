@@ -1,0 +1,76 @@
+package ui
+
+// Keep the existing root element, classes and live attributes without adding a
+// wrapper: table scrolling, semantic landmarks and DOM patch identity depend on them.
+templ Widget(props WidgetProps) {
+	switch props.Element {
+		case WidgetDiv:
+			<div class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</div>
+		case WidgetAside:
+			<aside class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</aside>
+		case WidgetNav:
+			<nav class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</nav>
+		default:
+			<section class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</section>
+	}
+}
+
+// The children slot holds the view's actions or badges. Counts retain exact
+// tooltips while using the same compact formatter as other numeric widgets.
+templ WidgetHeader(props WidgetHeaderProps) {
+	<div class={ "ghtui-widget-heading", props.Class }>
+		<div>
+			<h2 { widgetClassAttributes(props.TitleClass)... }>{ props.Title }
+				if props.Count != "" {
+					{ " " }<span class="ghtui-accent" title={ props.Count }>{ MetricText(props.Count) }</span>
+				}
+			</h2>
+			if props.Description != "" {
+				<p { widgetClassAttributes(props.DescriptionClass)... }>{ props.Description }</p>
+			}
+		</div>
+		{ children... }
+	</div>
+}
+
+templ WidgetMetricFrame(props WidgetMetricProps) {
+	<article class="ghtui-metric-card">
+		if props.Heading {
+			<h2 class="ghtui-metric-label">{ props.Label }</h2>
+		} else {
+			<p class="ghtui-metric-label">{ props.Label }</p>
+		}
+		{ children... }
+		if props.Note != "" {
+			<p class="ghtui-metric-note">{ props.Note }</p>
+		}
+	</article>
+}
+
+templ WidgetMetric(label, value, note string) {
+	@WidgetMetricFrame(WidgetMetricProps{Label: label, Note: note}) {
+		@WidgetMetricValue(value, value)
+	}
+}
+
+templ WidgetMetricValue(value, exact string) {
+	<p class="ghtui-metric-value" title={ widgetExactLabel(value, exact) } aria-label={ widgetExactLabel(value, exact) }>{ MetricText(value) }</p>
+}
+
+// The canvas and fallback remain siblings, preserving the chart renderer's
+// ghtui-empty handling and ResizeObserver behavior across live snapshots.
+templ WidgetChart(props WidgetChartProps) {
+	<div class={ "ghtui-chart-frame", templ.KV("ghtui-chart-compact", props.Compact) }><canvas id={ props.ID } data-ui-chart={ props.Spec } role="img" aria-label={ props.Label }></canvas></div>
+	<p class="ghtui-chart-empty">{ widgetChartEmpty(props.EmptyMessage) }</p>
+	if props.NoScriptNote != "" {
+		<noscript><p class="ghtui-note">{ props.NoScriptNote }</p></noscript>
+	}
+}
+
+templ WidgetEmpty() {
+	<p class="ghtui-empty">{ children... }</p>
+}
+
+templ WidgetData(label string) {
+	<details class="ghtui-data"><summary>{ label }</summary>{ children... }</details>
+}
