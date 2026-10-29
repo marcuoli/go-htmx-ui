@@ -39,6 +39,8 @@
    try {
     const spec=JSON.parse(canvas.dataset.uiChart);
     if(!spec || !["line","bar","doughnut"].includes(spec.type)) throw new Error("Unsupported chart type");
+    const fallback=canvas.parentElement.nextElementSibling;
+    if(fallback?.dataset.uiEmptyMessage!==undefined) fallback.textContent=fallback.dataset.uiEmptyMessage;
     canvas.parentElement.classList.toggle("is-empty",!!spec.empty);
     if(spec.empty) {destroy(canvas);continue;}
     if(!Array.isArray(spec.labels)||!Array.isArray(spec.datasets)) throw new Error("Invalid chart data");

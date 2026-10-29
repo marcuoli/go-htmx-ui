@@ -61,7 +61,7 @@ templ WidgetMetricValue(value, exact string) {
 // ghtui-empty handling and ResizeObserver behavior across live snapshots.
 templ WidgetChart(props WidgetChartProps) {
 	<div class={ "ghtui-chart-frame", templ.KV("ghtui-chart-compact", props.Compact) }><canvas id={ props.ID } data-ui-chart={ props.Spec } role="img" aria-label={ props.Label }></canvas></div>
-	<p class="ghtui-chart-empty">{ widgetChartEmpty(props.EmptyMessage) }</p>
+	<p class="ghtui-chart-empty" data-ui-empty-message={ widgetChartEmpty(props.EmptyMessage) }>{ widgetChartEmpty(props.EmptyMessage) }</p>
 	if props.NoScriptNote != "" {
 		<noscript><p class="ghtui-note">{ props.NoScriptNote }</p></noscript>
 	}
