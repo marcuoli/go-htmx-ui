@@ -5,13 +5,14 @@ import (
 	"io/fs"
 )
 
-//go:embed assets/*
+//go:embed web/assets/*
 var embeddedAssets embed.FS
 
-// Assets exposes paths relative to the asset directory. Serve with http.FileServer
+// Assets hides the repository layout: consumers continue to see ui.css, charts.js
+// and vendor filenames without a web/assets prefix. Serve with http.FileServer
 // and http.StripPrefix at the application's chosen URL; no router is required.
 func Assets() fs.FS {
-	sub, err := fs.Sub(embeddedAssets, "assets")
+	sub, err := fs.Sub(embeddedAssets, "web/assets")
 	if err != nil {
 		panic(err)
 	}

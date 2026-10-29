@@ -1,1 +1,0 @@
-{"name":"go-htmx-ui-assets","private":true,"scripts":{"build":"node scripts/build-assets.mjs","test":"node --test scripts/charts.test.mjs"},"devDependencies":{"@tailwindcss/cli":"4.3.3","tailwindcss":"4.3.3"},"overrides":{"@parcel/watcher":"^2.6.0"}}
