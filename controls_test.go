@@ -4,6 +4,7 @@ import (
 	"github.com/a-h/templ"
 	versioning "github.com/marcuoli/go-versioning"
 	"io/fs"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -57,6 +58,18 @@ func TestEmbeddedAssetsAndLicenses(t *testing.T) {
 		data, err := fs.ReadFile(Assets(), name)
 		if err != nil || len(data) == 0 {
 			t.Errorf("asset %s: %v", name, err)
+		}
+	}
+}
+
+func TestStylesDoNotReadHostTailwindTokens(t *testing.T) {
+	data, err := fs.ReadFile(Assets(), "ui.css")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, match := range regexp.MustCompile(`var\((--[a-zA-Z0-9-]+)`).FindAllStringSubmatch(string(data), -1) {
+		if !strings.HasPrefix(match[1], "--ghtui-") {
+			t.Errorf("component depends on global host token %s", match[1])
 		}
 	}
 }
