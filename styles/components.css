@@ -16,8 +16,8 @@
 .ghtui-chart-empty { @apply hidden m-0; color:var(--ghtui-muted,#8b949e); font-size:12px; text-align:center; padding:48px 0; }
 .ghtui-chart-frame.is-empty { display:none; }
 .ghtui-chart-frame.is-empty + .ghtui-chart-empty { display:block; }
-.ghtui-empty { @apply m-0 text-center text-[12px]; padding:48px 0; color:var(--ghtui-muted,#8b949e); }
-.ghtui-data { @apply mt-4 text-[10px]; color:var(--ghtui-muted,#8b949e); }
+.ghtui-empty { @apply m-0 text-center text-[12px]; padding:42px 20px; color:var(--ghtui-muted,#8b949e); }
+.ghtui-data { @apply mt-3 text-[10px]; color:var(--ghtui-muted,#8b949e); }
 .ghtui-data summary { @apply cursor-pointer; }
 .ghtui-page-header { @apply flex items-start justify-between gap-5 mb-5; }
 .ghtui-page-header h1 { @apply m-0 text-[28px] tracking-[-.025em] leading-[1.25]; font-weight:650; }
