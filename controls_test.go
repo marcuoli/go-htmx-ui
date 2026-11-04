@@ -54,7 +54,7 @@ func TestVersionLabelUsesVersioningValidation(t *testing.T) {
 }
 
 func TestEmbeddedAssetsAndLicenses(t *testing.T) {
-	for _, name := range []string{"ui.css", "charts.js", "chart.umd.js", "chartjs.LICENSE.txt", "kurkle-color.LICENSE.txt"} {
+	for _, name := range []string{"ui.css", "charts.js", "chart.umd.js", "echarts.min.js", "echarts.LICENSE.txt", "echarts.NOTICE.txt", "echarts-d3.LICENSE.txt", "zrender.LICENSE.txt", "tslib.LICENSE.txt", "tslib.CopyrightNotice.txt", "echarts.provenance.json"} {
 		data, err := fs.ReadFile(Assets(), name)
 		if err != nil || len(data) == 0 {
 			t.Errorf("asset %s: %v", name, err)
@@ -71,5 +71,19 @@ func TestStylesDoNotReadHostTailwindTokens(t *testing.T) {
 		if !strings.HasPrefix(match[1], "--ghtui-") {
 			t.Errorf("component depends on global host token %s", match[1])
 		}
+	}
+}
+
+func TestLegacyChartBundleURLServesECharts(t *testing.T) {
+	legacy, e := fs.ReadFile(Assets(), "chart.umd.js")
+	if e != nil {
+		t.Fatal(e)
+	}
+	current, e := fs.ReadFile(Assets(), "echarts.min.js")
+	if e != nil {
+		t.Fatal(e)
+	}
+	if string(legacy) != string(current) || !strings.Contains(string(current), "Apache") {
+		t.Fatal("legacy URL does not serve the verified ECharts asset")
 	}
 }

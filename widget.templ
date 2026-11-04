@@ -57,8 +57,8 @@ templ WidgetMetricValue(value, exact string) {
 	<p class="ghtui-metric-value" title={ widgetExactLabel(value, exact) } aria-label={ widgetExactLabel(value, exact) }>{ MetricText(value) }</p>
 }
 
-// The canvas and fallback remain siblings, preserving the chart renderer's
-// ghtui-empty handling and ResizeObserver behavior across live snapshots.
+// The stable canvas and fallback remain siblings. ECharts sizes its Canvas
+// renderer from the parent frame and keeps one instance across live snapshots.
 templ WidgetChart(props WidgetChartProps) {
 	<div class={ "ghtui-chart-frame", templ.KV("ghtui-chart-compact", props.Compact) }><canvas id={ props.ID } data-ui-chart={ props.Spec } role="img" aria-label={ props.Label }></canvas></div>
 	<p class="ghtui-chart-empty" data-ui-empty-message={ widgetChartEmpty(props.EmptyMessage) }>{ widgetChartEmpty(props.EmptyMessage) }</p>

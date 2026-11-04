@@ -9,8 +9,8 @@ import (
 templ Page(info versioning.Info) {
  <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>UI component showcase</title><link rel="stylesheet" href="/assets/ui.css"/>
  <style>
- body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form{display:grid;gap:18px}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}a{color:var(--ghtui-accent,#79c0ff)}
- </style><script src="/assets/chart.umd.js" defer></script><script src="/assets/charts.js" defer></script></head><body><main>
+ body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}.charts[hidden]{display:none}.form{display:grid;gap:18px}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}a{color:var(--ghtui-accent,#79c0ff)}
+ </style><script src="/assets/echarts.min.js" defer></script><script src="/assets/charts.js" defer></script></head><body><main>
  @ui.PageHeader(ui.PageHeaderProps{Title:"Component showcase",Description:"Synthetic examples · no account or production data"}) {
   @ui.Actions() {
    @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"theme-toggle"}}) { Toggle theme }
@@ -50,6 +50,45 @@ templ Page(info versioning.Info) {
  }
  </div>
  <br/>
+ @ui.Actions() {
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"chart-mode"}}) { Toggle count bars/lines }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"toggle-advanced"}}) { Hide/show advanced charts }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"resize-charts"}}) { Resize examples }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"show-hidden-chart"}}) { Reveal hidden chart }
+ }
+ <div id="advanced-charts" class="charts">
+  for _,example:=range advancedCharts() {
+   @ui.Widget(ui.WidgetProps{}) {
+    @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Title,Description:example.Description})
+    @ui.WidgetChart(ui.WidgetChartProps{ID:example.ID,Label:example.Title,Spec:example.Spec})
+    @ui.WidgetData("View chart data") {
+     <table>
+      <thead><tr>
+       for _,header:=range example.Headers {
+        <th>{ header }</th>
+       }
+      </tr></thead>
+      <tbody>
+       for _,row:=range example.Rows {
+        <tr>
+         for _,cell:=range row {
+          <td>{ cell }</td>
+         }
+        </tr>
+       }
+      </tbody>
+     </table>
+    }
+   }
+  }
+ </div>
+ <div id="hidden-chart-example" hidden>
+  @ui.Widget(ui.WidgetProps{}) {
+   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Hidden-to-visible recovery"})
+   @ui.WidgetChart(ui.WidgetChartProps{ID:"hidden-chart",Label:"Synthetic hidden chart",Spec:`{"type":"line","labels":["A","B"],"datasets":[{"label":"Values","data":[1,2]}]}`})
+  }
+ </div>
+ <br/>
  @ui.Widget(ui.WidgetProps{}) {
   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Table composition",Description:"Rendered by go-htmx-table; this example supplies its table styling"})
   @table.DataTable(table.DataTableProps{ID:"example-table"}) {
@@ -67,6 +106,10 @@ templ Page(info versioning.Info) {
   @ui.DialogBody() { <p>Applications own modal actions and form submission.</p> }
  }
  </main><script>
+ document.getElementById('chart-mode').onclick=()=>{const c=document.getElementById('mixed-latency'),s=JSON.parse(c.dataset.uiChart);s.type=s.type==='bar'?'line':'bar';for(const d of s.datasets)if(d.axis==='count')d.type=s.type;c.dataset.uiChart=JSON.stringify(s);GoHTMXUI.charts.render(c);};
+ document.getElementById('toggle-advanced').onclick=()=>{const node=document.getElementById('advanced-charts');node.hidden=!node.hidden;};
+ document.getElementById('resize-charts').onclick=()=>{const group=document.getElementById('advanced-charts');group.style.maxWidth=group.style.maxWidth?'':'1000px';};
+ document.getElementById('show-hidden-chart').onclick=()=>{const node=document.getElementById('hidden-chart-example');node.hidden=!node.hidden;};
  document.getElementById('edit-button').onclick=()=>document.getElementById('example-dialog').showModal();
  document.getElementById('close-dialog').onclick=()=>document.getElementById('example-dialog').close();
  document.getElementById('theme-toggle').onclick=()=>{document.body.classList.toggle('light');GoHTMXUI.charts.render();};

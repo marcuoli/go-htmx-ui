@@ -42,18 +42,89 @@ The showcase demonstrates a light theme. The component stylesheet has no global 
 
 ## Charts and live updates
 
-Pass JSON through WidgetChartProps.Spec. Supported specs have `type` (`line`, `bar`, `doughnut`), `labels`, Chart.js `datasets`, optional `empty`, `compact`, `stacked`, `horizontal`, `format: "usd"` and tooltip `bounds`. All spec fields are part of the update signature. Arbitrary JavaScript callbacks are not serialized or evaluated.
+`WidgetChartProps.Spec` is JSON in an escaped attribute; IDs, canvas hosts and
+Go props remain stable. The supported shared spec is declarative, with no
+serialized JavaScript callbacks or raw HTML. Unknown renderer-specific options
+are not forwarded to the engine.
 
-The optional controller exposes:
+Category labels are strings or finite numbers; dataset labels are strings.
+Object-valued labels, engine image/pattern options and non-string colors are
+rejected before reaching ECharts.
+
+- Core: `type` (`line`, `bar`, `doughnut`), `labels`, `datasets`; optional
+  `empty`, `compact`, `stacked`, `horizontal`, `format: "usd"`, `bounds`.
+- Datasets: `id`, `label`, numeric/null `data`, `backgroundColor` (string/array),
+  `borderColor`, `fill`, `tension`. Cartesian data also accepts `[x,y]` and
+  `{x,y}`; null y remains missing. A mode change can supply `type: "bar"` or
+  `"line"` per dataset. Arbitrary Chart.js dataset/plugin options are not part
+  of this contract.
+- `axes`: nonempty value-axis array. Each has a distinct `id` (optional for one
+  axis), `unit`, optional `precision` (maximum fractional digits0–8), independent
+  finite `min`/`max` (`min < max` when both given), `alignTicks` boolean,
+  `splitNumber` integer1–20, optional `label`, `offset`, and `position`.
+  Vertical positions are `left`/`right`; horizontal positions are `bottom`/`top`.
+  Values bind through dataset `axis: "id"`; omitted means the first axis.
+- Units: `count`, `rate` (/s), `qps`, `ms`, `us` (displayed as µs), `usd`,
+  `percent`. Dataset `unit`/`precision` control tooltip formatting and inherit
+  axis settings. Conflicting units require separate axes; no implicit unit
+  conversion occurs. Precision defaults to4 for count/USD and2 for other units;
+  count axes use compact labels. Missing values show Unavailable, zero stays zero.
+- Stacks: `stacked:true` supplies a default stack for series matching the base
+  chart type. An overlaid line on base bars is unstacked. Dataset `stack` can be
+  an explicit group string; `false`/`null` forces no stack. Explicit overrides
+  are recommended when consumers switch count modes while keeping a latency line.
+- `domain: {type:"time",min,max}` uses epoch milliseconds or timezone-qualified
+  ISO timestamps. Timed samples are sorted stably and use actual elapsed spacing.
+  Provide pairs/objects, or `labels` as timestamps with numeric data. Bounds are
+  independent of the observation timestamps and update with the spec. Numeric
+  zero remains a valid epoch. Ambiguous local time strings are rejected. Null
+  samples break lines; omitted points do not invent zeroes or a sampling cadence.
+  Category axes preserve caller label order and accept optional label/index bounds.
+- `legend: {show:true|false}` overrides normal visibility; compact rings omit
+  legends. Cartesian datasets can share `legendGroup` and optional `legendLabel`;
+  the legend toggles all series in that group, while tooltips retain individual
+  labels/units. Group labels must be consistent. User selections survive live
+  updates and disappear when their series/group is removed.
+- `bounds` is an array of safe bucket/range strings. A dataset may supply its
+  own `bounds`, remapped with sorted timestamps. Tooltips unify visible series,
+  their units and context, rendering as canvas rich text instead of HTML.
+
+```json
+{
+  "type":"bar", "stacked":true, "labels":["00:00","00:01"],
+  "axes":[
+    {"id":"count","unit":"count","min":0,"max":100,"splitNumber":5},
+    {"id":"latency","unit":"ms","position":"right","min":0,"max":10,"alignTicks":true,"splitNumber":5}
+  ],
+  "datasets":[
+    {"label":"Success","axis":"count","data":[30,45]},
+    {"label":"Errors","axis":"count","data":[2,1]},
+    {"label":"Response time","type":"line","axis":"latency","stack":false,"data":[3,null]}
+  ]
+}
+```
+
+The optional controller exposes the same lifecycle API:
 
 ```js
 GoHTMXUI.charts.render(container);  // default: document; includes a canvas root
 GoHTMXUI.charts.destroy(container); // before removing a subtree
 ```
 
-It renders on DOMContentLoaded and HTMX swaps, and destroys charts on HTMX cleanup. Application-owned SSE or DOM patchers call the same functions. Keep canvas IDs/nodes stable and preserve Chart.js width/height/style attributes when patching. The controller updates an existing Chart instance when data, options or theme change, and recreates it only for type changes or after empty/error states. Animation is disabled to avoid blinking. It never opens EventSource/WebSocket connections or fetches application data.
+Load `echarts.min.js` then `charts.js`. The controller handles DOMContentLoaded,
+HTMX swaps/cleanup, frame ResizeObserver updates, window resizing, hidden-to-visible
+initialization, theme changes and disposal. It reuses an existing instance and
+replaces its options to remove stale series/axes, preserving explicit legend
+selections. Animation is disabled. Empty/invalid/missing-engine states show safe
+fallback text and can recover on the next valid render. It opens no transport
+connections and fetches no application data.
 
-The canvas wrapper and fallback paragraph are siblings; preserve that structure. Missing Chart.js leaves the accessible canvas and your optional no-script note; provide a WidgetData disclosure with a real table for keyboard and nonvisual access. Errors show a safe text fallback. Dataset values and labels must follow Chart.js's documented JSON data format.
+Application DOM patchers preserve stable canvas IDs, `_echarts_instance_`,
+`data-zr-dom-id`, width/height/style and generated child content; otherwise engine
+registry lookup or drawing can fail. Keep the frame and fallback paragraph as
+siblings. `role="img"` and the caller's accessible label remain, alongside a real
+`WidgetData` disclosure table for keyboard/nonvisual access. Canvas is the public
+host/renderer contract in0.2.0; SVG engine tests do not promise SVG host support.
 
 ## Reuse in another app
 

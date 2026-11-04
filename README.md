@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.1.0
+go get github.com/marcuoli/go-htmx-ui@v0.2.0
 ```
 
 ## Render a widget
@@ -31,11 +31,11 @@ mux.Handle("GET /assets/ui/", http.StripPrefix("/assets/ui/",
 ```html
 <link rel="stylesheet" href="/assets/ui/ui.css">
 <!-- Optional, for charts only; keep this order. -->
-<script src="/assets/ui/chart.umd.js" defer></script>
+<script src="/assets/ui/echarts.min.js" defer></script>
 <script src="/assets/ui/charts.js" defer></script>
 ```
 
-Choose any asset URL prefix. The library has no router, authentication, database, CDN, font or network transport dependency. Assets include Chart.js 4.6.1 and both required MIT notices.
+Choose any asset URL prefix. The library has no router, authentication, database, CDN, font or network transport dependency. Assets include the unmodified official Apache ECharts 6.1.0 common bundle and its required third-party notices.
 
 ## Components
 
@@ -51,7 +51,7 @@ go run ./examples/showcase -listen 127.0.0.1:8099
 
 Open `http://127.0.0.1:8099` for synthetic dark/light widgets, forms, a modal, an updating chart and composition with published `go-htmx-table v0.1.0`. Example page layout and table styling belong to the example.
 
-Application metadata uses [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). Pass validated application build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's module version. An unversioned example correctly displays `0.0.0+unknown`. Library releases use conventional Go module tags (`v0.1.0`), separate from consuming applications' date/PR build versions.
+Application metadata uses [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). Pass validated application build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's module version. An unversioned example correctly displays `0.0.0+unknown`. Library releases use conventional Go module tags (`v0.2.0`), separate from consuming applications' date/PR build versions.
 
 ## Repository layout
 
@@ -98,3 +98,29 @@ temporary directory selected by the caller (for example, `TEMP`/`TMPDIR`).
 Generated assets are always written to `web/assets/`.
 
 MIT license. See [third-party notices](NOTICE.md).
+
+## ECharts migration
+
+Version0.2.0 uses Apache ECharts while preserving Go widget props, the canvas host,
+`GoHTMXUI.charts.render/destroy`, and the existing core JSON chart spec. New layouts
+load `echarts.min.js` before `charts.js`; the old `chart.umd.js` URL remains a
+virtual alias to that same bundle. No `window.Chart` implementation is provided.
+Arbitrary Chart.js plugin/options APIs are outside the shared spec.
+
+The adapter supports line/bar/doughnut, mixed line/bar series, independent value
+axes and units, real timestamp axes, explicit ranges/null gaps, grouped legends,
+pre-binned histograms, currency and safe text tooltips. See the
+[declarative spec](docs/components.md#charts-and-live-updates) and synthetic
+showcase. Consumer data collection, transport, permissions and preferences remain
+outside the library. Canvas is the supported host/renderer in this release.
+
+Preserve `_echarts_instance_`, `data-zr-dom-id`, canvas dimensions/styles and all
+engine-owned children during live DOM patches. The showcase exercises resize,
+hidden recovery, mode/theme changes and grouped legends. Real-engine SVG tests
+verify option translation; browser checks separately cover the Canvas lifecycle.
+
+For retained build evidence, pass `--output-dir /absolute/artifact/directory`
+and `--write-source` to the asset builder. With no arguments it stages in the
+caller's temporary directory and deliberately promotes checked-in assets for
+normal builds/CI. The builder verifies the exact locked official npm distribution
+and copies its bytes/notices unchanged; `echarts.provenance.json` records hashes.
