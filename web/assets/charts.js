@@ -23,8 +23,11 @@
   if(pair?.length===2 && (typeof pair[0]==="string" || typeof pair[0]==="number" && Number.isFinite(pair[0])) && (pair[1]===null || typeof pair[1]==="number" && Number.isFinite(pair[1]))) return pair;
   throw new Error("Invalid chart value");
  }
- const unitNames=new Set(["count","rate","qps","ms","us","usd","percent","bytes","bytes/s"]);
+ const unitNames=new Set(["count","rate","qps","ms","us","usd","percent","bytes","bytes/s","bits","bits/s","data","data-rate","custom"]);
  const bytePrefixes={decimal:["B","kB","MB","GB","TB","PB","EB","ZB","YB"],binary:["B","KiB","MiB","GiB","TiB","PiB","EiB","ZiB","YiB"]};
+ const bitPrefixes={decimal:["b","kb","Mb","Gb","Tb","Pb","Eb","Zb","Yb"],binary:["b","Kib","Mib","Gib","Tib","Pib","Eib","Zib","Yib"]};
+ const periods={s:1,min:60,h:3600,d:86400},dataUnits=new Map();
+ for(const [kind,families] of [["bytes",bytePrefixes],["bits",bitPrefixes]])for(const [scale,names] of Object.entries(families))names.forEach((label,index)=>dataUnits.set(label,{kind,scale:index?scale:null,factor:(kind==="bytes"?8:1)*(scale==="binary"?1024:1000)**index}));
  function messages(spec,fallback={}) {
   const source=spec?.messages??{};
   if(typeof source!=="object"||Array.isArray(source)||Object.entries(source).some(([key,text])=>!["empty","error","unavailable","loading"].includes(key)||typeof text!=="string"))throw new Error("Invalid messages");
@@ -47,30 +50,65 @@
  function flag(value,fallback) {
   if(value!==undefined&&typeof value!=="boolean")throw new Error("Invalid presentation flag");return value??fallback;
  }
- function byteFactor(unit,rate) {
-  if(typeof unit!=="string"||rate!==unit.endsWith("/s"))throw new Error("Invalid byte unit dimension");
-  const prefix=rate?unit.slice(0,-2):unit;
-  for(const [scale,names] of Object.entries(bytePrefixes)) {
-   const index=names.indexOf(prefix);if(index>=0)return (scale==="binary"?1024:1000)**index;
-  }
-  throw new Error("Unknown byte prefix");
+ function unitText(value) {
+  if(typeof value!=="string"||!value.trim()||value.length>80||/[\x00-\x1f\x7f]/.test(value))throw new Error("Invalid unit label");return value;
+ }
+ function rateUnit(label) {
+  const parts=unitText(label).split("/");
+  if(parts.length!==2||!Object.hasOwn(periods,parts[1]))throw new Error("Use an explicit /s, /min, /h or /d time base");
+  return {numerator:parts[0],period:parts[1]};
+ }
+ function dataUnit(label,rate) {
+  unitText(label);const parsed=rate?rateUnit(label):{numerator:label,period:null},base=dataUnits.get(parsed.numerator);
+  if(!base)throw new Error("Unknown case-sensitive bit/byte unit");
+  return {...base,period:parsed.period,factor:base.factor/(parsed.period?periods[parsed.period]:1)};
+ }
+ function conversionRule(rule) {
+  if(!rule||typeof rule!=="object"||Array.isArray(rule)||Object.keys(rule).some(key=>!["factor","offset"].includes(key))||typeof rule.factor!=="number"||!Number.isFinite(rule.factor)||rule.factor<=0||rule.offset!==undefined&&(typeof rule.offset!=="number"||!Number.isFinite(rule.offset)))throw new Error("Custom conversion needs a positive finite factor and finite offset");
+  return {factor:rule.factor,offset:rule.offset??0};
  }
  function formatConfig(source={},fallback={}) {
   const unit=source.unit??fallback.unit??"count",precision=source.precision??fallback.precision;
   if(!unitNames.has(unit)||precision!==undefined&&(!Number.isInteger(precision)||precision<0||precision>8))throw new Error("Invalid unit/precision");
   const config={unit,precision,locale:fallback.locale??"en-US",unavailable:fallback.unavailable??"Unavailable",numbers:new Map()};
-  if(unit==="bytes"||unit==="bytes/s") {
-   const rate=unit==="bytes/s",suffix=rate?"/s":"";
-   config.scale=source.scale??fallback.scale??"decimal";
-   if(typeof config.scale!=="string"||!Object.hasOwn(bytePrefixes,config.scale))throw new Error("Invalid byte scale");
-   config.inputUnit=source.inputUnit??fallback.inputUnit??"B"+suffix;
+  const rule=source.conversion!==undefined?source.conversion:fallback.conversion;
+  if(["bytes","bytes/s","bits","bits/s","data","data-rate"].includes(unit)) {
+   if(rule!==undefined)throw new Error("Built-in data units do not accept custom conversion rules");
+   const rate=unit.endsWith("/s")||unit==="data-rate",generic=unit==="data"||unit==="data-rate",aliasKind=unit.startsWith("bits")?"bits":"bytes";
+   config.inputUnit=source.inputUnit??fallback.inputUnit??(aliasKind==="bits"?"b":"B")+(rate?"/s":"");
    config.displayUnit=source.displayUnit??fallback.displayUnit??"auto";
-   config.inputFactor=byteFactor(config.inputUnit,rate);
-   if(config.displayUnit!=="auto") {
-    config.outputFactor=byteFactor(config.displayUnit,rate);
-    if(!bytePrefixes[config.scale].map(p=>p+suffix).includes(config.displayUnit))throw new Error("Output prefix conflicts with scale");
+   const input=dataUnit(config.inputUnit,rate),automatic=config.displayUnit==="auto"||typeof config.displayUnit==="string"&&config.displayUnit.startsWith("auto/");
+   let output;
+   if(automatic) {
+    const outputPeriod=config.displayUnit==="auto"?(rate?(generic?input.period:"s"):null):rate?rateUnit(config.displayUnit).period:null;
+    if(config.displayUnit!=="auto"&&!rate)throw new Error("A quantity cannot be displayed as a rate");
+    config.outputPeriod=outputPeriod;config.outputKind=generic?input.kind:aliasKind;
+   } else output=dataUnit(config.displayUnit,rate);
+   config.scale=source.scale??fallback.scale??(generic?(output?.scale??input.scale??"decimal"):"decimal");
+   if(typeof config.scale!=="string"||!Object.hasOwn(bytePrefixes,config.scale)||output?.scale&&output.scale!==config.scale)throw new Error("Output prefix conflicts with scale");
+   config.mode="data";config.inputFactor=input.factor;
+   if(output)config.outputFactor=output.factor;
+   else {
+    config.outputBaseFactor=(config.outputKind==="bytes"?8:1)/(config.outputPeriod?periods[config.outputPeriod]:1);
+    config.outputNames=(config.outputKind==="bytes"?bytePrefixes:bitPrefixes)[config.scale];
    }
-  } else if(["scale","inputUnit","displayUnit"].some(key=>source[key]!==undefined))throw new Error("Byte conversion needs a byte unit");
+  } else if(unit==="rate"||unit==="custom") {
+   if(source.scale!==undefined||fallback.scale!==undefined)throw new Error("Prefix scaling applies to data units only");
+   config.mode="linear";
+   if(unit==="rate") {
+    if(rule!==undefined)throw new Error("Named rates convert their known time base; use custom for other rules");
+    config.inputUnit=source.inputUnit??fallback.inputUnit??"/s";config.displayUnit=source.displayUnit??fallback.displayUnit??config.inputUnit;
+    const input=rateUnit(config.inputUnit),output=rateUnit(config.displayUnit);
+    if(input.numerator!==output.numerator)throw new Error("Different rate numerators require a custom rule");
+    config.factor=periods[output.period]/periods[input.period];config.offset=0;
+   } else {
+    config.displayUnit=unitText(source.displayUnit??fallback.displayUnit??source.inputUnit??fallback.inputUnit);
+    config.inputUnit=unitText(source.inputUnit??fallback.inputUnit??config.displayUnit);
+    if(rule===undefined&&config.inputUnit!==config.displayUnit)throw new Error("Different custom units require an explicit conversion rule");
+    config.conversion=rule===undefined?undefined:conversionRule(rule);
+    config.factor=config.conversion?.factor??1;config.offset=config.conversion?.offset??0;
+   }
+  } else if(["scale","inputUnit","displayUnit","conversion"].some(key=>source[key]!==undefined||fallback[key]!==undefined))throw new Error("Use a data, rate or custom unit for conversion");
   return config;
  }
  function numberFormat(config,precision,short=false,fixed=false) {
@@ -81,17 +119,24 @@
  function formatted(n,config,short=false) {
   if(typeof n!=="number"||!Number.isFinite(n))return config.unavailable;
   const precision=config.precision??(config.unit==="count"?(short?2:4):config.unit==="usd"?4:2);
-  if(config.unit==="bytes"||config.unit==="bytes/s") {
-   const rate=config.unit==="bytes/s",step=config.scale==="binary"?1024:1000;
+  if(config.mode==="data") {
    let output=config.displayUnit,factor=config.outputFactor;
-   if(output==="auto") {
-    // Work in logarithms and divide factors before multiplication: huge finite
-    // input values must not overflow merely because a prefix was declared.
-    const exponent=n===0?0:Math.max(0,Math.min(8,Math.floor((Math.log(Math.abs(n))+Math.log(config.inputFactor))/Math.log(step)+1e-12)));
-    factor=step**exponent;output=bytePrefixes[config.scale][exponent]+(rate?"/s":"");
+   if(config.outputNames) {
+    const step=config.scale==="binary"?1024:1000;
+    // Ratios and logarithms avoid overflowing a finite value merely because
+    // input/output prefixes or time bases differ. Samples remain untouched.
+    const exponent=n===0?0:Math.max(0,Math.min(8,Math.floor((Math.log(Math.abs(n))+Math.log(config.inputFactor)-Math.log(config.outputBaseFactor))/Math.log(step)+1e-12)));
+    factor=config.outputBaseFactor*step**exponent;output=config.outputNames[exponent]+(config.outputPeriod?"/"+config.outputPeriod:"");
    }
    const converted=n*(config.inputFactor/factor);
    return Number.isFinite(converted)?numberFormat(config,precision).format(converted)+" "+output:config.unavailable;
+  }
+  if(config.mode==="linear") {
+   let converted=n*config.factor;
+   if(!Number.isFinite(converted)&&config.offset&&Math.sign(n)!==Math.sign(config.offset))converted=(n+config.offset/config.factor)*config.factor;
+   else if(config.offset)converted+=config.offset;
+   const separator=config.displayUnit.startsWith("/")?"":" ";
+   return Number.isFinite(converted)?numberFormat(config,precision).format(converted)+separator+config.displayUnit:config.unavailable;
   }
   if(config.unit==="usd"&&n>0&&n<0.5*10**-precision)return "< USD "+numberFormat(config,precision,false,true).format(10**-precision);
   return numberFormat(config,precision,short).format(n)+({rate:"/s",qps:" QPS",ms:" ms",us:" \u00b5s",percent:"%"}[config.unit]||"");
@@ -108,10 +153,12 @@
    const inherited={...base};
    // One numeric axis has one conversion. Infer omitted settings from its
    // bound series, rejecting incompatible declarations instead of mislabeling.
-   for(const key of ["unit","inputUnit","displayUnit","scale"]) {
-    const values=new Set(datasets.filter((_d,j)=>bindings[j]===i).map(d=>d[key]).filter(v=>v!==undefined));
-    if(values.size>1||a[key]!==undefined&&[...values].some(v=>v!==a[key]))throw new Error("Different conversions require independent axes");
-    if(values.size)inherited[key]=[...values][0];
+   for(const key of ["unit","inputUnit","displayUnit","scale","conversion"]) {
+    const token=value=>key==="conversion"?JSON.stringify(Object.values(conversionRule(value))):value;
+    const values=new Map();
+    for(const dataset of datasets.filter((_d,j)=>bindings[j]===i))if(dataset[key]!==undefined)values.set(token(dataset[key]),dataset[key]);
+    if(values.size>1||a[key]!==undefined&&[...values.keys()].some(value=>value!==token(a[key])))throw new Error("Different conversions require independent axes");
+    if(values.size)inherited[key]=[...values.values()][0];
    }
    return formatConfig(a,inherited);
   });
@@ -138,6 +185,7 @@
   const axisID=axes[0].id??"primary";
   if(spec.datasets.some(d=>d.axis!==undefined&&d.axis!==axisID))throw new Error("Unknown format-axis binding");
   const format=axisFormats(axes,spec.datasets,spec.datasets.map(()=>0),formatConfig({unit:spec.format==="usd"?"usd":"count"},display))[0];
+  const datasetFormats=spec.datasets.map(dataset=>formatConfig(dataset,format));
   const result=sharedOptions(t,legendVisible(spec,spec.type==="radar")),axis=axes[0],palette=result.color;
   const color=(dataset,i)=>dataset.borderColor||(Array.isArray(dataset.backgroundColor)?dataset.backgroundColor[0]:dataset.backgroundColor)||palette[i%palette.length];
   if(spec.type==="heatmap") {
@@ -162,8 +210,8 @@
    const category=(values,inverse=false)=>({type:"category",data:values,inverse,splitArea:{show:true},axisLine:{show:false},axisTick:{show:false},axisLabel:{show:flag(spec.showAxisLabels,true),color:t.muted,fontFamily:t.font,fontSize:10}});
    result.xAxis=category(spec.labels);result.yAxis=category(spec.rows,true);result.grid={top:8,right:12,bottom:45,left:8,containLabel:true};
    result.visualMap={min,max,calculable:false,orient:"horizontal",left:"center",bottom:0,itemWidth:12,itemHeight:100,textStyle:{color:t.muted,fontFamily:t.font,fontSize:10},inRange:{color:colors},formatter:n=>formatted(n,format)};
-   result.series=[{id:"cells",type:"heatmap",data,label:{show:flag(spec.cellLabels,false),color:t.text,fontSize:10,formatter:p=>formatted(p.value[2],format)},animation:false}];
-   result.tooltip.formatter=p=>[spec.labels[p.value[0]],spec.rows[p.value[1]],formatted(p.value[2],format)].join(" / ");
+   result.series=[{id:"cells",type:"heatmap",data,label:{show:flag(spec.cellLabels,false),color:t.text,fontSize:10,formatter:p=>formatted(p.value[2],datasetFormats[0])},animation:false}];
+   result.tooltip.formatter=p=>[spec.labels[p.value[0]],spec.rows[p.value[1]],formatted(p.value[2],datasetFormats[0])].join(" / ");
    if(!data.length)result.title={text:display.unavailable,left:"center",textStyle:{color:t.muted,fontSize:12}};
   } else if(spec.type==="radar") {
    if(!Array.isArray(spec.indicators)||spec.indicators.length<3)throw new Error("Radar needs three or more indicators");
@@ -177,13 +225,13 @@
     return {name:dataset.label??String(i+1),value:dataset.data.slice(),itemStyle:{color:color(dataset,i)},lineStyle:{color:color(dataset,i),width:2},...(dataset.fill?{areaStyle:{opacity:0.12}}:{})};
    });
    result.legend.data=data.map(d=>d.name);result.series=[{id:"radar",type:"radar",data,animation:false}];
-   result.tooltip.formatter=p=>[p.name,...indicators.map((a,i)=>a.name+": "+formatted(p.value[i],format))].join("\n");
+   result.tooltip.formatter=p=>[p.name,...indicators.map((a,i)=>a.name+": "+formatted(p.value[i],datasetFormats[p.dataIndex??0]??format))].join("\n");
   } else {
    if(spec.datasets.length!==1||spec.datasets[0].data.length!==1)throw new Error("One gauge value required");
    const n=spec.datasets[0].data[0],min=axis.min??0,max=axis.max??100;
    if(n!==null&&(typeof n!=="number"||!Number.isFinite(n))||typeof min!=="number"||typeof max!=="number"||!Number.isFinite(min)||!Number.isFinite(max)||min>=max)throw new Error("Invalid gauge value/range");
-   result.series=[{id:"gauge",type:"gauge",min,max,radius:"80%",center:["50%","50%"],progress:{show:true,width:12},axisLine:{lineStyle:{width:12,color:[[1,t.border]]}},axisTick:{show:false},splitLine:{length:8,lineStyle:{color:t.muted}},axisLabel:{color:t.muted,fontSize:9,formatter:n=>formatted(n,format,true)},pointer:{width:4},itemStyle:{color:color(spec.datasets[0],0)},detail:{color:t.text,fontFamily:t.font,fontSize:18,offsetCenter:[0,"65%"],formatter:n=>formatted(n,format)},title:{color:t.muted,fontSize:10},data:n===null?[]:[{name:spec.datasets[0].label??"",value:n}],animation:false}];
-   result.tooltip.formatter=p=>formatted(p.value,format);
+   result.series=[{id:"gauge",type:"gauge",min,max,radius:"80%",center:["50%","50%"],progress:{show:true,width:12},axisLine:{lineStyle:{width:12,color:[[1,t.border]]}},axisTick:{show:false},splitLine:{length:8,lineStyle:{color:t.muted}},axisLabel:{color:t.muted,fontSize:9,formatter:n=>formatted(n,format,true)},pointer:{width:4},itemStyle:{color:color(spec.datasets[0],0)},detail:{color:t.text,fontFamily:t.font,fontSize:18,offsetCenter:[0,"65%"],formatter:n=>formatted(n,datasetFormats[0])},title:{color:t.muted,fontSize:10},data:n===null?[]:[{name:spec.datasets[0].label??"",value:n}],animation:false}];
+   result.tooltip.formatter=p=>formatted(p.value,datasetFormats[0]);
    if(n===null)result.title={text:display.unavailable,left:"center",top:"40%",textStyle:{color:t.muted,fontSize:12}};
   }
   return result;

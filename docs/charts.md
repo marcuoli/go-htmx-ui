@@ -169,3 +169,9 @@ Analytical follow-up: [issue #7](https://github.com/marcuoli/go-htmx-ui/issues/7
 Until an explicit adapter is released, unsupported types fail safely rather than
 silently claiming support. The support matrix lists the implemented common
 families; it makes no claim to cover every native ECharts feature.
+
+## Metric units (v0.5.0+)
+
+The [metric-unit contract](units.md) adds generic data/data-rate, bits/bytes,
+SI/IEC prefixes, second/minute/hour/day time bases and custom labels/rules.
+All families share the converter; raw samples and bounds are never rewritten.

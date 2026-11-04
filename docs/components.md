@@ -74,7 +74,8 @@ rejected before reaching ECharts.
   and `scale:"binary"|"decimal"` (default decimal). IEC binary output is
   recommended for storage/monitoring examples: B, KiB, MiB, GiB, TiB, PiB, EiB,
   ZiB, YiB; each step is1024. Decimal uses B, kB, MB, GB, TB, PB, EB, ZB, YB,
-  each1000. Throughput adds `/s` to every explicit input/output unit.
+  each1000. Version 0.5.0 adds bits and /s, /min, /h, /d time bases; see
+  [metric units](units.md) for generic types, aliases, auto output and custom rules.
   The source prefix determines its factor independently: decimal MB/s to binary
   MiB/s is a real conversion, never relabeling. Fixed output prefixes must match
   `scale`; `auto` chooses a prefix from the configured family per value.
@@ -216,3 +217,7 @@ For v0.4.0 chart families, numeric domains, special-coordinate shapes, zoom, DOM
 events and loading messages, use the [current support matrix](charts.md).
 The core examples above remain supported. Version0.4.0 serves the official full
 ECharts distribution; theme/formatting and lifecycle APIs are shared across types.
+
+For v0.5.0 bit/byte/time-base and custom metric declarations, use
+[the metric unit contract](units.md). Units remain per axis/domain/dataset;
+applications pass the same JSON from Go/templ or JavaScript-only templates.

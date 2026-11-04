@@ -83,6 +83,31 @@ templ Page(info versioning.Info) {
   }
  </div>
  <br/>
+ @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Metric unit selection",Description:"Case-sensitive bits/bytes, SI/IEC, time bases and explicit custom rules; raw data is unchanged"})
+ @ui.Actions() {
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"unit-hide"}}) { Hide/show unit plot }
+  @ui.Field(ui.FieldProps{For:"unit-display",Label:"Display unit"}) {
+   @ui.Select(ui.SelectProps{ID:"unit-display",Name:"unit-display",Value:"MiB/h",Options:[]ui.Option{{Value:"MB/s",Label:"MB/s"},{Value:"MiB/s",Label:"MiB/s"},{Value:"Mb/s",Label:"Mb/s"},{Value:"Mib/s",Label:"Mib/s"},{Value:"MiB/h",Label:"MiB/h"},{Value:"MB/min",Label:"MB/min"},{Value:"Gb/d",Label:"Gb/d"},{Value:"auto/s",Label:"Auto /s"},{Value:"auto/h",Label:"Auto /h"}}})
+  }
+  @ui.Field(ui.FieldProps{For:"unit-scale",Label:"Auto prefix scale",Hint:"Applies only to automatic output"}) {
+   @ui.Select(ui.SelectProps{ID:"unit-scale",Name:"unit-scale",Value:"binary",Attributes:templ.Attributes{"disabled":true},Options:[]ui.Option{{Value:"binary",Label:"IEC (1024)"},{Value:"decimal",Label:"SI (1000)"}}})
+  }
+ }
+ <div id="unit-live">
+ for i,example:=range unitCharts() {
+  if i==0 {
+   @FamilyExample(example,false)
+  }
+ }
+ </div>
+ <div class="charts">
+  for i,example:=range unitCharts() {
+   if i>0 {
+    @FamilyExample(example,false)
+   }
+  }
+ </div>
+ <br/>
  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Chart families",Description:"Typed shapes, common themes/units and safe interactions; open raw inputs below each chart"})
  @ui.Actions() {
   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"family-update"}}) { Supply new snapshot }
@@ -159,6 +184,10 @@ templ Page(info versioning.Info) {
   @ui.DialogBody() { <p>Applications own modal actions and form submission.</p> }
  }
  </main><script>
+ const unitRender=()=>{const c=document.getElementById('units-network'),s=JSON.parse(c.dataset.uiChart),output=document.getElementById('unit-display').value,scale=document.getElementById('unit-scale');s.axes[0].displayUnit=output;scale.disabled=!output.startsWith('auto');if(!scale.disabled)s.axes[0].scale=scale.value;else delete s.axes[0].scale;c.dataset.uiChart=JSON.stringify(s);GoHTMXUI.charts.render(c);};
+ document.getElementById('unit-hide').onclick=()=>{const node=document.getElementById('unit-live');node.hidden=!node.hidden;};
+ document.getElementById('unit-display').onchange=unitRender;
+ document.getElementById('unit-scale').onchange=unitRender;
  const familyRows=s=>s.datasets.flatMap((d,j)=>d.data.map((v,i)=>[d.label||String(j+1),s.type==='heatmap'?s.labels[v[0]]+' / '+s.rows[v[1]]:s.indicators?.[i]?.name||s.labels?.[i]||String(i+1),JSON.stringify(v)]));
  const familyRender=fn=>{for(const c of document.querySelectorAll('#family-charts [data-ui-chart]')){const s=JSON.parse(c.dataset.uiChart);fn(s);c.dataset.uiChart=JSON.stringify(s);const body=c.closest('.ghtui-widget').querySelector('tbody');body.replaceChildren(...familyRows(s).map(row=>{const tr=document.createElement('tr');for(const value of row){const td=document.createElement('td');td.textContent=value;tr.append(td);}return tr;}));GoHTMXUI.charts.render(c);}};
  document.getElementById('family-update').onclick=()=>familyRender(s=>{for(const d of s.datasets)d.data=d.data.map(p=>{if(Array.isArray(p)){const index=s.type==='heatmap'?2:1;return p.map((v,i)=>i===index&&v!==null?v+1:v);}return p===null?null:p+1;});});
