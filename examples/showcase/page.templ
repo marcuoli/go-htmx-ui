@@ -9,7 +9,7 @@ import (
 templ Page(info versioning.Info) {
  <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>UI component showcase</title><link rel="stylesheet" href="/assets/ui.css"/>
  <style>
- body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}.charts[hidden]{display:none}.form{display:grid;gap:18px}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}a{color:var(--ghtui-accent,#79c0ff)}
+ body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}.charts[hidden]{display:none}.monitor-charts .ghtui-chart-frame{height:130px;min-height:130px}.form{display:grid;gap:18px}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}a{color:var(--ghtui-accent,#79c0ff)}
  </style><script src="/assets/echarts.min.js" defer></script><script src="/assets/charts.js" defer></script></head><body><main>
  @ui.PageHeader(ui.PageHeaderProps{Title:"Component showcase",Description:"Synthetic examples · no account or production data"}) {
   @ui.Actions() {
@@ -82,6 +82,38 @@ templ Page(info versioning.Info) {
    }
   }
  </div>
+ <br/>
+ @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Compact monitoring",Description:"IEC output; explicit raw bytes and decimal MB/s input; caller-owned synthetic snapshots"})
+ @ui.Actions() {
+  @ui.Select(ui.SelectProps{ID:"monitor-locale",Attributes:templ.Attributes{"aria-label":"Monitor locale"},Name:"monitor-locale",Value:"pt-BR",Options:[]ui.Option{{Value:"en-US",Label:"English"},{Value:"pt-BR",Label:"Português"},{Value:"es-ES",Label:"Español"}}})
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"monitor-update"}}) { Update monitor samples }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"monitor-hide"}}) { Hide/show monitors }
+ }
+ <div id="monitor-charts" class="charts monitor-charts">
+  for _,example:=range monitorCharts() {
+   @ui.Widget(ui.WidgetProps{}) {
+    @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Title,Description:example.Description})
+    @ui.WidgetChart(ui.WidgetChartProps{ID:example.ID,Label:example.Title+" synthetic history",Spec:example.Spec,EmptyMessage:"Sem dados",ErrorMessage:"Falha no gráfico"})
+    @ui.WidgetData("Latest raw samples") {
+     <table><thead><tr><th>Epoch milliseconds</th><th>Raw input value</th></tr></thead><tbody>
+      for _,row:=range example.Rows {
+       <tr><td>{ row[0] }</td><td>{ row[1] }</td></tr>
+      }
+     </tbody></table>
+    }
+   }
+  }
+ </div>
+ <div class="charts">
+ @ui.Widget(ui.WidgetProps{}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Localized empty state"})
+  @ui.WidgetChart(ui.WidgetChartProps{ID:"localized-empty",Label:"Synthetic empty history",Spec:`{"empty":true,"messages":{"empty":"Sem dados neste período"}}`})
+ }
+ @ui.Widget(ui.WidgetProps{}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Localized configuration error"})
+  @ui.WidgetChart(ui.WidgetChartProps{ID:"localized-error",Label:"Synthetic invalid history",Spec:`{"timeZone":"Not/AZone","messages":{"error":"No se puede mostrar el gráfico"}}`,ErrorMessage:"No se puede mostrar el gráfico"})
+ }
+ </div>
  <div id="hidden-chart-example" hidden>
   @ui.Widget(ui.WidgetProps{}) {
    @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Hidden-to-visible recovery"})
@@ -106,6 +138,10 @@ templ Page(info versioning.Info) {
   @ui.DialogBody() { <p>Applications own modal actions and form submission.</p> }
  }
  </main><script>
+ const monitorRender=fn=>{for(const c of document.querySelectorAll('#monitor-charts [data-ui-chart]')){const s=JSON.parse(c.dataset.uiChart);fn(s);c.dataset.uiChart=JSON.stringify(s);const rows=c.closest(".ghtui-widget").querySelectorAll("tbody tr");s.datasets[0].data.slice(-12).forEach((p,i)=>{if(rows[i]){rows[i].cells[0].textContent=String(p[0]);rows[i].cells[1].textContent=p[1]===null?"null":String(p[1]);}});GoHTMXUI.charts.render(c);}};
+ document.getElementById('monitor-locale').onchange=event=>monitorRender(s=>{s.locale=event.target.value;});
+ document.getElementById('monitor-update').onclick=()=>monitorRender(s=>{for(const d of s.datasets){const last=d.data.at(-1);d.data=[...d.data.slice(1),[last[0]+2000,last[1]===null?0:last[1]*1.01]];}});
+ document.getElementById('monitor-hide').onclick=()=>{const group=document.getElementById('monitor-charts');group.hidden=!group.hidden;};
  document.getElementById('chart-mode').onclick=()=>{const c=document.getElementById('mixed-latency'),s=JSON.parse(c.dataset.uiChart);s.type=s.type==='bar'?'line':'bar';for(const d of s.datasets)if(d.axis==='count')d.type=s.type;c.dataset.uiChart=JSON.stringify(s);GoHTMXUI.charts.render(c);};
  document.getElementById('toggle-advanced').onclick=()=>{const node=document.getElementById('advanced-charts');node.hidden=!node.hidden;};
  document.getElementById('resize-charts').onclick=()=>{const group=document.getElementById('advanced-charts');group.style.maxWidth=group.style.maxWidth?'':'1000px';};

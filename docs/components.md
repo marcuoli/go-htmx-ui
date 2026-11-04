@@ -69,6 +69,35 @@ rejected before reaching ECharts.
   axis settings. Conflicting units require separate axes; no implicit unit
   conversion occurs. Precision defaults to4 for count/USD and2 for other units;
   count axes use compact labels. Missing values show Unavailable, zero stays zero.
+- Storage: `unit:"bytes"` or `"bytes/s"` enables display-only conversion.
+  Declare `inputUnit` (default `B` or `B/s`), `displayUnit` (default `auto`),
+  and `scale:"binary"|"decimal"` (default decimal). IEC binary output is
+  recommended for storage/monitoring examples: B, KiB, MiB, GiB, TiB, PiB, EiB,
+  ZiB, YiB; each step is1024. Decimal uses B, kB, MB, GB, TB, PB, EB, ZB, YB,
+  each1000. Throughput adds `/s` to every explicit input/output unit.
+  The source prefix determines its factor independently: decimal MB/s to binary
+  MiB/s is a real conversion, never relabeling. Fixed output prefixes must match
+  `scale`; `auto` chooses a prefix from the configured family per value.
+  `precision` remains maximum fractional digits0–8. Axis bounds/data stay in
+  raw input units; only display strings convert. All series on an axis share
+  conversion semantics, inferred from unambiguous declarations; otherwise use
+  independent axes. Dataset precision may deliberately differ from axis precision.
+- Localization: chart `locale:"pt-BR"` and `timeZone:"America/Sao_Paulo"`
+  configure number/date formatting, including real timestamp tooltip headers.
+  `en_US`, `pt_BR`, `es_ES` normalize to `en-US`, `pt-BR`, `es-ES`. Intl-supported
+  locales and valid Intl timezone names are required. With no locale, existing
+  en-US numbers/en-GB dates remain; timezone defaults to UTC. Epoch0 is valid;
+  a timezone changes presentation, never sample positions or spacing.
+  `messages:{empty,error,unavailable}` supplies plain text. No automatic
+  translations, HTML, native engine options or serialized callbacks are accepted.
+  Invalid options show a safe error and recover on a valid next snapshot.
+  `WidgetChartProps.ErrorMessage` (or fallback paragraph `data-ui-error-message`)
+  also covers malformed JSON that cannot supply `messages.error`.
+- Small Cartesian charts: `showAxisLabels:false` hides both axis labels;
+  an axis can override `showLabels`. `showPoints:false` removes line markers
+  including hover markers; a dataset can override `showPoints`. Defaults remain
+  visible. Caller CSS owns frame height (the showcase uses130px); these options
+  do not set `WidgetChartProps.Compact`, which retains its existing ring layout.
 - Stacks: `stacked:true` supplies a default stack for series matching the base
   chart type. An overlaid line on base bars is unstacked. Dataset `stack` can be
   an explicit group string; `false`/`null` forces no stack. Explicit overrides
@@ -134,3 +163,51 @@ host/renderer contract in0.2.0; SVG engine tests do not promise SVG host support
 4. Keep data, routes, permission checks and live transport in the app.
 5. Compose go-htmx-table in widget slots. Verify your own table spacing.
 6. Run your templ generator and test keyboard, modal and live update behavior.
+
+## Localized monitoring example (v0.3.0+)
+
+```json
+{
+  "type":"line", "locale":"pt_BR", "timeZone":"America/Sao_Paulo",
+  "showAxisLabels":false, "showPoints":false,
+  "domain":{"type":"time"},
+  "axes":[{"unit":"bytes/s","inputUnit":"MB/s","displayUnit":"MiB/s","scale":"binary","precision":2}],
+  "messages":{"empty":"Sem dados","error":"Falha no gráfico","unavailable":"Não disponível"},
+  "datasets":[{"label":"Network","fill":true,"data":[[1767225600000,12.5],[1767225602000,0],[1767225604000,null]]}]
+}
+```
+
+12.5 MB/s displays11,92 MiB/s in pt-BR; zero remains0 MiB/s and null remains
+missing. To retain already-scaled decimal MB/s exactly, select
+`inputUnit:"MB/s", displayUnit:"MB/s", scale:"decimal"`. For raw byte storage,
+select `unit:"bytes", inputUnit:"B", scale:"binary"`;1073741824 B displays1 GiB.
+Do not use `BiB` (not a byte-unit symbol) or infer input semantics from a title.
+
+The synthetic monitor showcase retains1800 observations at two-second spacing,
+with real null gaps and zeroes, in130px frames. It demonstrates live snapshots,
+locale/theme changes and hidden-to-visible recovery. It is a rendering fit check,
+not a transport, history store, domain calculation or performance guarantee.
+
+## JavaScript-only consumers
+
+Go/templ is optional at runtime for frontend integration. Obtain the official
+assets from the exact module release/tag, retain notices/provenance and serve
+locally. For example, Django can render escaped JSON in the same contract:
+
+```html
+<script src="/static/shared/echarts.min.js" defer></script>
+<script src="/static/shared/charts.js" defer></script>
+<div class="ghtui-chart-frame" style="height:130px;min-height:130px">
+  <canvas id="cpu-history" role="img" aria-label="CPU history"
+    data-ui-chart='{"type":"line","showAxisLabels":false,"showPoints":false,"labels":["A","B"],"datasets":[{"unit":"percent","data":[0,null]}]}'></canvas>
+</div>
+<p class="ghtui-chart-empty" data-ui-empty-message="No samples" data-ui-error-message="Cannot display chart">No samples</p>
+```
+
+Load `ui.css` for frame/fallback styles, and provide a useful accessible data
+disclosure alongside the chart. HTML-escape attributes using the server template
+engine; do not mark application JSON as safe HTML. The controller validates JSON
+and assigns fallback text with textContent. To update, replace the canvas
+`dataset.uiChart` with `JSON.stringify(spec)` then call
+`GoHTMXUI.charts.render(canvas)`; destroy before removing a subtree unless HTMX
+cleanup does so. The same public lifecycle/DOM preservation rules apply.
