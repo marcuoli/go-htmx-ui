@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.4.0
+go get github.com/marcuoli/go-htmx-ui@v0.5.0
 ```
 
 ## Render a widget
@@ -134,3 +134,7 @@ ownership of collection, transport, history and business calculations.
 The [general chart support matrix](docs/charts.md) documents line/area/bar, pie/ring,
 scatter/bubble, heatmap, radar, gauge and microchart usage; zoom/pan, safe DOM
 events, loading and JS-only integration are part of the shared contract.
+
+[Metric units](docs/units.md) cover case-sensitive bits/bytes, SI/IEC prefixes,
+/s/min/h/d time bases, matching named rates and explicit custom conversion rules.
+Applications can switch display units live while raw samples remain unchanged.
