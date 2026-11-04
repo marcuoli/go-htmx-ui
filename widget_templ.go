@@ -555,8 +555,8 @@ func WidgetMetricValue(value, exact string) templ.Component {
 	})
 }
 
-// The canvas and fallback remain siblings, preserving the chart renderer's
-// ghtui-empty handling and ResizeObserver behavior across live snapshots.
+// The stable canvas and fallback remain siblings. ECharts sizes its Canvas
+// renderer from the parent frame and keeps one instance across live snapshots.
 func WidgetChart(props WidgetChartProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

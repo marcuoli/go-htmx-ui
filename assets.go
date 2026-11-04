@@ -16,5 +16,16 @@ func Assets() fs.FS {
 	if err != nil {
 		panic(err)
 	}
-	return sub
+	return chartAssetFS{sub}
+}
+
+// Preserve the previous bundle URL for layouts upgrading the shared module.
+// It serves ECharts, not a second chart engine; new layouts use echarts.min.js.
+type chartAssetFS struct{ fs.FS }
+
+func (assets chartAssetFS) Open(name string) (fs.File, error) {
+	if name == "chart.umd.js" {
+		name = "echarts.min.js"
+	}
+	return assets.FS.Open(name)
 }

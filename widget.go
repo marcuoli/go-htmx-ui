@@ -32,7 +32,8 @@ type WidgetMetricProps struct {
 }
 
 // Spec is the feature's serialized chart configuration. It stays in an escaped
-// attribute so the shared live renderer can reuse the existing canvas by ID.
+// attribute so the shared live renderer can reuse the existing canvas by ID. Specs use the documented shared core, not arbitrary
+// renderer-specific options.
 type WidgetChartProps struct {
 	ID, Spec, Label            string
 	EmptyMessage, NoScriptNote string

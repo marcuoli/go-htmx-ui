@@ -1,6 +1,7 @@
 # Third-party notices
 
-- Chart.js 4.6.1: MIT; bundled as web/assets/chart.umd.js, license at web/assets/chartjs.LICENSE.txt.
-- @kurkle/color: MIT; used in the Chart.js browser bundle, license at web/assets/kurkle-color.LICENSE.txt.
-- Tailwind CSS 4.3.3: MIT; the generated stylesheet retains its license banner.
-- Go dependencies are resolved by modules, not vendored. templ and go-htmx-table use MIT; go-versioning uses the Universal Permissive License 1.0. Their original licenses remain with their modules.
+- Apache ECharts 6.1.0: Apache-2.0, unchanged official common distribution at web/assets/echarts.min.js; license/NOTICE at echarts.LICENSE.txt and echarts.NOTICE.txt. Included d3 subcomponent notice: echarts-d3.LICENSE.txt.
+- ZRender: BSD-3-Clause; bundled upstream rendering dependency, notice at zrender.LICENSE.txt.
+- tslib: 0BSD; upstream helper dependency, notices at tslib.LICENSE.txt and tslib.CopyrightNotice.txt.
+
+All listed files are served by ui.Assets(). echarts.provenance.json records the exact upstream version, npm integrity and SHA-256 of copied assets/notices. The legacy chart.umd.js URL is a virtual alias to the same ECharts bytes. Chart.js and its color dependency are no longer distributed.

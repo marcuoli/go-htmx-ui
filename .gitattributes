@@ -1,0 +1,7 @@
+# Templ embeds literal style/script newlines; keep generation platform independent.
+*.templ text eol=lf
+# Preserve copied upstream bytes, including original notice line endings.
+web/assets/echarts.min.js -text
+web/assets/*.LICENSE.txt -text
+web/assets/*.NOTICE.txt -text
+web/assets/tslib.CopyrightNotice.txt -text
