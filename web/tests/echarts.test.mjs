@@ -1,21 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import vm from 'node:vm';
-import {createRequire} from 'node:module';
-const require=createRequire(import.meta.url);
-const echarts=require('../assets/echarts.min.js');
+import {actualRenderer,echarts} from './fixture.mjs';
 
-function actualRenderer(t,spec,{width=600,height=238}={}) {
- const instances=[];t.after(()=>{for(const chart of instances)if(!chart.isDisposed())chart.dispose()});
- const frame={getBoundingClientRect:()=>({width,height}),classList:{toggle(){},add(){}},nextElementSibling:{dataset:{uiEmptyMessage:'No data'},textContent:''}};
- const canvas={isConnected:true,dataset:{uiChart:JSON.stringify(spec)},parentElement:frame,matches:()=>true,querySelectorAll:()=>[],getAttribute:()=> 'Synthetic chart'};
- const window={echarts:{init(_host,_theme,options){const chart=echarts.init(null,null,{...options,renderer:'svg',ssr:true});instances.push(chart);return chart},getInstanceByDom:()=>null},addEventListener(){}};
- const context={window,document:{readyState:'complete',querySelectorAll:()=>[canvas],addEventListener(){}},getComputedStyle:()=>({fontFamily:'sans-serif',getPropertyValue:()=>''}),Intl,Map,JSON};
- vm.runInNewContext(fs.readFileSync(new URL('../assets/charts.js',import.meta.url),'utf8'),context);
- return {instances,canvas,api:window.GoHTMXUI.charts,update(value){canvas.dataset.uiChart=JSON.stringify(value);this.api.render(canvas)}};
-}
-for(const type of ['line','bar','doughnut'])test('official ECharts common bundle renders '+type+' with shared options',t=>{
+for(const type of ['line','bar','doughnut'])test('official ECharts bundle renders '+type+' with shared options',t=>{
  const f=actualRenderer(t,{type,labels:['A','B'],datasets:[{label:'Requests',data:[3,7],borderColor:'#58a6ff',backgroundColor:['#58a6ff','#fbbf24']}],compact:type==='doughnut'},{width:type==='doughnut'?24:800,height:type==='doughnut'?24:178});
  assert.equal(echarts.version,'6.1.0');assert.equal(f.instances.length,1);const chart=f.instances[0];
  const svg=chart.renderToSVGString();assert.ok(svg.includes('<path'),'missing real chart geometry');assert.ok(!svg.includes('NaN'),'invalid chart coordinates');

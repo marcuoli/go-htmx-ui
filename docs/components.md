@@ -211,3 +211,8 @@ and assigns fallback text with textContent. To update, replace the canvas
 `dataset.uiChart` with `JSON.stringify(spec)` then call
 `GoHTMXUI.charts.render(canvas)`; destroy before removing a subtree unless HTMX
 cleanup does so. The same public lifecycle/DOM preservation rules apply.
+
+For v0.4.0 chart families, numeric domains, special-coordinate shapes, zoom, DOM
+events and loading messages, use the [current support matrix](charts.md).
+The core examples above remain supported. Version0.4.0 serves the official full
+ECharts distribution; theme/formatting and lifecycle APIs are shared across types.
