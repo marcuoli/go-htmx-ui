@@ -53,3 +53,14 @@ test('line samples reach the plot edges instead of inheriting bar-style category
  assert.equal(chart.containPixel({gridIndex:0},[first-2,middleY]),false,'unexpected left category padding');
  assert.equal(chart.containPixel({gridIndex:0},[last+2,middleY]),false,'unexpected right category padding');
 });
+
+
+test('official engine renders 1800-sample compact monitoring histories and updates in place',t=>{
+ const start=1767225600000,data=Array.from({length:1800},(_,i)=>[start+i*2000,i===0?0:i%127===0?null:40+30*Math.sin(i/31)]);
+ const spec={type:'line',locale:'pt_BR',timeZone:'America/Sao_Paulo',showAxisLabels:false,showPoints:false,domain:{type:'time'},axes:[{unit:'bytes/s',inputUnit:'MB/s',displayUnit:'MiB/s',scale:'binary',precision:2}],datasets:[{label:'Synthetic throughput',data,fill:true}]};
+ const started=performance.now(),f=actualRenderer(t,spec,{width:420,height:130}),chart=f.instances[0];
+ assert.equal(chart.getHeight(),130);assert.equal(chart.getOption().series[0].data.length,1800);assert.equal(chart.getOption().series[0].data[0][1],0);assert.equal(chart.getOption().series[0].data[127][1],null);assert.equal(chart.getOption().series[0].symbol,'none');
+ let svg=chart.renderToSVGString();assert.ok(svg.includes('<path'));assert.ok(!svg.includes('NaN'));assert.ok(svg.length<300000,'unexpected dense-chart geometry expansion');
+ const points=[...data.slice(1),[start+3600000,12.5]];f.update({...spec,datasets:[{...spec.datasets[0],data:points}]});assert.equal(f.instances.length,1);assert.equal(chart.getOption().series[0].data.at(-1)[1],12.5);assert.equal(chart.getOption().yAxis[0].axisLabel.formatter(12.5),'11,92 MiB/s');
+ t.diagnostic('Synthetic 1800-point SVG init+serialize+update: '+(performance.now()-started).toFixed(1)+'ms; this is a local fit check, not a browser performance guarantee.');
+});

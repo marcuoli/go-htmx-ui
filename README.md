@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.2.0
+go get github.com/marcuoli/go-htmx-ui@v0.3.0
 ```
 
 ## Render a widget
@@ -124,3 +124,9 @@ and `--write-source` to the asset builder. With no arguments it stages in the
 caller's temporary directory and deliberately promotes checked-in assets for
 normal builds/CI. The builder verifies the exact locked official npm distribution
 and copies its bytes/notices unchanged; `echarts.provenance.json` records hashes.
+
+Monitoring charts support explicit IEC/decimal byte and throughput conversions,
+locale/timezone and translated fallbacks, and optional axis labels/point markers.
+See [the shared contract and JavaScript-only integration](docs/components.md#localized-monitoring-example-v030).
+The synthetic showcase includes130px charts with1800 samples; applications keep
+ownership of collection, transport, history and business calculations.

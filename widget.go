@@ -37,7 +37,9 @@ type WidgetMetricProps struct {
 type WidgetChartProps struct {
 	ID, Spec, Label            string
 	EmptyMessage, NoScriptNote string
-	Compact                    bool
+	// ErrorMessage also applies when malformed JSON cannot supply messages.error.
+	ErrorMessage string
+	Compact      bool
 }
 
 func widgetClassAttributes(class string) templ.Attributes {

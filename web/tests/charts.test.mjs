@@ -99,7 +99,7 @@ test('group legends toggle related units together and preserve grouped selection
  const f=fixture();const spec={type:'bar',stacked:true,legend:{show:true},labels:['A'],axes:[{id:'count',unit:'count'},{id:'latency',unit:'us'}],datasets:[{label:'Queries',legendGroup:'upstream-a',legendLabel:'Upstream A',axis:'count',data:[10]},{label:'Latency',type:'line',legendGroup:'upstream-a',legendLabel:'Upstream A',axis:'latency',data:[800]}]};
  f.set(spec);const chart=f.instances[0],o=chart.option,key=o.series[0].name;assert.equal(o.series[1].name,key);assert.equal(o.legend.data.length,1);assert.equal(o.legend.formatter(key),'Upstream A');
  chart.option.legend.selected={[key]:false};f.set({...spec,labels:['B']});assert.equal(chart.option.legend.selected[key],false);
- const tip=chart.option.tooltip.formatter([{name:'B',seriesIndex:1,seriesName:key,value:800,dataIndex:0}]);assert.ok(tip.includes('Upstream A / Latency'));assert.ok(tip.includes('800 µs'));
+ const tip=chart.option.tooltip.formatter([{name:'B',seriesIndex:1,seriesName:key,value:800,dataIndex:0}]);assert.ok(tip.includes('Upstream A / Latency'));assert.ok(tip.includes('800 µs'),tip);
 });
 
 test('legend visibility, explicit stack overrides and pre-binned bucket context are declarative',()=>{
@@ -138,4 +138,81 @@ test('category and dataset labels cannot carry native engine options',()=>{
  ]) {
   const f=fixture();f.set(spec);assert.equal(f.frame.classList.empty,true);assert.equal(f.instances[0].disposed,true);assert.equal(f.instances.length,1);
  }
+});
+
+test('storage scaling distinguishes binary/decimal input and preserves raw axis values',()=>{
+ const f=fixture();
+ for(const [axis,n,text] of [
+  [{unit:'bytes',scale:'binary'},1073741824,'1 GiB'],
+  [{unit:'bytes',scale:'binary'},2**50,'1 PiB'],
+  [{unit:'bytes',scale:'decimal'},1e9,'1 GB'],
+  [{unit:'bytes',scale:'binary',inputUnit:'GB',displayUnit:'GiB',precision:2},1,'0.93 GiB'],
+  [{unit:'bytes',scale:'binary'},-1024,'-1 KiB']
+ ]) {
+  f.set({type:'line',labels:['A'],axes:[axis],datasets:[{label:'Storage',data:[n]}]});
+  const o=f.instances[0].option;assert.equal(o.yAxis.axisLabel.formatter(n),text);
+  assert.ok(o.tooltip.formatter([{seriesIndex:0,value:n,dataIndex:0}]).includes(text));
+  assert.equal(o.series[0].data[0],n,'display conversion must not mutate values');
+ }
+});
+
+test('MB/s input is neither double-scaled nor relabeled as MiB/s',()=>{
+ const f=fixture();
+ for(const [scale,displayUnit,text] of [['decimal','MB/s','12.5 MB/s'],['binary','MiB/s','11.92 MiB/s']]) {
+  f.set({type:'line',labels:['A'],datasets:[{label:'Network',unit:'bytes/s',inputUnit:'MB/s',displayUnit,scale,precision:2,data:[12.5,0,null]}]});
+  const o=f.instances[0].option;assert.equal(o.yAxis.axisLabel.formatter(12.5),text);assert.equal(o.series[0].data[1],0);assert.equal(o.series[0].data[2],null);
+  assert.ok(o.tooltip.formatter([{seriesIndex:0,value:null,dataIndex:2}]).includes('Unavailable'));
+  assert.ok(o.tooltip.formatter([{seriesIndex:0,value:0,dataIndex:1}]).includes('0 '+displayUnit));
+ }
+});
+
+test('locales normalize POSIX-style tags and format axes and tooltips consistently',()=>{
+ const f=fixture();
+ for(const [locale,text] of [['en_US','12,345.5'],['pt_BR','12.345,5'],['es_ES','12.345,5']]) {
+  f.set({type:'line',locale,labels:['A'],axes:[{unit:'ms',precision:1}],datasets:[{label:'Latency',data:[12345.5]}]});
+  const o=f.instances[0].option;assert.equal(o.yAxis.axisLabel.formatter(12345.5),text+' ms');assert.ok(o.tooltip.formatter([{seriesIndex:0,value:12345.5,dataIndex:0}]).includes(text+' ms'));
+ }
+ f.set({type:'line',locale:'pt-BR',labels:['A'],axes:[{unit:'bytes',scale:'binary',precision:2}],datasets:[{data:[1536]}]});
+ assert.equal(f.instances[0].option.yAxis.axisLabel.formatter(1536),'1,5 KiB');
+});
+
+test('date axes and tooltip headers use explicit timezone, including epoch zero and DST',()=>{
+ const f=fixture();const start=Date.parse('2026-03-08T06:30:00Z');
+ const spec={type:'line',locale:'en-US',timeZone:'America/New_York',domain:{type:'time'},datasets:[{label:'CPU',data:[[start,1],[start+3600000,2]]}]};
+ f.set(spec);const o=f.instances[0].option;
+ assert.match(o.xAxis.axisLabel.formatter(start),/01:30/);assert.match(o.xAxis.axisLabel.formatter(start+3600000),/03:30/);
+ const tip=o.tooltip.formatter([{axisValueLabel:'WRONG ENGINE ZONE',seriesIndex:0,value:[start,1],dataIndex:0}]);assert.ok(tip.includes('01:30'));assert.ok(!tip.includes('WRONG ENGINE ZONE'));assert.match(tip,/2026/);
+ f.set({...spec,timeZone:'UTC',datasets:[{data:[[0,0]]}]});const utc=f.instances[0].option;assert.match(utc.tooltip.formatter([{seriesIndex:0,value:[0,0],dataIndex:0}]),/1970/);
+});
+
+test('localized missing/empty/error text is plain text and survives recovery',()=>{
+ const f=fixture();const messages={unavailable:'Não disponível',empty:'Sem dados',error:'Falha <img src=x>'};
+ const spec={type:'line',locale:'pt_BR',messages,labels:['A'],datasets:[{data:[null]}]};
+ f.set(spec);assert.ok(f.instances[0].option.tooltip.formatter([{seriesIndex:0,value:null,dataIndex:0}]).includes('Não disponível'));
+ f.set({empty:true,messages});assert.equal(f.frame.nextElementSibling.textContent,'Sem dados');
+ f.set({...spec,timeZone:'Not/AZone'});assert.equal(f.frame.nextElementSibling.textContent,messages.error);
+ f.set(spec);assert.equal(f.frame.nextElementSibling.textContent,'Sem dados');assert.equal(f.frame.classList.empty,false);
+ f.api.destroy(f.canvas);f.fail('init');f.set(spec);assert.equal(f.frame.nextElementSibling.textContent,messages.error);
+ f.canvas.dataset.uiChart='bad json';f.frame.nextElementSibling.dataset.uiErrorMessage='JSON inválido';f.api.render(f.canvas);assert.equal(f.frame.nextElementSibling.textContent,'JSON inválido');
+});
+
+test('invalid locale, timezone, units, mixed conversions and presentation fail safely',()=>{
+ for(const extra of [
+  {locale:{}},{locale:'not_a_valid_@_locale'},{locale:'zz-ZZ'},{timeZone:{}},{timeZone:'Mars/Example'},
+  {axes:[{unit:'bytes',scale:'IEC'}]},{axes:[{unit:'bytes',scale:'binary',displayUnit:'GB'}]},
+  {axes:[{unit:'bytes',inputUnit:'BiB'}]},{axes:[{unit:'bytes/s',inputUnit:'MB'}]},
+  {axes:[{unit:'bytes',inputUnit:'GB'}],datasets:[{inputUnit:'GiB',data:[1]}]},
+  {axes:[{unit:'count',scale:'binary'}]},{messages:{error:{image:'https://example.invalid/x'}}},
+  {showAxisLabels:'false'},{showPoints:0},{axes:[{showLabels:'no'}]},{datasets:[{showPoints:'no',data:[1]}]}
+ ]) {
+  const f=fixture();f.set({type:'line',labels:['A'],datasets:[{data:[1]}],...extra});assert.equal(f.frame.classList.empty,true,JSON.stringify(extra));assert.equal(f.instances[0].disposed,true);
+ }
+});
+
+test('compact line options hide axes/markers while preserving live and hidden instance identity',()=>{
+ const f=fixture({height:130});const spec={type:'line',showAxisLabels:false,showPoints:false,domain:{type:'time'},axes:[{unit:'percent',min:0,max:100}],datasets:[{label:'CPU',data:[[0,0],[2000,null],[4000,70]]}]};
+ f.set(spec);const chart=f.instances[0];assert.equal(chart.option.xAxis.axisLabel.show,false);assert.equal(chart.option.yAxis.axisLabel.show,false);assert.equal(chart.option.series[0].showSymbol,false);assert.equal(chart.option.series[0].symbol,'none');assert.equal(chart.option.series[0].connectNulls,false);
+ f.resize(0,0);f.set({...spec,datasets:[{data:[[0,0],[2000,20]]}]});f.resize(400,130);assert.equal(f.instances.length,1);assert.equal(chart.option.series[0].data[1][1],20);
+ f.set({...spec,axes:[{showLabels:true}],datasets:[{showPoints:true,data:[[0,1]]}]});assert.equal(chart.option.xAxis.axisLabel.show,false);assert.equal(chart.option.yAxis.axisLabel.show,true);assert.equal(chart.option.series[0].showSymbol,true);
+ f.events['htmx:beforeCleanupElement']({detail:{elt:f.canvas}});assert.equal(chart.disposed,true);
 });

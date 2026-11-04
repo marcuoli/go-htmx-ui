@@ -93,3 +93,12 @@ func TestWidgetChartKeepsLosslessEscapedSpecAndAccessibleFallbacks(t *testing.T)
 		t.Fatal("chart spec became executable markup", body)
 	}
 }
+
+func TestChartLocalizedFallbackEscaping(t *testing.T) {
+	body := renderWidgetContract(t, WidgetChart(WidgetChartProps{ID: "localized", Label: "Synthetic", Spec: "bad json", EmptyMessage: "Sem dados", ErrorMessage: "Erro <unsafe>"}), "")
+	for _, want := range []string{`data-ui-error-message="Erro &lt;unsafe&gt;"`, `data-ui-empty-message="Sem dados"`, `role="img"`, `aria-label="Synthetic"`} {
+		if !strings.Contains(body, want) {
+			t.Errorf("missing %q", want)
+		}
+	}
+}
