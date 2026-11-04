@@ -33,7 +33,7 @@ try {
  const locked=lock.packages['node_modules/echarts'];
  if(echarts.version!==manifest.dependencies.echarts||echarts.version!==locked.version||!locked.integrity||locked.resolved!==`https://registry.npmjs.org/echarts/-/echarts-${echarts.version}.tgz`)throw new Error('Use the exact locked official ECharts package.');
  const files={
-  'echarts.min.js':'echarts/dist/echarts.common.min.js',
+  'echarts.min.js':'echarts/dist/echarts.min.js',
   'echarts.LICENSE.txt':'echarts/LICENSE','echarts.NOTICE.txt':'echarts/NOTICE',
   'echarts-d3.LICENSE.txt':'echarts/licenses/LICENSE-d3',
   'zrender.LICENSE.txt':'zrender/LICENSE','tslib.LICENSE.txt':'tslib/LICENSE.txt','tslib.CopyrightNotice.txt':'tslib/CopyrightNotice.txt'
@@ -44,7 +44,7 @@ try {
   hashes[name]=sha(join(output,name));
   if(hashes[name]!==sha(join(modules,source)))throw new Error('Upstream asset copy changed bytes.');
  }
- writeFileSync(join(output,'echarts.provenance.json'),JSON.stringify({package:'echarts',version:echarts.version,source:locked.resolved,integrity:locked.integrity,distribution:'dist/echarts.common.min.js',sha256:hashes},null,2)+'\n');
+ writeFileSync(join(output,'echarts.provenance.json'),JSON.stringify({package:'echarts',version:echarts.version,source:locked.resolved,integrity:locked.integrity,distribution:'dist/echarts.min.js',sha256:hashes},null,2)+'\n');
  if(promote)for(const name of ['ui.css',...Object.keys(files),'echarts.provenance.json'])copyFileSync(join(output,name),join(webRoot,'assets',name));
  process.stdout.write(`ECharts ${echarts.version}: ${readFileSync(join(output,'echarts.min.js')).length} bytes; official assets/notices verified\n`);
 } finally {

@@ -1,6 +1,6 @@
 # Third-party notices
 
-- Apache ECharts 6.1.0: Apache-2.0, unchanged official common distribution at web/assets/echarts.min.js; license/NOTICE at echarts.LICENSE.txt and echarts.NOTICE.txt. Included d3 subcomponent notice: echarts-d3.LICENSE.txt.
+- Apache ECharts 6.1.0: Apache-2.0, unchanged official full distribution at web/assets/echarts.min.js; license/NOTICE at echarts.LICENSE.txt and echarts.NOTICE.txt. Included d3 subcomponent notice: echarts-d3.LICENSE.txt.
 - ZRender: BSD-3-Clause; bundled upstream rendering dependency, notice at zrender.LICENSE.txt.
 - tslib: 0BSD; upstream helper dependency, notices at tslib.LICENSE.txt and tslib.CopyrightNotice.txt.
 

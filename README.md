@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.3.0
+go get github.com/marcuoli/go-htmx-ui@v0.4.0
 ```
 
 ## Render a widget
@@ -35,7 +35,7 @@ mux.Handle("GET /assets/ui/", http.StripPrefix("/assets/ui/",
 <script src="/assets/ui/charts.js" defer></script>
 ```
 
-Choose any asset URL prefix. The library has no router, authentication, database, CDN, font or network transport dependency. Assets include the unmodified official Apache ECharts 6.1.0 common bundle and its required third-party notices.
+Choose any asset URL prefix. The library has no router, authentication, database, CDN, font or network transport dependency. Assets include the unmodified official Apache ECharts 6.1.0 full bundle and its required third-party notices.
 
 ## Components
 
@@ -130,3 +130,7 @@ locale/timezone and translated fallbacks, and optional axis labels/point markers
 See [the shared contract and JavaScript-only integration](docs/components.md#localized-monitoring-example-v030).
 The synthetic showcase includes130px charts with1800 samples; applications keep
 ownership of collection, transport, history and business calculations.
+
+The [general chart support matrix](docs/charts.md) documents line/area/bar, pie/ring,
+scatter/bubble, heatmap, radar, gauge and microchart usage; zoom/pan, safe DOM
+events, loading and JS-only integration are part of the shared contract.
