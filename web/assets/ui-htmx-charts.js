@@ -121,13 +121,72 @@
    series.symbolSize=value=>extract(value,binding.dimension);
   }
  }
+ let tooltipID=0;
+ function tooltipSurface(host,t,chart) {
+  // Issue #23: richText is safe but clips to a microchart's canvas. Keep that
+  // renderer and put only trusted formatter output into an owned text node.
+  const node=document.createElement("div"),dialog=host.closest?.("dialog"),listeners=[];
+  node.className="ghtui-chart-tooltip";node.id="ghtui-chart-tooltip-"+(++tooltipID);node.hidden=true;node.tabIndex=0;
+  node.setAttribute("role","tooltip");let popover=typeof node.showPopover==="function";
+  if(popover)node.setAttribute("popover","manual");(dialog||document.body).append(node);
+  let timer,visible=false,hovered=false,focused=false;
+  const cancel=()=>{clearTimeout(timer);timer=undefined;};
+  const describe=add=>{const ids=(host.getAttribute("aria-describedby")||"").split(/\s+/).filter(id=>id&&id!==node.id);if(add)ids.push(node.id);if(ids.length)host.setAttribute("aria-describedby",ids.join(" "));else host.removeAttribute("aria-describedby");};
+  const hide=()=>{
+   const wasVisible=visible;visible=false;
+   // Public hideTip also clears the engine's remembered hover. Otherwise its
+   // resize/update refresh can reopen a dismissed popup on the next tick.
+   if(wasVisible)chart.dispatchAction?.({type:"hideTip"},{silent:true});
+   cancel();if(wasVisible&&popover)try{node.hidePopover();}catch{}hovered=false;focused=false;node.hidden=true;describe(false);return wasVisible;
+  };
+  const delay=()=>{cancel();if(!hovered&&!focused)timer=setTimeout(hide,160);};
+  const on=(target,name,fn)=>{target?.addEventListener(name,fn);if(target)listeners.push(()=>target.removeEventListener(name,fn));};
+  on(host,"pointerleave",delay);on(node,"pointerenter",()=>{hovered=true;cancel();});on(node,"pointerleave",()=>{hovered=false;delay();});on(node,"focusin",()=>{focused=true;cancel();});on(node,"focusout",()=>{focused=false;delay();});
+  on(node,"keydown",event=>{if(event.key==="Escape")hide();});on(dialog,"close",hide);
+  const surface={node,hide,delay,
+   theme(t){Object.assign(node.style,{color:t.text,backgroundColor:t.surface,borderColor:t.border,fontFamily:t.font});},
+   content(value){cancel();node.textContent=value;},
+   position(point){
+    if(!host.isConnected||!node.textContent){hide();return [0,0];}
+    cancel();node.hidden=false;
+    // Popover's top layer escapes overflow/transform ancestors and works inside
+    // modal dialogs. Older engines get a fixed portal in the nearest dialog/body.
+    if(!visible&&popover)try{node.showPopover();}catch{node.removeAttribute("popover");popover=false;}
+    visible=true;describe(true);
+    const rect=host.getBoundingClientRect(),box=node.getBoundingClientRect(),vw=document.documentElement.clientWidth||window.innerWidth,vh=document.documentElement.clientHeight||window.innerHeight;
+    const x=rect.left+(Number.isFinite(point?.[0])?point[0]:0),y=rect.top+(Number.isFinite(point?.[1])?point[1]:0);
+    const clamp=(n,max)=>Math.max(8,Math.min(n,Math.max(8,max)));
+    Object.assign(node.style,{left:clamp(x+12,vw-box.width-12)+"px",top:clamp(y-box.height-12>=8?y-box.height-12:y+12,vh-box.height-12)+"px"});
+    return [0,0];
+   },
+   destroy(){hide();listeners.forEach(off=>off());node.remove();}
+  };surface.theme(t);return surface;
+ }
+ function outsideTooltip(option,config,surface) {
+  if(option.tooltip===undefined)option.tooltip={};
+  const bound=typeof option.tooltip.formatter==="function"?option.tooltip.formatter:params=>list(params).map(p=>{
+   const valueFormatter=list(option.series)[p.seriesIndex]?.tooltip?.valueFormatter;
+   const value=typeof valueFormatter==="function"?valueFormatter(extract(p)):String(extract(p)??config.settings.unavailable);
+   return [p.name,p.seriesName,value].filter(v=>v!==undefined&&v!=="").join("\n");
+  }).join("\n");
+  const formatter=params=>{surface.content(bound(params));return "";},position=point=>surface.position(point);
+  // A nested native template must neither bypass textContent nor replace the
+  // trusted callbacks when media/baseOption/series/item options are selected.
+  function visit(value) {
+   if(!value||typeof value!=="object")return;
+   for(const [key,item] of Object.entries(value)) {
+    if(key==="tooltip")for(const tooltip of list(item))if(object(tooltip))Object.assign(tooltip,{renderMode:"richText",formatter,position,backgroundColor:"transparent",borderWidth:0,padding:0,shadowBlur:0,shadowOffsetX:0,shadowOffsetY:0});
+    visit(item);
+   }
+  }visit(option);
+ }
  function configuration(raw,fallback={}) {
-  keys(raw,["locale","timeZone","formats","tooltip","bubbleSizes","events","messages","empty","loading"],"ECharts configuration");
+  keys(raw,["locale","timeZone","formats","tooltip","tooltipOutside","bubbleSizes","events","messages","empty","loading"],"ECharts configuration");
   const messages={empty:fallback.uiEmptyMessage||"No reported data in this period.",error:fallback.uiErrorMessage||"Chart unavailable. Open the chart data table below.",unavailable:"Unavailable",loading:"Loading…",...(raw.messages??{})};
   if(raw.messages!==undefined){keys(raw.messages,["empty","error","unavailable","loading"],"messages");Object.values(raw.messages).forEach(text);}
   const settings={locale:raw.locale,timeZone:raw.timeZone,unavailable:messages.unavailable};window.GoHTMXUI.echartsFormat.compile({},settings);
   const events=raw.events??{};keys(events,["select","zoom"],"events");
-  return {...raw,settings,messages,events:{select:boolean(events.select),zoom:boolean(events.zoom)},empty:boolean(raw.empty),loading:boolean(raw.loading)};
+  return {...raw,settings,messages,tooltipOutside:boolean(raw.tooltipOutside),events:{select:boolean(events.select),zoom:boolean(events.zoom)},empty:boolean(raw.empty),loading:boolean(raw.loading)};
  }
  function compile(option,config,t) {
   if(!object(option)||["labels","datasets","type"].some(k=>Object.hasOwn(option,k)))throw Error("Supply native ECharts options, not the retired chart schema");
@@ -136,13 +195,14 @@
   bindTooltip(option,config.tooltip??[],config.settings);bindBubbles(option,config.bubbleSizes??[]);tooltipSafety(option);styles(option,t);return option;
  }
  function release(host) {
-  const entry=entries.get(host);entries.delete(host);entry?.observer?.disconnect();
+  const entry=entries.get(host);entries.delete(host);entry?.observer?.disconnect();entry?.surface?.destroy();
   const registered=window.echarts?.getInstanceByDom?.(host);entry?.chart?.dispose();if(registered&&registered!==entry?.chart)registered.dispose();
  }
  function destroy(root=document){for(const host of [...entries.keys()])if(root===document||host===root||root.contains?.(host))release(host);}
  const size=host=>{const r=host.parentElement.getBoundingClientRect();return {width:r.width,height:r.height};};
  function resize(host) {
   if(!host.isConnected){release(host);return;}const entry=entries.get(host);if(!entry)return;
+  entry.surface?.hide();
   const dimensions=size(host);if(dimensions.width<=0||dimensions.height<=0){entry.pending=true;return;}
   if(entry.pending||!entry.chart)render(host);else entry.chart.resize(dimensions);
  }
@@ -152,6 +212,7 @@
   if(entry.bound)return;entry.bound=true;
   entry.chart.on("click",p=>{if(entry.events.select)emit(host,"select",{seriesId:typeof p.seriesId==="string"?p.seriesId:undefined,seriesIndex:Number.isInteger(p.seriesIndex)?p.seriesIndex:undefined,dataIndex:Number.isInteger(p.dataIndex)?p.dataIndex:undefined,name:typeof p.name==="string"?p.name:"",value:safeValue(p.value)});});
   entry.chart.on("datazoom",p=>{const v=p?.batch?.[0]??p;if(entry.events.zoom&&Number.isFinite(v?.start)&&Number.isFinite(v?.end))emit(host,"zoom",{start:v.start,end:v.end});});
+  entry.chart.on("hidetip",()=>entry.surface?.delay());
  }
  function zoomIdentity(z){return JSON.stringify([z.id??null,z.type??"slider",...["xAxisIndex","yAxisIndex","radiusAxisIndex","angleAxisIndex","singleAxisIndex"].map(key=>z[key]==null?null:list(z[key])),z.orient??"horizontal",z.start??0,z.end??100,z.startValue??null,z.endValue??null,z.rangeMode??null]);}
  function retainState(option,entry,previous) {
@@ -184,7 +245,7 @@
     const prior=entries.get(host);
     if(config.loading) {
      frame.classList.toggle("is-empty",!prior?.chart);if(fallback)fallback.textContent=config.messages.loading;
-     if(prior){prior.events={};prior.chart?.showLoading("default",{text:config.messages.loading,color:t.accent,textColor:t.text,maskColor:t.surface});}
+     if(prior){prior.surface?.hide();prior.events={};prior.chart?.showLoading("default",{text:config.messages.loading,color:t.accent,textColor:t.text,maskColor:t.surface});}
      continue;
     }
     frame.classList.toggle("is-empty",config.empty);if(fallback)fallback.textContent=config.messages.empty;
@@ -199,6 +260,9 @@
     if(!entry.chart)entry.chart=window.echarts.getInstanceByDom?.(host)||window.echarts.init(host,null,{renderer:"canvas",...dimensions});
     bindEvents(host,entry);
     if(entry.signature!==signature) {
+     entry.surface?.hide();
+     if(config.tooltipOutside){entry.surface??=tooltipSurface(host,t,entry.chart);entry.surface.theme(t);outsideTooltip(option,config,entry.surface);}
+     else {entry.surface?.destroy();delete entry.surface;}
      const state=retainState(option,entry,entry.chart.getOption?.());
      // Native complete snapshots remove stale series/axes. Only unchanged declared
      // legend/zoom defaults carry forward the reader's current interaction state.
@@ -212,6 +276,10 @@
  function update(host,option,config) {const encoded=json(option),metadata=config===undefined?undefined:json(config);host.dataset.uiEcharts=encoded;if(metadata!==undefined)host.dataset.uiEchartsConfig=metadata;render(host);}
  window.GoHTMXUI=window.GoHTMXUI||{};window.GoHTMXUI.echarts={render,update,destroy};
  window.addEventListener("resize",()=>{for(const host of [...entries.keys()])resize(host);});
+ document.addEventListener("scroll",event=>{for(const entry of entries.values())if(entry.surface&&!entry.surface.node.contains(event.target))entry.surface.hide();},true);
+ // Manual popovers do not light-dismiss. Escape must also work when a pointer
+ // opened the tooltip and keyboard focus remains on the chart or page.
+ document.addEventListener("keydown",event=>{if(event.key==="Escape"){let dismissed=false;for(const entry of entries.values())if(entry.surface?.hide())dismissed=true;if(dismissed)event.preventDefault();}},true);
  document.addEventListener("gohtmxui:theme",()=>render());
  document.addEventListener("htmx:beforeCleanupElement",event=>destroy(event.detail.elt));
  document.addEventListener("htmx:afterSwap",event=>render(event.detail.elt));

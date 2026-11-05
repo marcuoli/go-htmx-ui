@@ -1,7 +1,7 @@
 # Modals, alerts and toast notifications
 
 Available since `0.10.0+20261105.20`. Pin the current full release tag:
-`go get github.com/marcuoli/go-htmx-ui@v0.10.1+20261105.22`.
+`go get github.com/marcuoli/go-htmx-ui@v0.10.2+20261105.24`.
 These components use the shared Light/Dark palettes and standalone color
 fallbacks, with no new dependencies. `Page` supplies the
 external feedback runtime and an empty toast region automatically. Register
@@ -21,7 +21,7 @@ X, a scrollable content area and a footer. Header and footer remain visible when
 content is long. The footer supplies a secondary Close button when no custom
 `Footer` is provided; `CloseLabel` localizes both close controls. The description
 appears at the top of the content area. This layout is the default starting in
-`0.10.1+20261105.22`.
+`0.10.2+20261105.24`.
 The content and footer can receive keyboard focus for scrolling. If custom
 footer actions wrap beyond the available space, the footer scrolls within its
 own bounded area so every action remains reachable.
