@@ -77,21 +77,52 @@ Application metadata uses [go-versioning v0.1.1](https://github.com/marcuoli/go-
 
 ```text
 go-htmx-ui/
-├── *.go, *.templ       # Public ui components and generated Go
+├── doc.go, ui.go       # Stable root ui API: aliases and forwarding functions
+├── ui_test.go          # Root import and asset compatibility contracts
+├── components/
+│   ├── control/        # Headings, actions, tabs, buttons, forms and dialogs
+│   ├── widget/         # Dashboard containers, metrics and chart hosts
+│   ├── status/         # Status labels, pulsing circles and Alpine bindings
+│   └── auth/           # Explicit authentication lock/text indicators
+├── chart/              # Native ECharts types and JSON validation
+├── metric/             # Exact compact numeric label formatting
 ├── web/
+│   ├── *.go, *.templ   # Asset embedding, HTTP handler and page-head component
 │   ├── assets/        # Embedded CSS, JavaScript and license notices
 │   ├── styles/        # Canonical Tailwind sources
 │   ├── scripts/       # Frontend build tooling
 │   ├── tests/         # JavaScript contract tests
 │   └── package*.json  # Frontend dependency manifest and lockfile
 ├── examples/showcase/
+├── internal/testutil/  # Shared component rendering helper for Go tests
+├── scripts/module-version/
 ├── docs/
 └── .github/workflows/
 ```
 
-The public Go package stays at the module root. `ui.Assets()` returns the same
-asset filenames without a repository prefix; v0.6.0 intentionally changes the
-chart API and runtime filenames. See the migration guide before upgrading. Go tests remain beside their Go source files.
+The root `ui` imports above remain supported. Implementations live in the
+responsibility packages, which can also be imported directly, for example:
+
+```templ
+import "github.com/marcuoli/go-htmx-ui/components/status"
+
+templ Connection() {
+    @status.StatusIndicator(status.StatusIndicatorProps{
+        Label: "Connected", Tone: status.StatusSuccess, Pulse: true,
+    })
+}
+```
+
+The root types are aliases, so both import styles can be composed without
+conversions. Component packages never import the root facade. Widgets use
+`chart` for configuration and `metric` for labels; `web` owns embedding and
+asset URLs. Keep Go tests beside their implementation and generated `_templ.go`
+files beside their `.templ` sources. Regenerate from the repository root.
+`examples/showcase` deliberately uses the root API to check existing consumers.
+
+`ui.Assets()` and `web.Assets()` return the same filenames without a repository
+prefix. Folder organization does not change public asset URLs. The earlier
+v0.6.0 chart API migration is documented separately in the migration guide.
 
 ## Compatibility
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Group Go implementations into control, widget, status, auth, chart, metric and
+  web packages, with tests beside their sources. Preserve the root `ui` API
+  through aliases and forwarding functions, and keep existing asset URLs.
+
 ## v0.7.0
 
 - Add StatusIndicator with semantic tones, visible labels, optional pulsing ring,
