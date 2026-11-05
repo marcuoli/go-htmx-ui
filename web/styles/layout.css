@@ -1,0 +1,66 @@
+@layer theme {
+ .ghtui-app { color-scheme:light; --ghtui-font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --ghtui-radius:8px; --ghtui-gap:20px; --ghtui-panel-padding:20px; --ghtui-control-height:40px; --ghtui-control-padding:8px 14px; --ghtui-body-size:14px; }
+ .ghtui-app[data-ui-mode="dark"] { color-scheme:dark; }
+ .ghtui-app[data-ui-density="compact"] { --ghtui-gap:12px; --ghtui-panel-padding:14px; --ghtui-control-height:34px; --ghtui-control-padding:6px 10px; --ghtui-body-size:13px; }
+ @media(prefers-color-scheme:dark) { .ghtui-app[data-ui-mode="system"] { color-scheme:dark; } }
+}
+@layer components {
+ body.ghtui-document { margin:0; }
+ .ghtui-app { box-sizing:border-box; min-width:0; color:var(--ghtui-text); background:var(--ghtui-page); font-family:var(--ghtui-font); font-size:var(--ghtui-body-size); line-height:1.5; }
+ .ghtui-app :where(*, *::before, *::after) { box-sizing:border-box; }
+ .ghtui-app :where(a) { color:var(--ghtui-accent); }
+ .ghtui-app :where(button,input,select,textarea) { font:inherit; }
+ .ghtui-app :where(h1,h2,h3,p) { overflow-wrap:anywhere; }
+ .ghtui-app .ghtui-widget,.ghtui-app .ghtui-metric-card { padding:var(--ghtui-panel-padding); border-radius:var(--ghtui-radius); }
+ .ghtui-app .ghtui-input,.ghtui-app .ghtui-button { min-height:var(--ghtui-control-height); padding:var(--ghtui-control-padding); border-radius:var(--ghtui-radius); }
+ .ghtui-app .ghtui-input,.ghtui-app .ghtui-button,.ghtui-app .ghtui-tab { font-size:inherit; }
+ .ghtui-app .ghtui-actions,.ghtui-app .ghtui-tabs { flex-wrap:wrap; }
+ .ghtui-app .ghtui-button-primary { color:var(--ghtui-on-primary); }
+ .ghtui-app .ghtui-button-danger { color:var(--ghtui-on-danger); }
+ .ghtui-app [hidden],.ghtui-shell [hidden] { display:none!important; }
+ .ghtui-stack { display:flex; flex-direction:column; gap:var(--ghtui-gap,20px); min-width:0; }
+ .ghtui-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr)); gap:var(--ghtui-gap,20px); min-width:0; }
+ .ghtui-grid[data-ui-columns="1"] { grid-template-columns:minmax(0,1fr); }
+ @media(min-width:768px) {
+  .ghtui-grid[data-ui-columns="2"] { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .ghtui-grid[data-ui-columns="3"] { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .ghtui-grid[data-ui-columns="4"] { grid-template-columns:repeat(4,minmax(0,1fr)); }
+ }
+ .ghtui-theme-switcher { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
+ .ghtui-theme-switcher label { display:grid; gap:3px; font-size:12px; }
+ .ghtui-theme-switcher .ghtui-input { width:auto; min-width:100px; }
+ .ghtui-shell { min-height:100dvh; display:flex; flex-direction:column; }
+ .ghtui-shell-header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--ghtui-gap); padding:16px 24px; background:var(--ghtui-surface); border-bottom:1px solid var(--ghtui-border); }
+ .ghtui-shell-brand,.ghtui-shell-actions { display:flex; flex-wrap:wrap; align-items:center; gap:16px; min-width:0; }
+ .ghtui-shell-brand a { font-size:18px; font-weight:650; text-decoration:none; color:var(--ghtui-text); }
+ .ghtui-shell-brand p { margin:2px 0 0; color:var(--ghtui-muted); font-size:12px; }
+ .ghtui-shell-body { flex:1; min-width:0; display:grid; grid-template-columns:minmax(0,1fr); }
+ .ghtui-shell-sidebar { padding:20px 16px; background:var(--ghtui-surface); border-bottom:1px solid var(--ghtui-border); }
+ .ghtui-shell-sidebar nav { display:grid; gap:6px; }
+ .ghtui-shell-link { display:block; padding:10px 12px; border-radius:var(--ghtui-radius); text-decoration:none; color:var(--ghtui-text); }
+ .ghtui-shell-link:hover,.ghtui-shell-link.is-active { background:var(--ghtui-raised); }
+ .ghtui-shell-link.is-active { font-weight:650; color:var(--ghtui-accent); }
+ .ghtui-shell-main { min-width:0; padding:24px; }
+ .ghtui-shell-footer { padding:16px 24px; background:var(--ghtui-surface); border-top:1px solid var(--ghtui-border); color:var(--ghtui-muted); }
+ .ghtui-shell :where(a,button,select):focus-visible { outline:2px solid var(--ghtui-accent); outline-offset:3px; }
+ .ghtui-skip-link { position:fixed; top:8px; left:8px; transform:translateY(-200%); padding:10px 16px; background:var(--ghtui-surface); color:var(--ghtui-text); border:2px solid var(--ghtui-accent); border-radius:var(--ghtui-radius); z-index:100; }
+ .ghtui-skip-link:focus { transform:none; }
+ @media(min-width:900px) {
+  .ghtui-shell-with-sidebar { grid-template-columns:240px minmax(0,1fr); }
+  .ghtui-shell-sidebar { border-right:1px solid var(--ghtui-border); border-bottom:0; }
+ }
+ @media(max-width:599px) {
+  .ghtui-shell-main,.ghtui-shell-header,.ghtui-shell-footer { padding:16px; }
+  .ghtui-shell-header .ghtui-theme-switcher { width:100%; }
+ }
+ .ghtui-input[aria-invalid="true"] { border-color:var(--ghtui-status-danger,#f85149); }
+ .ghtui-field-error { margin:0; color:var(--ghtui-status-danger,#f85149); font-size:12px; }
+ .ghtui-loading { display:flex; align-items:center; gap:10px; color:var(--ghtui-muted,#8b949e); }
+ .ghtui-spinner { display:inline-block; width:1em; height:1em; flex:none; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:ghtui-spin .8s linear infinite; }
+ .ghtui-empty-state { display:grid; justify-items:center; gap:12px; padding:32px 20px; text-align:center; }
+ .ghtui-empty-state h2 { margin:0; font-size:16px; }
+ .ghtui-empty-state p { margin:0; color:var(--ghtui-muted,#8b949e); }
+ .ghtui-button:disabled:hover { filter:none; }
+ @keyframes ghtui-spin { to { transform:rotate(360deg); } }
+ @media(prefers-reduced-motion:reduce) { .ghtui-spinner { animation:none; } }
+}

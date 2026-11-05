@@ -4,7 +4,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 export const engine=require('../assets/echarts.min.js');
 export const base=()=>({animation:false,xAxis:{type:'category',data:['A','B','C']},yAxis:{type:'value'},series:[{id:'requests',name:'Requests',type:'line',data:[0,null,3]}]});
-export function fixture({width=600,height=238,observe=true,actual=false,option=base(),config={}}={}) {
+export function fixture({width=600,height=238,observe=true,actual=false,option=base(),config={},tokens={}}={}) {
  const events={},instances=[],observers=[],dispatched=[],registered=new Map(); let muted='#8b949e',failure='';
  const frame={clientWidth:width,clientHeight:height,getBoundingClientRect(){return {width:this.clientWidth,height:this.clientHeight}},classList:{toggle(_n,v){this.empty=!!v},add(){this.empty=true}},nextElementSibling:{textContent:'No data',dataset:{uiEmptyMessage:'No data'}}};
  const attrs=new Map();
@@ -18,8 +18,8 @@ export function fixture({width=600,height=238,observe=true,actual=false,option=b
  class ResizeObserver{constructor(fn){this.callback=fn;observers.push(this)}observe(target){this.target=target}disconnect(){this.disconnected=true}}
  class CustomEvent{constructor(type,options){this.type=type;Object.assign(this,options)}}
  const document={readyState:'complete',querySelectorAll:()=>host.isConnected?[host]:[],addEventListener:(n,f)=>events[n]=f};
- const context={document,echarts,Intl,Map,JSON,CustomEvent,ResizeObserver:observe?ResizeObserver:undefined,getComputedStyle:()=>({fontFamily:'system-ui',getPropertyValue:n=>n==='--ghtui-muted'?muted:''}),addEventListener:(n,f)=>events['window:'+n]=f};context.window=context;
+ const context={document,echarts,Intl,Map,JSON,CustomEvent,ResizeObserver:observe?ResizeObserver:undefined,getComputedStyle:()=>({fontFamily:'system-ui',getPropertyValue:n=>tokens[n]||(n==='--ghtui-muted'?muted:'')}),addEventListener:(n,f)=>events['window:'+n]=f};context.window=context;
  for(const file of ['echarts-format.js','ui-htmx-charts.js'])vm.runInNewContext(fs.readFileSync(new URL('../assets/'+file,import.meta.url),'utf8'),context);
  return {api:context.GoHTMXUI.echarts,format:context.GoHTMXUI.echartsFormat,host,frame,events,instances,observers,dispatched,context,
-  set(o,c=JSON.parse(host.dataset.uiEchartsConfig)){host.dataset.uiEcharts=JSON.stringify(o);host.dataset.uiEchartsConfig=JSON.stringify(c);this.api.render(host)},resize(w,h){frame.clientWidth=w;frame.clientHeight=h;for(const o of [...observers])if(!o.disconnected)o.callback()},setTheme(v){muted=v},fail(v){failure=v},cleanup(){this.api.destroy(host)}};
+  set(o,c=JSON.parse(host.dataset.uiEchartsConfig)){host.dataset.uiEcharts=JSON.stringify(o);host.dataset.uiEchartsConfig=JSON.stringify(c);this.api.render(host)},resize(w,h){frame.clientWidth=w;frame.clientHeight=h;for(const o of [...observers])if(!o.disconnected)o.callback()},setTheme(v){muted=v},setToken(n,v){tokens[n]=v},fail(v){failure=v},cleanup(){this.api.destroy(host)}};
 }

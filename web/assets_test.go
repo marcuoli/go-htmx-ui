@@ -9,7 +9,7 @@ import (
 )
 
 func TestEmbeddedAssetsAndLicenses(t *testing.T) {
-	for _, name := range []string{"ui.css", "ui-htmx-charts.js", "echarts-format.js", "echarts.min.js", "echarts.LICENSE.txt", "echarts.NOTICE.txt", "echarts-d3.LICENSE.txt", "zrender.LICENSE.txt", "tslib.LICENSE.txt", "tslib.CopyrightNotice.txt", "echarts.provenance.json"} {
+	for _, name := range []string{"ui.css", "ui-runtime.js", "ui-htmx-charts.js", "echarts-format.js", "echarts.min.js", "echarts.LICENSE.txt", "echarts.NOTICE.txt", "echarts-d3.LICENSE.txt", "zrender.LICENSE.txt", "tslib.LICENSE.txt", "tslib.CopyrightNotice.txt", "echarts.provenance.json"} {
 		data, err := fs.ReadFile(Assets(), name)
 		if err != nil || len(data) == 0 {
 			t.Errorf("asset %s: %v", name, err)

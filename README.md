@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.8.0+20261105.16
+go get github.com/marcuoli/go-htmx-ui@v0.9.0+20261105.18
 ```
 
 ## Render a widget
@@ -51,6 +51,28 @@ Route shared component, API, style and asset requests through this module's
 designated owning development session. Consuming apps retain domain logic and
 adopt released shared versions rather than maintaining divergent copies.
 
+## A complete app with defaults
+
+```templ
+@ui.Page(ui.PageProps{Title: "My app"}) {
+    @ui.AppShell(ui.AppShellProps{Title: "My app"}) {
+        @ui.Stack() {
+            @ui.TextField(ui.TextFieldProps{
+                Label: "Project", Input: ui.InputProps{Name: "project"},
+            })
+            @ui.Button(ui.ButtonProps{}) { Save }
+        }
+    }
+}
+```
+
+Register `ui.AssetHandler("")` at `/assets/ui/` once. Page supplies shared assets
+and Standard/System appearance; the shell includes a persistent theme switcher.
+Standard, Ocean and Forest each have Light and Dark variants. Typography,
+spacing, controls, states and chart colors inherit the selected theme.
+See [defaults, themes and app layout](docs/themes.md) for configuration and the
+optional smaller App wrapper. Open `/themes` in the showcase to compare variants.
+
 ## Showcase
 
 ```sh
@@ -71,7 +93,7 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.8.0+20261105.16`, with immutable tag `v0.8.0+20261105.16`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
+Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.9.0+20261105.18`, with immutable tag `v0.9.0+20261105.18`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
 
 ## Repository layout
 
@@ -83,7 +105,9 @@ go-htmx-ui/
 │   ├── control/        # Headings, actions, tabs, buttons, forms and dialogs
 │   ├── widget/         # Dashboard containers, metrics and chart hosts
 │   ├── status/         # Status labels, pulsing circles and Alpine bindings
-│   └── auth/           # Explicit authentication lock/text indicators
+│   ├── auth/           # Explicit authentication lock/text indicators
+│   └── layout/         # App scope, shell, switcher, Stack and Grid
+├── theme/              # Appearance types, normalization and render context
 ├── chart/              # Native ECharts types and JSON validation
 ├── metric/             # Exact compact numeric label formatting
 ├── web/
@@ -147,7 +171,13 @@ go vet ./...
 go mod verify
 ```
 
-`web/styles/components.css` is the canonical Tailwind source. `web/assets/ui.css` is generated without preflight, global body styles or fonts. Component rules use the standard `components` cascade layer so downstream utilities and custom classes can override them. The build scopes Tailwind fallback initialization and namespaces its internal custom properties. Applications can use the prebuilt CSS or adapt the source into their asset pipeline; preserve those isolation steps. App layout classes stay outside this library.
+`web/styles/components.css`, `layout.css` and `themes.json` are the canonical
+style inputs. Generated `web/assets/ui.css` has no global preflight or external
+fonts; complete-page defaults are scoped to the opt-in App/Page helpers.
+Component rules use the standard components layer so downstream utilities and
+custom classes can override defaults. The build scopes Tailwind initialization
+and namespaces internal custom properties. Preserve those isolation steps when
+adapting the sources into an application pipeline.
 
 The latest official Go and frontend releases are checked during dependency
 reviews. Current direct versions: templ v0.3.1100, go-htmx-table v0.2.0,
@@ -167,12 +197,12 @@ Use go-versioning's official CLI rather than a separate bare-core allocator:
 
 ```sh
 go run github.com/marcuoli/go-versioning/cmd/go-versioning inspect --repo . --json
-go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 16 --initial-core 0.8.0 --json
+go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 18 --bump minor --json
 ```
 
-`next` is read-only. This first full-identity allocation needs an explicit
-initial core; later allocations inherit the previous core unless an explicit
-bump is selected. After verifying the merged commit and plan, an authorized
+`next` is read-only. This release selects a minor bump from the previous
+full-identity tag; ordinary later allocations inherit the previous core unless
+an explicit bump is selected. After verifying the merged commit and plan, an authorized
 release uses the same arguments with `tag --push --remote origin`. The allocator
 never moves an existing tag. CI records explicit source metadata with `inspect`.
 

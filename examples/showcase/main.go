@@ -83,6 +83,18 @@ func showcaseHandlerWithRuntime(info versioning.Info, runtimeAssets fs.FS) http.
 			log.Print(err)
 		}
 	})
+	mux.HandleFunc("GET /themes", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := ThemesPage(info, runtimeAssets != nil).Render(r.Context(), w); err != nil {
+			log.Print(err)
+		}
+	})
+	mux.HandleFunc("GET /themes/fragment", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := ThemeFragment().Render(r.Context(), w); err != nil {
+			log.Print(err)
+		}
+	})
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := Page(info).Render(r.Context(), w); err != nil {

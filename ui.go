@@ -8,9 +8,11 @@ import (
 	"github.com/marcuoli/go-htmx-ui/chart"
 	"github.com/marcuoli/go-htmx-ui/components/auth"
 	"github.com/marcuoli/go-htmx-ui/components/control"
+	"github.com/marcuoli/go-htmx-ui/components/layout"
 	"github.com/marcuoli/go-htmx-ui/components/status"
 	"github.com/marcuoli/go-htmx-ui/components/widget"
 	"github.com/marcuoli/go-htmx-ui/metric"
+	"github.com/marcuoli/go-htmx-ui/theme"
 	"github.com/marcuoli/go-htmx-ui/web"
 	versioning "github.com/marcuoli/go-versioning"
 )
@@ -30,6 +32,10 @@ type (
 	SelectProps       = control.SelectProps
 	DialogProps       = control.DialogProps
 	DialogHeaderProps = control.DialogHeaderProps
+	TextFieldProps    = control.TextFieldProps
+	SelectFieldProps  = control.SelectFieldProps
+	LoadingStateProps = control.LoadingStateProps
+	EmptyStateProps   = control.EmptyStateProps
 
 	WidgetElement     = widget.WidgetElement
 	WidgetProps       = widget.WidgetProps
@@ -56,7 +62,17 @@ type (
 	EChartsMessages      = chart.EChartsMessages
 	EChartsConfig        = chart.EChartsConfig
 
-	HeadProps = web.HeadProps
+	HeadProps          = web.HeadProps
+	PageProps          = web.PageProps
+	AppProps           = layout.AppProps
+	AppShellProps      = layout.AppShellProps
+	ThemeSwitcherProps = layout.ThemeSwitcherProps
+	NavItem            = layout.NavItem
+	GridProps          = layout.GridProps
+	Theme              = theme.Name
+	Mode               = theme.Mode
+	Density            = theme.Density
+	ThemeConfig        = theme.Config
 )
 
 const (
@@ -77,9 +93,17 @@ const (
 	StatusRing    = status.StatusRing
 	StatusPing    = status.StatusPing
 
-	AuthUnknown   = auth.AuthUnknown
-	AuthSignedIn  = auth.AuthSignedIn
-	AuthSignedOut = auth.AuthSignedOut
+	AuthUnknown        = auth.AuthUnknown
+	AuthSignedIn       = auth.AuthSignedIn
+	AuthSignedOut      = auth.AuthSignedOut
+	ThemeStandard      = theme.Standard
+	ThemeOcean         = theme.Ocean
+	ThemeForest        = theme.Forest
+	ModeSystem         = theme.System
+	ModeLight          = theme.Light
+	ModeDark           = theme.Dark
+	DensityComfortable = theme.Comfortable
+	DensityCompact     = theme.Compact
 )
 
 func PageHeader(props PageHeaderProps) templ.Component { return control.PageHeader(props) }
@@ -95,8 +119,12 @@ func Dialog(props DialogProps) templ.Component         { return control.Dialog(p
 func DialogHeader(props DialogHeaderProps) templ.Component {
 	return control.DialogHeader(props)
 }
-func DialogBody() templ.Component { return control.DialogBody() }
-func Badge() templ.Component      { return control.Badge() }
+func DialogBody() templ.Component                          { return control.DialogBody() }
+func Badge() templ.Component                               { return control.Badge() }
+func TextField(props TextFieldProps) templ.Component       { return control.TextField(props) }
+func SelectField(props SelectFieldProps) templ.Component   { return control.SelectField(props) }
+func LoadingState(props LoadingStateProps) templ.Component { return control.LoadingState(props) }
+func EmptyState(props EmptyStateProps) templ.Component     { return control.EmptyState(props) }
 
 // VersionLabel renders validated application metadata without probing Git.
 func VersionLabel(info versioning.Info) templ.Component { return control.VersionLabel(info) }
@@ -141,3 +169,11 @@ func Assets() fs.FS { return web.Assets() }
 
 // AssetHandler serves assets at an application-owned URL prefix.
 func AssetHandler(prefix string) http.Handler { return web.AssetHandler(prefix) }
+
+// Page supplies document metadata, shared assets and scoped app defaults.
+func Page(props PageProps) templ.Component                   { return web.Page(props) }
+func App(props AppProps) templ.Component                     { return layout.App(props) }
+func AppShell(props AppShellProps) templ.Component           { return layout.AppShell(props) }
+func ThemeSwitcher(props ThemeSwitcherProps) templ.Component { return layout.ThemeSwitcher(props) }
+func Stack() templ.Component                                 { return layout.Stack() }
+func Grid(props GridProps) templ.Component                   { return layout.Grid(props) }

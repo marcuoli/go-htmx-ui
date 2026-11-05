@@ -1,0 +1,14 @@
+{
+  "standard": {
+    "light": {"page":"#f6f8fa","surface":"#ffffff","raised":"#eaeef2","text":"#1f2328","muted":"#526175","border":"#8c959f","accent":"#0969da","primary":"#0969da","on-primary":"#ffffff","danger":"#b42335","on-danger":"#ffffff","success":"#166534","warning":"#7a4b00","status-danger":"#b42335","chart-1":"#0969da","chart-2":"#6e40c9","chart-3":"#9a6700","chart-4":"#cf222e","chart-5":"#1a7f37","chart-6":"#0550ae"},
+    "dark": {"page":"#0d1117","surface":"#161b22","raised":"#21262d","text":"#f0f6fc","muted":"#9aa9bd","border":"#68758a","accent":"#79c0ff","primary":"#1f6feb","on-primary":"#ffffff","danger":"#b42335","on-danger":"#ffffff","success":"#56d364","warning":"#f2cc60","status-danger":"#ff7b86","chart-1":"#79c0ff","chart-2":"#c4b5fd","chart-3":"#fcd34d","chart-4":"#fda4af","chart-5":"#86efac","chart-6":"#67e8f9"}
+  },
+  "ocean": {
+    "light": {"page":"#f0f9ff","surface":"#ffffff","raised":"#e0f2fe","text":"#0c2d48","muted":"#365d75","border":"#66879b","accent":"#075985","primary":"#0369a1","on-primary":"#ffffff","danger":"#b42335","on-danger":"#ffffff","success":"#166534","warning":"#7a4b00","status-danger":"#b42335","chart-1":"#0369a1","chart-2":"#0f766e","chart-3":"#7e22ce","chart-4":"#b45309","chart-5":"#be123c","chart-6":"#334155"},
+    "dark": {"page":"#061923","surface":"#0c2635","raised":"#15394b","text":"#e6f7ff","muted":"#9dc7db","border":"#517c94","accent":"#7dd3fc","primary":"#0369a1","on-primary":"#ffffff","danger":"#b42335","on-danger":"#ffffff","success":"#56d364","warning":"#f2cc60","status-danger":"#ff7b86","chart-1":"#7dd3fc","chart-2":"#5eead4","chart-3":"#d8b4fe","chart-4":"#fcd34d","chart-5":"#fda4af","chart-6":"#cbd5e1"}
+  },
+  "forest": {
+    "light": {"page":"#f3faf4","surface":"#ffffff","raised":"#e7f3e9","text":"#16351f","muted":"#42614c","border":"#718c76","accent":"#166534","primary":"#15803d","on-primary":"#ffffff","danger":"#b42335","on-danger":"#ffffff","success":"#166534","warning":"#7a4b00","status-danger":"#b42335","chart-1":"#15803d","chart-2":"#0e7490","chart-3":"#7e22ce","chart-4":"#b45309","chart-5":"#be123c","chart-6":"#475569"},
+    "dark": {"page":"#0b1910","surface":"#13271b","raised":"#203b2b","text":"#ecfdf0","muted":"#a6c9ae","border":"#5e8468","accent":"#86efac","primary":"#15803d","on-primary":"#ffffff","danger":"#b42335","on-danger":"#ffffff","success":"#56d364","warning":"#f2cc60","status-danger":"#ff7b86","chart-1":"#86efac","chart-2":"#67e8f9","chart-3":"#d8b4fe","chart-4":"#fcd34d","chart-5":"#fda4af","chart-6":"#cbd5e1"}
+  }
+}

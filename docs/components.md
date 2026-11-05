@@ -21,7 +21,12 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 | Badge / VersionLabel | children / versioning.Info validated by go-versioning |
 | StatusIndicator | StatusIndicatorProps: Label, Tone, Pulse, PulseStyle, Alpine, Class, LabelClass, Attributes, LabelAttributes; dot and text |
 | AuthStatus | AuthStatusProps: State, SignedInLabel, SignedOutLabel, UnknownLabel, Class, LabelClass, Attributes; explicit lock/text presentation |
-| Head / AssetHandler | HeadProps: AssetPrefix, Charts, Nonce / application-owned asset route |
+| Head / AssetHandler | HeadProps: AssetPrefix, Charts, Interactive, Nonce / application-owned asset route |
+| Page / App | Complete document/assets or scoped appearance; PageProps / AppProps |
+| AppShell / ThemeSwitcher | Optional header, navigation/sidebar, main and footer / inherited theme and appearance selectors |
+| Stack / Grid | Shared vertical spacing / responsive columns |
+| TextField / SelectField | Label, Hint, Error and typed Input/Select props; connected accessibility attributes |
+| LoadingState / EmptyState | Default state labels, custom text/classes and optional empty-state actions |
 
 Use unique IDs and associate Field.For with the control ID. Give every dialog a TitleID matching DialogHeader.TitleID; applications call showModal(), implement close actions and restore focus. Forms and modal shells do not submit, move or fetch content automatically. Tokens, capability checks and permissions stay in the application.
 
@@ -41,7 +46,14 @@ Classes use the `ghtui-` prefix. Override these inherited CSS variables on a con
 | --ghtui-danger | #b42335 |
 | --ghtui-chart-height | 238px |
 
-The showcase demonstrates a light theme. The component stylesheet has no global reset or font. A consumer supplies page layout and typography; shared components own their local spacing and typography. Custom Class props add layout hooks without duplicating component markup. Use the table library's own application adapter for compact rows and pagination.
+These are the legacy standalone fallbacks. New apps can use `Page`/`App` for
+complete Standard/Ocean/Forest themes with paired Light/Dark variants, System
+appearance, shared typography/density and optional shell/layout helpers. The
+`/themes` showcase compares all six variants. See [themes and defaults](themes.md)
+for minimal setup. Existing standalone components retain their appearance; Page
+opts its document body into a margin reset, while App scopes defaults to its
+subtree. Custom Class props and tokens remain available. Use the table library's
+own application adapter for compact rows and pagination.
 
 Shared rules are in `@layer components`, with Tailwind's standard layer order
 declared so host `utilities` can override them even when `Head` loads shared CSS
@@ -56,7 +68,9 @@ prefix, then render `@ui.Head(ui.HeadProps{AssetPrefix: "/ui/shared/", Charts: t
 once inside a full page's `<head>`. With no prefix both helpers use `/assets/ui/`;
 leading/trailing slashes are normalized. Prefixes describe local URL paths.
 
-`Charts: false` emits only the shared stylesheet. `Charts: true` additionally
+With `Charts: false` and `Interactive: false`, Head emits only the stylesheet.
+`Interactive: true` adds the shared theme/navigation runtime; Page enables it
+automatically. `Charts: true` additionally
 loads the external deferred engine, formatter and controller in dependency order.
 An optional `Nonce` applies to those scripts; CSP headers, middleware and route
 authorization remain application-owned. Do not render Head again in fragments

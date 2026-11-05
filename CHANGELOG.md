@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.0+20261105.18
+
+- Add scoped Standard, Ocean and Forest themes, each with complete Light/Dark
+  palettes, System appearance, shared density and validated primary colors.
+- Add Page/App setup, an optional responsive AppShell, persistent ThemeSwitcher,
+  Stack/Grid layout helpers and a paired-theme gallery without application CSS.
+- Add loading/empty states and accessible TextField/SelectField conveniences;
+  keep existing root imports, asset URLs and standalone styling fallbacks.
+- Coordinate chart palettes and UI initialization with HTMX4 settling so repeated
+  fragment replacements retain preferences and valid chart registration.
+
 ## 0.8.0+20261105.16
 
 - Group Go implementations into control, widget, status, auth, chart, metric and

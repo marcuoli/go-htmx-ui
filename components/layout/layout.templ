@@ -1,0 +1,80 @@
+package layout
+
+import "github.com/marcuoli/go-htmx-ui/theme"
+
+// App supplies scoped defaults without changing the surrounding document.
+templ App(props AppProps) {
+ {{ config := appConfig(props) }}
+ {{ ctx = theme.WithConfig(ctx, config) }}
+ <div class={ "ghtui-app", props.Class } data-ui-app data-ui-theme={ string(config.Theme) } data-ui-mode={ string(config.Mode) } data-ui-density={ string(config.Density) } { appAttributes(props)... }>{ children... }</div>
+}
+
+templ ThemeSwitcher(props ThemeSwitcherProps) {
+ {{ config := theme.FromContext(ctx) }}
+ <div class={ "ghtui-theme-switcher", props.Class }>
+  <label><span>{ fallback(props.ThemeLabel,"Theme") }</span><select class="ghtui-input" data-ui-theme-select disabled>
+   <option value="standard" selected?={ config.Theme == theme.Standard }>Standard</option>
+   <option value="ocean" selected?={ config.Theme == theme.Ocean }>Ocean</option>
+   <option value="forest" selected?={ config.Theme == theme.Forest }>Forest</option>
+  </select></label>
+  <label><span>{ fallback(props.ModeLabel,"Appearance") }</span><select class="ghtui-input" data-ui-mode-select disabled>
+   <option value="system" selected?={ config.Mode == theme.System }>System</option>
+   <option value="light" selected?={ config.Mode == theme.Light }>Light</option>
+   <option value="dark" selected?={ config.Mode == theme.Dark }>Dark</option>
+  </select></label>
+ </div>
+}
+
+templ AppShell(props AppShellProps) {
+ <div id={ shellID(props) } class={ "ghtui-shell", props.Class } data-ui-shell>
+  <a class="ghtui-skip-link" href={ templ.SafeURL("#"+shellID(props)+"-main") }>Skip to content</a>
+  <header class="ghtui-shell-header">
+   <div class="ghtui-shell-brand">
+    if shellHasSidebar(props) {
+     <button type="button" class="ghtui-button ghtui-button-secondary" data-ui-shell-toggle aria-controls={ shellID(props)+"-navigation" } aria-expanded="false" hidden>Menu</button>
+    }
+    <div><a href={ templ.URL(shellHref(props)) }>{ fallback(props.Title,"Application") }</a>
+     if props.Description != "" {
+      <p>{ props.Description }</p>
+     }
+    </div>
+   </div>
+   <div class="ghtui-shell-actions">
+    if props.Actions != nil {
+     @props.Actions
+    }
+    if !props.HideThemeSwitcher {
+     @ThemeSwitcher(ThemeSwitcherProps{})
+    }
+   </div>
+  </header>
+  <div class={ "ghtui-shell-body", templ.KV("ghtui-shell-with-sidebar",shellHasSidebar(props)) }>
+   if shellHasSidebar(props) {
+    <aside id={ shellID(props)+"-navigation" } class="ghtui-shell-sidebar" data-ui-shell-nav>
+     if len(props.Nav)>0 {
+      <nav aria-label="Main navigation">
+       for _, item := range props.Nav {
+        <a href={ templ.URL(item.Href) } class={ "ghtui-shell-link", templ.KV("is-active",item.Active) } { navAttributes(item.Active)... }>{ item.Label }</a>
+       }
+      </nav>
+     }
+     if props.Sidebar != nil {
+      @props.Sidebar
+     }
+    </aside>
+   }
+   <main id={ shellID(props)+"-main" } class="ghtui-shell-main" tabindex="-1">{ children... }</main>
+  </div>
+  if props.Footer != nil {
+   <footer class="ghtui-shell-footer">@props.Footer</footer>
+  }
+ </div>
+}
+
+templ Stack() {
+ <div class="ghtui-stack">{ children... }</div>
+}
+
+templ Grid(props GridProps) {
+ <div class={ "ghtui-grid", props.Class } data-ui-columns={ columns(props) }>{ children... }</div>
+}

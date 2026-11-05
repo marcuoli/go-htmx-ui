@@ -25,10 +25,12 @@ const (
 )
 
 type ButtonProps struct {
-	Type, Class string
-	Kind        ButtonKind
-	Disabled    bool
-	Attributes  templ.Attributes
+	Type, Class  string
+	Kind         ButtonKind
+	Disabled     bool
+	Loading      bool
+	LoadingLabel string
+	Attributes   templ.Attributes
 }
 type LinkButtonProps struct {
 	Href, Class string
@@ -36,12 +38,14 @@ type LinkButtonProps struct {
 	Attributes  templ.Attributes
 }
 type FieldProps struct {
-	For, Label, Hint, Class string
-	Attributes              templ.Attributes
+	For, Label, Hint, Error, Class string
+	Attributes                     templ.Attributes
 }
 type InputProps struct {
 	ID, Name, Value, Type, Placeholder, Class string
 	Required, Disabled                        bool
+	Invalid                                   bool
+	DescribedBy                               string
 	Attributes                                templ.Attributes
 }
 type Option struct {
@@ -52,6 +56,8 @@ type SelectProps struct {
 	ID, Name, Value, Class string
 	Options                []Option
 	Required, Disabled     bool
+	Invalid                bool
+	DescribedBy            string
 	Attributes             templ.Attributes
 }
 type DialogProps struct {
