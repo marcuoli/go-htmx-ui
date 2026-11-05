@@ -12,18 +12,19 @@ import (
 	"time"
 )
 
-var version, commit, buildTime string
-
 func main() {
 	addr := flag.String("listen", "127.0.0.1:8099", "HTTP listen address")
 	runtimeDir := flag.String("runtime-assets", "", "optional external node_modules directory for the Alpine/HTMX example")
 	htmx4 := flag.Bool("htmx4", false, "use the development-only htmx4 npm alias in the Alpine example")
 	flag.Parse()
-	info, err := versioning.Current(versioning.Info{Version: version, Commit: commit, BuildTime: buildTime})
+	// Shared linker metadata is read-only. Validation builds keep an unknown
+	// counter/time; running the example never probes or allocates a live store.
+	info, err := versioning.CurrentBuild()
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Printf("showcase: http://%s", *addr)
+	log.Printf("build: version=%s commit=%s build_time=%q overall_build_number=%d build_counter_id=%q", info.Version, info.Commit, info.BuildTime, info.OverallBuildNumber, info.BuildCounterID)
 	var runtimeAssets fs.FS
 	if *runtimeDir != "" {
 		runtimeAssets = os.DirFS(*runtimeDir)

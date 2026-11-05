@@ -97,7 +97,7 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.10.2+20261105.24`, with immutable tag `v0.10.2+20261105.24`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
+Release and application metadata use [go-versioning 0.3.0+20261105.9](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.0%2B20261105.9). The latest UI release's full identity is `0.10.2+20261105.24`, with immutable tag `v0.10.2+20261105.24`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [build metadata boundary](docs/build-metadata.md) for read-only runtime metadata and future external `VERSION` authorities.
 
 ## Repository layout
 
@@ -186,7 +186,7 @@ adapting the sources into an application pipeline.
 
 The latest official Go and frontend releases are checked during dependency
 reviews. Current direct versions: templ v0.3.1100, go-htmx-table v0.2.0,
-go-versioning v0.1.1, Tailwind 4.3.4 and ECharts 6.1.0. The generator is pinned as
+go-versioning 0.3.0+20261105.9, Tailwind 4.3.4 and ECharts 6.1.0. The generator is pinned as
 a Go tool. Retain official parse v0.0.0-20250122154542-74294addb73e: the newer
 v0.0.0-20261027111828-db2689052003 adds `Parser.Match`, which templ's generator
 does not implement. Recheck that upstream exception on the next review.
@@ -198,11 +198,11 @@ remain as upstream ships them; no dependency sources or bundles are patched.
 Use the full `CORE+YYYYMMDD.PR` identity in release names, changelogs, version
 output and immutable `v`-prefixed tags. The date comes from the final commit's
 committer date in `America/Sao_Paulo`; the suffix is the merged PR number.
-Use go-versioning's official CLI rather than a separate bare-core allocator:
+Use this checkout's pinned official go-versioning tool rather than a separate bare-core allocator:
 
 ```sh
-go run github.com/marcuoli/go-versioning/cmd/go-versioning inspect --repo . --json
-go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 24 --bump patch --json
+go tool go-versioning inspect --repo . --json
+go tool go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 24 --bump patch --json
 ```
 
 `next` is read-only. This release selects a patch bump from the previous

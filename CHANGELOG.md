@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Adopt official go-versioning `0.3.0+20261105.9`, pin its CLI tool and use shared
+  read-only build metadata in the showcase. Document the source-only library's
+  non-allocating validation boundary and future external VERSION authority setup.
+
 ## 0.10.2+20261105.24
 
 - Add opt-in `TooltipOutside` / `tooltipOutside` for complete tooltips on short
