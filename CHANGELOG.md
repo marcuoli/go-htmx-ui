@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.9.0+20261105.18
 
 - Add scoped Standard, Ocean and Forest themes, each with complete Light/Dark
   palettes, System appearance, shared density and validated primary colors.
