@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.9.0+20261105.18
+go get github.com/marcuoli/go-htmx-ui@v0.10.0+20261105.20
 ```
 
 ## Render a widget
@@ -75,6 +75,10 @@ optional smaller App wrapper. Open `/themes` in the showcase to compare variants
 
 ## Showcase
 
+The [modals, alerts and toast notifications](docs/feedback.md) add
+complete modal interactions and four-toned messages with shared theme defaults.
+Open `/feedback` in the showcase; existing low-level Dialog APIs remain supported.
+
 ```sh
 go run ./examples/showcase -listen 127.0.0.1:8099
 ```
@@ -93,7 +97,7 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.9.0+20261105.18`, with immutable tag `v0.9.0+20261105.18`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
+Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.10.0+20261105.20`, with immutable tag `v0.10.0+20261105.20`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
 
 ## Repository layout
 
@@ -103,6 +107,7 @@ go-htmx-ui/
 ├── ui_test.go          # Root import and asset compatibility contracts
 ├── components/
 │   ├── control/        # Headings, actions, tabs, buttons, forms and dialogs
+│   ├── feedback/       # Inline alerts, toasts and notification regions
 │   ├── widget/         # Dashboard containers, metrics and chart hosts
 │   ├── status/         # Status labels, pulsing circles and Alpine bindings
 │   ├── auth/           # Explicit authentication lock/text indicators
@@ -171,7 +176,7 @@ go vet ./...
 go mod verify
 ```
 
-`web/styles/components.css`, `layout.css` and `themes.json` are the canonical
+`web/styles/components.css`, `layout.css`, `feedback.css` and `themes.json` are the canonical
 style inputs. Generated `web/assets/ui.css` has no global preflight or external
 fonts; complete-page defaults are scoped to the opt-in App/Page helpers.
 Component rules use the standard components layer so downstream utilities and
@@ -197,7 +202,7 @@ Use go-versioning's official CLI rather than a separate bare-core allocator:
 
 ```sh
 go run github.com/marcuoli/go-versioning/cmd/go-versioning inspect --repo . --json
-go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 18 --bump minor --json
+go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 20 --bump minor --json
 ```
 
 `next` is read-only. This release selects a minor bump from the previous

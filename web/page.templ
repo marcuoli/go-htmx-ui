@@ -1,6 +1,7 @@
 package web
 
 import "github.com/marcuoli/go-htmx-ui/components/layout"
+import "github.com/marcuoli/go-htmx-ui/components/feedback"
 
 templ Page(props PageProps) {
  <!DOCTYPE html>
@@ -17,6 +18,9 @@ templ Page(props PageProps) {
   <body class="ghtui-document">
    @layout.App(props.App) {
     { children... }
+    if !props.DisableToasts {
+     @feedback.ToastRegion(feedback.ToastRegionProps{})
+    }
    }
   </body>
  </html>

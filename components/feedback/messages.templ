@@ -1,0 +1,44 @@
+package feedback
+
+templ messageBody(heading, message string, variant AlertTone) {
+ <span class="ghtui-message-icon" aria-hidden="true">{ icon(variant) }</span>
+ <div class="ghtui-message-content">
+  <div data-ui-message-text>
+   <p class="ghtui-message-title">{ title(heading,variant) }</p>
+   if message != "" {
+    <p class="ghtui-message-text">{ message }</p>
+   }
+  </div>
+  { children... }
+ </div>
+}
+
+templ dismissButton(label string) {
+ <button type="button" class="ghtui-dismiss" disabled data-ui-dismiss-enable data-ui-message-dismiss aria-label={ dismissLabel(label) }><span aria-hidden="true">×</span></button>
+}
+
+templ Alert(props AlertProps) {
+ <div id={ props.ID } class={ "ghtui-message", "ghtui-alert", props.Class } role={ liveRole(tone(props.Tone)) } data-ui-alert data-ui-tone={ string(tone(props.Tone)) } { attributes(props.Attributes)... }>
+  @messageBody(props.Title,props.Message,props.Tone) { { children... } }
+  if props.Dismissible {
+   @dismissButton(props.DismissLabel)
+  }
+ </div>
+}
+
+templ Toast(props ToastProps) {
+ <div id={ props.ID } class={ "ghtui-message", "ghtui-toast", props.Class } role="group" aria-label={ title(props.Title,props.Tone) } data-ui-toast data-ui-tone={ string(tone(props.Tone)) } data-ui-duration={ duration(props.Duration) } { attributes(props.Attributes)... }>
+  @messageBody(props.Title,props.Message,props.Tone) { { children... } }
+  @dismissButton(props.DismissLabel)
+ </div>
+}
+
+// Empty live nodes exist before messages arrive. Visual toasts themselves are
+// groups rather than nested live regions, so each message is announced once.
+templ ToastRegion(props ToastRegionProps) {
+ <section id={ props.ID } class={ "ghtui-toast-region", props.Class } aria-label={ regionLabel(props.Label) } data-ui-toast-region data-ui-position={ position(props.Position) }>
+  <div data-ui-toast-items>{ children... }</div>
+  <div class="ghtui-visually-hidden" data-ui-toast-polite role="status" aria-live="polite" aria-atomic="true"></div>
+  <div class="ghtui-visually-hidden" data-ui-toast-assertive role="alert" aria-live="assertive" aria-atomic="true"></div>
+ </section>
+}

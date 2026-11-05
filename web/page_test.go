@@ -14,7 +14,17 @@ func TestPageProvidesCompleteDefaultsAndExternalRuntime(t *testing.T) {
 			t.Errorf("missing %s: %s", want, body)
 		}
 	}
-	if strings.Count(body, "<script") != 1 || strings.Contains(body, "<style") {
+	if strings.Count(body, "<script") != 2 || strings.Contains(body, "<style") || !strings.Contains(body, "/assets/ui/ui-feedback.js") || strings.Count(body, "data-ui-toast-region") != 1 {
 		t.Fatal(body)
+	}
+}
+
+func TestPageCanOptOutOfDefaultToastRegion(t *testing.T) {
+	body := testutil.Render(t, Page(PageProps{DisableToasts: true}), "")
+	if strings.Contains(body, "data-ui-toast-region") {
+		t.Fatal(body)
+	}
+	if !strings.Contains(body, "ui-feedback.js") {
+		t.Fatal("modal/alert runtime must remain available")
 	}
 }

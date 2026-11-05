@@ -89,6 +89,24 @@ func showcaseHandlerWithRuntime(info versioning.Info, runtimeAssets fs.FS) http.
 			log.Print(err)
 		}
 	})
+	mux.HandleFunc("GET /feedback", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := FeedbackPage(info, runtimeAssets != nil).Render(r.Context(), w); err != nil {
+			log.Print(err)
+		}
+	})
+	mux.HandleFunc("GET /feedback/fragment", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := FeedbackFragment().Render(r.Context(), w); err != nil {
+			log.Print(err)
+		}
+	})
+	mux.HandleFunc("GET /feedback/toast", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := ui.Toast(ui.ToastProps{Tone: ui.AlertSuccess, Title: "Changes saved", Message: "This notification was rendered on the server.", Duration: 5 * time.Second}).Render(r.Context(), w); err != nil {
+			log.Print(err)
+		}
+	})
 	mux.HandleFunc("GET /themes/fragment", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := ThemeFragment().Render(r.Context(), w); err != nil {

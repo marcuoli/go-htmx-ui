@@ -8,6 +8,7 @@ import (
 	"github.com/marcuoli/go-htmx-ui/chart"
 	"github.com/marcuoli/go-htmx-ui/components/auth"
 	"github.com/marcuoli/go-htmx-ui/components/control"
+	"github.com/marcuoli/go-htmx-ui/components/feedback"
 	"github.com/marcuoli/go-htmx-ui/components/layout"
 	"github.com/marcuoli/go-htmx-ui/components/status"
 	"github.com/marcuoli/go-htmx-ui/components/widget"
@@ -32,6 +33,15 @@ type (
 	SelectProps       = control.SelectProps
 	DialogProps       = control.DialogProps
 	DialogHeaderProps = control.DialogHeaderProps
+	ModalProps        = control.ModalProps
+	ModalTriggerProps = control.ModalTriggerProps
+	ModalCloseProps   = control.ModalCloseProps
+	ModalSize         = control.ModalSize
+	AlertProps        = feedback.AlertProps
+	AlertTone         = feedback.AlertTone
+	ToastProps        = feedback.ToastProps
+	ToastRegionProps  = feedback.ToastRegionProps
+	ToastPosition     = feedback.ToastPosition
 	TextFieldProps    = control.TextFieldProps
 	SelectFieldProps  = control.SelectFieldProps
 	LoadingStateProps = control.LoadingStateProps
@@ -76,9 +86,20 @@ type (
 )
 
 const (
-	Primary   = control.Primary
-	Secondary = control.Secondary
-	Danger    = control.Danger
+	Primary          = control.Primary
+	Secondary        = control.Secondary
+	Danger           = control.Danger
+	ModalSmall       = control.ModalSmall
+	ModalMedium      = control.ModalMedium
+	ModalLarge       = control.ModalLarge
+	AlertInfo        = feedback.AlertInfo
+	AlertSuccess     = feedback.AlertSuccess
+	AlertWarning     = feedback.AlertWarning
+	AlertDanger      = feedback.AlertDanger
+	ToastBottomRight = feedback.ToastBottomRight
+	ToastBottomLeft  = feedback.ToastBottomLeft
+	ToastTopRight    = feedback.ToastTopRight
+	ToastTopLeft     = feedback.ToastTopLeft
 
 	WidgetSection = widget.WidgetSection
 	WidgetDiv     = widget.WidgetDiv
@@ -106,16 +127,22 @@ const (
 	DensityCompact     = theme.Compact
 )
 
-func PageHeader(props PageHeaderProps) templ.Component { return control.PageHeader(props) }
-func Actions() templ.Component                         { return control.Actions() }
-func Tabs(label string) templ.Component                { return control.Tabs(label) }
-func Tab(props TabProps) templ.Component               { return control.Tab(props) }
-func Button(props ButtonProps) templ.Component         { return control.Button(props) }
-func LinkButton(props LinkButtonProps) templ.Component { return control.LinkButton(props) }
-func Field(props FieldProps) templ.Component           { return control.Field(props) }
-func Input(props InputProps) templ.Component           { return control.Input(props) }
-func Select(props SelectProps) templ.Component         { return control.Select(props) }
-func Dialog(props DialogProps) templ.Component         { return control.Dialog(props) }
+func PageHeader(props PageHeaderProps) templ.Component     { return control.PageHeader(props) }
+func Actions() templ.Component                             { return control.Actions() }
+func Tabs(label string) templ.Component                    { return control.Tabs(label) }
+func Tab(props TabProps) templ.Component                   { return control.Tab(props) }
+func Button(props ButtonProps) templ.Component             { return control.Button(props) }
+func LinkButton(props LinkButtonProps) templ.Component     { return control.LinkButton(props) }
+func Field(props FieldProps) templ.Component               { return control.Field(props) }
+func Input(props InputProps) templ.Component               { return control.Input(props) }
+func Select(props SelectProps) templ.Component             { return control.Select(props) }
+func Dialog(props DialogProps) templ.Component             { return control.Dialog(props) }
+func Modal(props ModalProps) templ.Component               { return control.Modal(props) }
+func ModalTrigger(props ModalTriggerProps) templ.Component { return control.ModalTrigger(props) }
+func ModalClose(props ModalCloseProps) templ.Component     { return control.ModalClose(props) }
+func Alert(props AlertProps) templ.Component               { return feedback.Alert(props) }
+func Toast(props ToastProps) templ.Component               { return feedback.Toast(props) }
+func ToastRegion(props ToastRegionProps) templ.Component   { return feedback.ToastRegion(props) }
 func DialogHeader(props DialogHeaderProps) templ.Component {
 	return control.DialogHeader(props)
 }

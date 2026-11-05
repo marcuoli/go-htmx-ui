@@ -18,6 +18,8 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 | Input / Select | ID, Name, Value, Class, Required, Disabled, Attributes; Input adds Type/Placeholder, Select adds []Option |
 | Dialog | DialogProps: ID, TitleID, Class, Attributes; native dialog body slot |
 | DialogHeader / DialogBody | TitleID, Title, Description and actions slot / content slot |
+| Modal / ModalTrigger / ModalClose | Complete native modal, sensible title/size/close defaults, optional footer and declarative buttons |
+| Alert / Toast / ToastRegion | Four tones, inline or floating messages, dismissal, primed live regions and optional paused timers |
 | Badge / VersionLabel | children / versioning.Info validated by go-versioning |
 | StatusIndicator | StatusIndicatorProps: Label, Tone, Pulse, PulseStyle, Alpine, Class, LabelClass, Attributes, LabelAttributes; dot and text |
 | AuthStatus | AuthStatusProps: State, SignedInLabel, SignedOutLabel, UnknownLabel, Class, LabelClass, Attributes; explicit lock/text presentation |
@@ -28,7 +30,7 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 | TextField / SelectField | Label, Hint, Error and typed Input/Select props; connected accessibility attributes |
 | LoadingState / EmptyState | Default state labels, custom text/classes and optional empty-state actions |
 
-Use unique IDs and associate Field.For with the control ID. Give every dialog a TitleID matching DialogHeader.TitleID; applications call showModal(), implement close actions and restore focus. Forms and modal shells do not submit, move or fetch content automatically. Tokens, capability checks and permissions stay in the application.
+Use unique IDs and associate Field.For with the control ID. Low-level Dialog needs a TitleID matching DialogHeader.TitleID and application-owned behavior. The new Modal convenience API supplies its labels and native open/close/focus behavior. Forms and modal shells do not submit, move or fetch content automatically. Tokens, capability checks and permissions stay in the application. See [modals, alerts and toasts](feedback.md) for complete defaults and examples.
 
 ## Appearance
 
@@ -69,7 +71,7 @@ once inside a full page's `<head>`. With no prefix both helpers use `/assets/ui/
 leading/trailing slashes are normalized. Prefixes describe local URL paths.
 
 With `Charts: false` and `Interactive: false`, Head emits only the stylesheet.
-`Interactive: true` adds the shared theme/navigation runtime; Page enables it
+`Interactive: true` adds the shared theme/navigation and feedback runtimes; Page enables it
 automatically. `Charts: true` additionally
 loads the external deferred engine, formatter and controller in dependency order.
 An optional `Nonce` applies to those scripts; CSP headers, middleware and route
