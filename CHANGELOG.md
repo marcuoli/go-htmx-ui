@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Add ready-to-use native Modal with trigger/close helpers, title/body/footer,
+  size variants, native focus handling and optional backdrop dismissal.
+- Add themed inline alerts and server/browser toast notifications with four
+  tones, accessible live regions, dismissal and optional paused timers.
+- Supply feedback assets and a default ToastRegion through Page; add a complete
+  guide and /feedback showcase while preserving low-level Dialog APIs.
+
 ## 0.9.0+20261105.18
 
 - Add scoped Standard, Ocean and Forest themes, each with complete Light/Dark

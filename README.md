@@ -75,6 +75,10 @@ optional smaller App wrapper. Open `/themes` in the showcase to compare variants
 
 ## Showcase
 
+The unreleased [modals, alerts and toast notifications](docs/feedback.md) add
+complete modal interactions and four-toned messages with shared theme defaults.
+Open `/feedback` in the showcase; existing low-level Dialog APIs remain supported.
+
 ```sh
 go run ./examples/showcase -listen 127.0.0.1:8099
 ```
@@ -103,6 +107,7 @@ go-htmx-ui/
 ├── ui_test.go          # Root import and asset compatibility contracts
 ├── components/
 │   ├── control/        # Headings, actions, tabs, buttons, forms and dialogs
+│   ├── feedback/       # Inline alerts, toasts and notification regions
 │   ├── widget/         # Dashboard containers, metrics and chart hosts
 │   ├── status/         # Status labels, pulsing circles and Alpine bindings
 │   ├── auth/           # Explicit authentication lock/text indicators
@@ -171,7 +176,7 @@ go vet ./...
 go mod verify
 ```
 
-`web/styles/components.css`, `layout.css` and `themes.json` are the canonical
+`web/styles/components.css`, `layout.css`, `feedback.css` and `themes.json` are the canonical
 style inputs. Generated `web/assets/ui.css` has no global preflight or external
 fonts; complete-page defaults are scoped to the opt-in App/Page helpers.
 Component rules use the standard components layer so downstream utilities and

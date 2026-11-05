@@ -72,3 +72,20 @@ func TestAssetHandlerMatchesHeadAndKeepsRouteOwnership(t *testing.T) {
 		t.Fatalf("handler served outside its configured prefix: %d", response.Code)
 	}
 }
+
+func TestInteractiveHeadIncludesFeedbackAndNonce(t *testing.T) {
+	body := testutil.Render(t, Head(HeadProps{Interactive: true, Nonce: "test-nonce"}), "")
+	for _, asset := range []string{"ui-runtime.js", "ui-feedback.js"} {
+		if !strings.Contains(body, "/assets/ui/"+asset) {
+			t.Fatal(body)
+		}
+		response := httptest.NewRecorder()
+		AssetHandler("").ServeHTTP(response, httptest.NewRequest("GET", "/assets/ui/"+asset, nil))
+		if response.Code != 200 {
+			t.Fatalf("asset %s returned %d", asset, response.Code)
+		}
+	}
+	if strings.Count(body, `nonce="test-nonce"`) != 2 {
+		t.Fatal(body)
+	}
+}

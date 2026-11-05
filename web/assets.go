@@ -10,8 +10,8 @@ import (
 //go:embed assets/*
 var embeddedAssets embed.FS
 
-// Assets serves ui.css, the official echarts.min.js and first-party
-// echarts-format.js/ui-htmx-charts.js without a repository-layout prefix.
+// Assets serves ui.css, shared appearance/feedback runtimes, the official
+// echarts.min.js and first-party chart helpers without a repository-layout prefix.
 // Serve with http.FileServer and http.StripPrefix at the application-owned URL.
 // The former echarts-ui.js filename remains an alias to the same controller.
 // v0.6.0's retired chart-schema bundle URLs remain unavailable.

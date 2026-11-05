@@ -23,7 +23,7 @@ const sha=path=>createHash('sha256').update(readFileSync(path)).digest('hex');
 try {
  const reference=JSON.stringify(join(modules,'tailwindcss/index.css').replaceAll('\\','/'));
  const palettes=JSON.parse(readFileSync(join(webRoot,'styles/themes.json'),'utf8'));
- const styles=readFileSync(join(webRoot,'styles/components.css'),'utf8')+'\n'+themeCSS(palettes)+'\n'+readFileSync(join(webRoot,'styles/layout.css'),'utf8');
+ const styles=readFileSync(join(webRoot,'styles/components.css'),'utf8')+'\n'+themeCSS(palettes)+'\n'+readFileSync(join(webRoot,'styles/layout.css'),'utf8')+'\n'+readFileSync(join(webRoot,'styles/feedback.css'),'utf8');
  writeFileSync(input,styles.replace('@reference "tailwindcss";',`@reference ${reference};`));
  const result=spawnSync(process.execPath,[join(modules,'@tailwindcss/cli/dist/index.mjs'),'-i',input,'-o',join(output,'ui.css'),'--minify'],{cwd:webRoot,stdio:'inherit'});
  if(result.error)throw result.error;

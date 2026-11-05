@@ -1,0 +1,30 @@
+package control
+
+import "github.com/marcuoli/go-htmx-ui/components/feedback"
+
+templ Modal(props ModalProps) {
+ {{ props = normalizeModal(props) }}
+ <dialog id={ props.ID } class={ "ghtui-dialog", "ghtui-modal", props.Class } aria-labelledby={ props.ID+"-title" } { modalDescription(props)... } data-ui-modal data-ui-size={ string(props.Size) } data-ui-modal-backdrop={ props.CloseOnBackdrop } { modalAttributes(props)... }>
+  <div class="ghtui-modal-header">
+   <div><h2 id={ props.ID+"-title" }>{ props.Title }</h2>
+    if props.Description != "" {
+     <p id={ props.ID+"-description" }>{ props.Description }</p>
+    }
+   </div>
+   <button type="button" class="ghtui-dismiss" data-ui-modal-close aria-label={ props.CloseLabel }><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="ghtui-modal-body">{ children... }</div>
+  if props.Footer != nil {
+   <div class="ghtui-modal-footer">@props.Footer</div>
+  }
+  @feedback.ToastRegion(feedback.ToastRegionProps{})
+ </dialog>
+}
+
+templ ModalTrigger(props ModalTriggerProps) {
+ @Button(modalTriggerButton(props)) { { children... } }
+}
+
+templ ModalClose(props ModalCloseProps) {
+ @Button(modalCloseButton(props)) { { children... } }
+}
