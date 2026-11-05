@@ -177,7 +177,7 @@
    const frame=host.parentElement,fallback=frame?.nextElementSibling;if(!frame)continue;
    let message=fallback?.dataset.uiErrorMessage||"Chart unavailable. Open the chart data table below.";
    try {
-    if(!window.GoHTMXUI?.echartsFormat?.compile)throw Error("Load echarts-format.js before echarts-ui.js");
+    if(!window.GoHTMXUI?.echartsFormat?.compile)throw Error("Load echarts-format.js before ui-htmx-charts.js");
     const config=configuration(JSON.parse(host.dataset.uiEchartsConfig||"{}"),fallback?.dataset);message=config.messages.error;
     const t=theme(host);
     const prior=entries.get(host);

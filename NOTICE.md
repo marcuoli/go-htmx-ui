@@ -4,4 +4,4 @@
 - ZRender: BSD-3-Clause; bundled upstream rendering dependency, notice at zrender.LICENSE.txt.
 - tslib: 0BSD; upstream helper dependency, notices at tslib.LICENSE.txt and tslib.CopyrightNotice.txt.
 
-All listed files are served by ui.Assets(). echarts.provenance.json records the exact upstream version, npm integrity and SHA-256 of copied assets/notices. The native integration uses first-party echarts-format.js and echarts-ui.js; neither is a third-party engine. Legacy adapter and compatibility bundle URLs are not served by v0.6.0.
+All listed files are served by ui.Assets(). echarts.provenance.json records the exact upstream version, npm integrity and SHA-256 of copied assets/notices. The native integration uses first-party echarts-format.js and ui-htmx-charts.js; neither is a third-party engine. Legacy adapter and compatibility bundle URLs are not served by v0.6.0.

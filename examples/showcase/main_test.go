@@ -9,7 +9,7 @@ import (
 
 func TestShowcaseRoutes(t *testing.T) {
 	handler := showcaseHandler(versioning.Info{})
-	for _, path := range []string{"/", "/assets/ui.css", "/assets/echarts.min.js", "/assets/echarts-format.js", "/assets/echarts-ui.js"} {
+	for _, path := range []string{"/", "/assets/ui.css", "/assets/echarts.min.js", "/assets/echarts-format.js", "/assets/ui-htmx-charts.js", "/assets/echarts-ui.js"} {
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, httptest.NewRequest("GET", path, nil))
 		if w.Code != 200 || strings.TrimSpace(w.Body.String()) == "" {

@@ -25,7 +25,7 @@ func main() {
 
 func showcaseHandler(info versioning.Info) http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("GET /assets/", http.StripPrefix("/assets/", http.FileServer(http.FS(ui.Assets()))))
+	mux.Handle("GET /assets/", ui.AssetHandler("/assets/"))
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := Page(info).Render(r.Context(), w); err != nil {

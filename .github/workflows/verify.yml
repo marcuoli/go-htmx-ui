@@ -16,7 +16,7 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: go mod download
-      - run: go run github.com/a-h/templ/cmd/templ@v0.3.1070 generate
+      - run: go tool templ generate
       - run: npm --prefix web ci && npm --prefix web run build && npm --prefix web test
       - run: git diff --exit-code
       - run: go test ./... && go vet ./... && go mod verify

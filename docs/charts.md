@@ -52,7 +52,7 @@ pipeline. No Go runtime is needed. Load each script once, in this order:
 <link rel="stylesheet" href="/static/ui/ui.css">
 <script src="/static/ui/echarts.min.js" defer></script>
 <script src="/static/ui/echarts-format.js" defer></script>
-<script src="/static/ui/echarts-ui.js" defer></script>
+<script src="/static/ui/ui-htmx-charts.js" defer></script>
 <div class="ghtui-chart-frame" style="--ghtui-chart-height:130px">
   <div id="network" role="img" aria-label="Reported throughput"
        data-ui-echarts='{"xAxis":{"type":"category","data":["08:00","08:02","08:04"]},"yAxis":{"type":"value"},"series":[{"id":"network","name":"Network","type":"line","data":[0,null,2.5]}]}'

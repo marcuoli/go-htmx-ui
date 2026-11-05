@@ -7,13 +7,13 @@ import (
 )
 
 templ Page(info versioning.Info) {
- <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>Native ECharts component showcase</title><link rel="stylesheet" href="/assets/ui.css"/>
+ <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>Native ECharts component showcase</title>
+ @ui.Head(ui.HeadProps{AssetPrefix:"/assets/",Charts:true})
  <style>
  body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.charts[hidden]{display:none}.micro .ghtui-chart-frame:not(.ghtui-chart-compact){height:70px}.micro{grid-template-columns:repeat(4,minmax(0,1fr))}.monitor .ghtui-chart-frame{height:130px}.form{display:grid;gap:18px}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}#chart-event-log{display:block;margin:12px 0;font-size:12px;overflow-wrap:anywhere}a{color:var(--ghtui-accent,#79c0ff)}
+ .light{--ghtui-success:#1a7f37;--ghtui-warning:#9a6700;--ghtui-status-danger:#cf222e}
+ #status-indicators .ghtui-actions{flex-wrap:wrap}
  </style>
- <script src="/assets/echarts.min.js" defer></script>
- <script src="/assets/echarts-format.js" defer></script>
- <script src="/assets/echarts-ui.js" defer></script>
  </head><body><main>
  @ui.PageHeader(ui.PageHeaderProps{Title:"Native ECharts showcase",Description:"Synthetic native options · no account or production data"}) {
   @ui.Actions() {
@@ -22,6 +22,16 @@ templ Page(info versioning.Info) {
   }
  }
  @ui.VersionLabel(info)
+ @ui.Widget(ui.WidgetProps{Attributes:templ.Attributes{"id":"status-indicators"}}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Status indicators",Description:"CSS-only pulsing rings; reduced motion keeps the solid dots and labels"})
+  @ui.Actions() {
+   @ui.StatusIndicator(ui.StatusIndicatorProps{Label:"Connected",Tone:ui.StatusSuccess,Pulse:true,Attributes:templ.Attributes{"id":"status-connected"}})
+   @ui.StatusIndicator(ui.StatusIndicatorProps{Label:"Reconnecting",Tone:ui.StatusWarning,Pulse:true})
+   @ui.StatusIndicator(ui.StatusIndicatorProps{Label:"Disconnected",Tone:ui.StatusDanger})
+   @ui.StatusIndicator(ui.StatusIndicatorProps{Label:"Checking",Tone:ui.StatusInfo,Pulse:true})
+   @ui.StatusIndicator(ui.StatusIndicatorProps{Label:"Updates paused"})
+  }
+ }
  @ui.Tabs("Example sections") {
   @ui.Tab(ui.TabProps{Label:"Overview",Href:"/",Active:true})
   @ui.Tab(ui.TabProps{Label:"Forms",Href:"#forms"})
