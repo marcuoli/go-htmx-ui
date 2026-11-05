@@ -44,3 +44,22 @@ func TestVersionLabelUsesVersioningValidation(t *testing.T) {
 		}
 	}
 }
+
+func TestVersionLabelAcceptsBuildCounterMetadataWithoutSourceOrStore(t *testing.T) {
+	t.Chdir(t.TempDir())
+	info := versioning.Info{
+		Version: "1.2.3+20261105.42", Commit: strings.Repeat("a", 40),
+		BuildTime: "2026-11-05T21:00:00Z", OverallBuildNumber: ^uint64(0),
+		BuildCounterID: strings.Repeat("b", 32),
+	}
+	body := testutil.Render(t, VersionLabel(info), "")
+	if !strings.Contains(body, info.Version) {
+		t.Fatal(body)
+	}
+	// The component validates supplied metadata and renders the full version;
+	// build allocation and the counter's decimal representation stay app-owned.
+	info.BuildCounterID = "invalid"
+	if body = testutil.Render(t, VersionLabel(info), ""); !strings.Contains(body, versioning.UnknownVersion) {
+		t.Fatal(body)
+	}
+}
