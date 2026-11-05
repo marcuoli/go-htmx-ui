@@ -13,6 +13,8 @@ const (
 // Modal is the interactive convenience API; Dialog remains the low-level shell.
 // Use distinct IDs for multiple modals. The runtime handles presentation only:
 // applications still own submission, authorization and destructive actions.
+// Header and footer stay visible while content scrolls. A nil Footer supplies
+// a secondary Close action using CloseLabel, rather than omitting the footer.
 type ModalProps struct {
 	ID, Title, Description, Class, CloseLabel string
 	Size                                      ModalSize

@@ -5,18 +5,23 @@ import "github.com/marcuoli/go-htmx-ui/components/feedback"
 templ Modal(props ModalProps) {
  {{ props = normalizeModal(props) }}
  <dialog id={ props.ID } class={ "ghtui-dialog", "ghtui-modal", props.Class } aria-labelledby={ props.ID+"-title" } { modalDescription(props)... } data-ui-modal data-ui-size={ string(props.Size) } data-ui-modal-backdrop={ props.CloseOnBackdrop } { modalAttributes(props)... }>
-  <div class="ghtui-modal-header">
-   <div><h2 id={ props.ID+"-title" }>{ props.Title }</h2>
-    if props.Description != "" {
-     <p id={ props.ID+"-description" }>{ props.Description }</p>
-    }
-   </div>
-   <button type="button" class="ghtui-dismiss" data-ui-modal-close aria-label={ props.CloseLabel }><span aria-hidden="true">×</span></button>
+  <header class="ghtui-modal-header">
+   <h2 id={ props.ID+"-title" } title={ props.Title }>{ props.Title }</h2>
+   <button type="button" class="ghtui-dismiss ghtui-modal-close" data-ui-modal-close aria-label={ props.CloseLabel }><span aria-hidden="true">×</span></button>
+  </header>
+  <div class="ghtui-modal-body" tabindex="0" role="region" aria-labelledby={ props.ID+"-title" }>
+   if props.Description != "" {
+    <p id={ props.ID+"-description" } class="ghtui-modal-description">{ props.Description }</p>
+   }
+   { children... }
   </div>
-  <div class="ghtui-modal-body">{ children... }</div>
-  if props.Footer != nil {
-   <div class="ghtui-modal-footer">@props.Footer</div>
-  }
+  <footer class="ghtui-modal-footer" tabindex="0" role="group" aria-labelledby={ props.ID+"-title" }>
+   if props.Footer != nil {
+    @props.Footer
+   } else {
+    @ModalClose(ModalCloseProps{Button:ButtonProps{Kind:Secondary}}) { { props.CloseLabel } }
+   }
+  </footer>
   @feedback.ToastRegion(feedback.ToastRegionProps{})
  </dialog>
 }

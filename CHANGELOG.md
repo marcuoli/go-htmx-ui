@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Make the default Modal a desktop window with title/X header, an independently
+  scrolling content area and a persistent footer. Supply a Close footer action
+  by default, while preserving custom footer components and theme inheritance.
+
 ## 0.10.0+20261105.20
 
 - Add ready-to-use native Modal with trigger/close helpers, title/body/footer,
