@@ -1,0 +1,3288 @@
+[
+  {
+    "id": "units-network",
+    "title": "Native data-rate units",
+    "description": "Raw MB/s · live display conversion preserves the host, instance and zoom",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 80,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "time"
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "network",
+          "name": "Network",
+          "type": "line",
+          "data": [
+            [
+              1767225600000,
+              0
+            ],
+            [
+              1767225602000,
+              6.25
+            ],
+            [
+              1767225604000,
+              12.5
+            ],
+            [
+              1767225606000,
+              null
+            ],
+            [
+              1767225608000,
+              25
+            ]
+          ],
+          "connectNulls": false
+        }
+      ],
+      "dataZoom": [
+        {
+          "id": "inside",
+          "type": "inside",
+          "xAxisIndex": 0,
+          "filterMode": "none",
+          "start": 0,
+          "end": 100
+        },
+        {
+          "id": "slider",
+          "type": "slider",
+          "height": 16,
+          "bottom": 30,
+          "xAxisIndex": 0,
+          "filterMode": "none",
+          "start": 0,
+          "end": 100
+        }
+      ]
+    },
+    "config": {
+      "locale": "pt_BR",
+      "timeZone": "UTC",
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "time"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "data-rate",
+            "inputUnit": "MB/s",
+            "displayUnit": "MiB/h",
+            "precision": 2
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "network",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "Time",
+              "format": {
+                "unit": "time"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "Rate",
+              "format": {
+                "unit": "data-rate",
+                "inputUnit": "MB/s",
+                "displayUnit": "MiB/h",
+                "precision": 2
+              }
+            }
+          ]
+        }
+      ],
+      "events": {
+        "select": true,
+        "zoom": true
+      }
+    },
+    "section": "units",
+    "compact": false
+  },
+  {
+    "id": "units-rate",
+    "title": "Named rate",
+    "description": "Native bar values remain requests/s; only displayed units change",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "requests",
+          "name": "Requests",
+          "type": "bar",
+          "data": [
+            0,
+            0.5,
+            1,
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "rate",
+            "inputUnit": "requests/s",
+            "displayUnit": "requests/h"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "requests",
+          "values": [
+            {
+              "format": {
+                "unit": "rate",
+                "inputUnit": "requests/s",
+                "displayUnit": "requests/h"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "units",
+    "compact": false
+  },
+  {
+    "id": "units-custom",
+    "title": "Explicit custom conversion",
+    "description": "Raw 20 °C displays 68 °F; native gauge geometry stays in Celsius",
+    "option": {
+      "series": [
+        {
+          "id": "temperature",
+          "name": "Temperature",
+          "type": "gauge",
+          "min": -20,
+          "max": 50,
+          "radius": "80%",
+          "data": [
+            {
+              "name": "Temperature",
+              "value": 20
+            }
+          ],
+          "center": [
+            "50%",
+            "45%"
+          ],
+          "detail": {
+            "offsetCenter": [
+              0,
+              "60%"
+            ],
+            "fontSize": 18
+          },
+          "title": {
+            "offsetCenter": [
+              0,
+              "90%"
+            ],
+            "fontSize": 10
+          },
+          "axisLabel": {
+            "fontSize": 9
+          }
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "series.0.detail.formatter",
+          "format": {
+            "unit": "custom",
+            "inputUnit": "°C",
+            "displayUnit": "°F",
+            "conversion": {
+              "factor": 1.8,
+              "offset": 32
+            },
+            "precision": 1
+          }
+        },
+        {
+          "target": "series.0.label.formatter",
+          "format": {
+            "unit": "custom",
+            "inputUnit": "°C",
+            "displayUnit": "°F",
+            "conversion": {
+              "factor": 1.8,
+              "offset": 32
+            },
+            "precision": 1
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "temperature",
+          "values": [
+            {
+              "format": {
+                "unit": "custom",
+                "inputUnit": "°C",
+                "displayUnit": "°F",
+                "conversion": {
+                  "factor": 1.8,
+                  "offset": 32
+                },
+                "precision": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "units",
+    "compact": false
+  },
+  {
+    "id": "mixed-latency",
+    "title": "Mixed independent axes",
+    "description": "Native bar stacks share count axis; native line uses an independent ms axis",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "time"
+      },
+      "yAxis": [
+        {
+          "type": "value",
+          "id": "count",
+          "min": 0
+        },
+        {
+          "type": "value",
+          "id": "latency",
+          "position": "right",
+          "min": 0,
+          "alignTicks": true
+        }
+      ],
+      "series": [
+        {
+          "id": "success",
+          "name": "Success",
+          "type": "bar",
+          "stack": "counts",
+          "data": [
+            [
+              1767225600000,
+              30
+            ],
+            [
+              1767225602000,
+              45
+            ],
+            [
+              1767225604000,
+              60
+            ],
+            [
+              1767225606000,
+              0
+            ],
+            [
+              1767225608000,
+              50
+            ]
+          ]
+        },
+        {
+          "id": "errors",
+          "name": "Errors",
+          "type": "bar",
+          "stack": "counts",
+          "data": [
+            [
+              1767225600000,
+              2
+            ],
+            [
+              1767225602000,
+              1
+            ],
+            [
+              1767225604000,
+              3
+            ],
+            [
+              1767225606000,
+              0
+            ],
+            [
+              1767225608000,
+              1
+            ]
+          ]
+        },
+        {
+          "id": "latency",
+          "name": "Latency",
+          "type": "line",
+          "yAxisIndex": 1,
+          "data": [
+            [
+              1767225600000,
+              3
+            ],
+            [
+              1767225602000,
+              null
+            ],
+            [
+              1767225604000,
+              6
+            ],
+            [
+              1767225606000,
+              4
+            ],
+            [
+              1767225608000,
+              5
+            ]
+          ]
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "time"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "count"
+          }
+        },
+        {
+          "target": "yAxis.1.axisLabel.formatter",
+          "format": {
+            "unit": "ms"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "success",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              },
+              "dimension": 1
+            }
+          ]
+        },
+        {
+          "seriesId": "errors",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              },
+              "dimension": 1
+            }
+          ]
+        },
+        {
+          "seriesId": "latency",
+          "values": [
+            {
+              "format": {
+                "unit": "ms"
+              },
+              "dimension": 1
+            }
+          ]
+        }
+      ]
+    },
+    "section": "advanced",
+    "compact": false
+  },
+  {
+    "id": "grouped-native",
+    "title": "Native legend grouping",
+    "description": "Series share native names to toggle each upstream together",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0,
+        "data": [
+          "Upstream A",
+          "Upstream B"
+        ]
+      },
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ]
+      },
+      "yAxis": [
+        {
+          "type": "value"
+        },
+        {
+          "type": "value",
+          "position": "right"
+        }
+      ],
+      "series": [
+        {
+          "id": "a-rate",
+          "name": "Upstream A",
+          "type": "line",
+          "data": [
+            1.5,
+            null,
+            4.25,
+            2,
+            1
+          ],
+          "connectNulls": false
+        },
+        {
+          "id": "a-latency",
+          "name": "Upstream A",
+          "type": "line",
+          "data": [
+            300,
+            350,
+            500,
+            450,
+            300
+          ],
+          "connectNulls": false,
+          "yAxisIndex": 1
+        },
+        {
+          "id": "b-rate",
+          "name": "Upstream B",
+          "type": "line",
+          "data": [
+            2,
+            3,
+            1.75,
+            1,
+            2
+          ],
+          "connectNulls": false
+        },
+        {
+          "id": "b-latency",
+          "name": "Upstream B",
+          "type": "line",
+          "data": [
+            500,
+            450,
+            400,
+            500,
+            550
+          ],
+          "connectNulls": false,
+          "yAxisIndex": 1
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "qps"
+          }
+        },
+        {
+          "target": "yAxis.1.axisLabel.formatter",
+          "format": {
+            "unit": "us"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "a-rate",
+          "values": [
+            {
+              "format": {
+                "unit": "qps"
+              }
+            }
+          ]
+        },
+        {
+          "seriesId": "a-latency",
+          "values": [
+            {
+              "format": {
+                "unit": "us"
+              }
+            }
+          ]
+        },
+        {
+          "seriesId": "b-rate",
+          "values": [
+            {
+              "format": {
+                "unit": "qps"
+              }
+            }
+          ]
+        },
+        {
+          "seriesId": "b-latency",
+          "values": [
+            {
+              "format": {
+                "unit": "us"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "advanced",
+    "compact": false
+  },
+  {
+    "id": "histogram",
+    "title": "Pre-binned histogram",
+    "description": "Category bins and counts are supplied by the application",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "0–1 ms",
+          "1–5 ms",
+          "5–20 ms",
+          ">20 ms"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "samples",
+          "name": "Samples",
+          "type": "bar",
+          "barCategoryGap": "0%",
+          "data": [
+            {
+              "name": "0–1 ms [0,1)",
+              "value": 12
+            },
+            {
+              "name": "1–5 ms [1,5)",
+              "value": 30
+            },
+            {
+              "name": "5–20 ms [5,20)",
+              "value": 8
+            },
+            {
+              "name": ">20 ms [20,infinity)",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "count"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "samples",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "advanced",
+    "compact": false
+  },
+  {
+    "id": "percentiles",
+    "title": "Percentile categories",
+    "description": "Native category order retains named p50/p95/p99 labels",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "p50",
+          "p95",
+          "p99"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "a",
+          "name": "A",
+          "type": "line",
+          "data": [
+            2.5,
+            5,
+            9
+          ],
+          "connectNulls": false
+        },
+        {
+          "id": "b",
+          "name": "B",
+          "type": "line",
+          "data": [
+            3,
+            6,
+            12
+          ],
+          "connectNulls": false
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "ms"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "a",
+          "values": [
+            {
+              "format": {
+                "unit": "ms"
+              }
+            }
+          ]
+        },
+        {
+          "seriesId": "b",
+          "values": [
+            {
+              "format": {
+                "unit": "ms"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "advanced",
+    "compact": false
+  },
+  {
+    "id": "ranking",
+    "title": "Horizontal ranking",
+    "description": "Native category/value axes; first category stays at the top",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "value"
+      },
+      "yAxis": {
+        "type": "category",
+        "data": [
+          "Group A",
+          "Group B",
+          "Group C"
+        ],
+        "inverse": true
+      },
+      "series": [
+        {
+          "id": "ranking",
+          "name": "Requests",
+          "type": "bar",
+          "data": [
+            12000,
+            7000,
+            3000
+          ]
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "count"
+          },
+          "compact": true
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "ranking",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "advanced",
+    "compact": false
+  },
+  {
+    "id": "family-pie",
+    "title": "Pie",
+    "description": "Native pie series, named values and explicit radius",
+    "option": {
+      "tooltip": {
+        "trigger": "item"
+      },
+      "legend": {
+        "bottom": 0
+      },
+      "series": [
+        {
+          "id": "outcomes",
+          "name": "Outcomes",
+          "type": "pie",
+          "radius": "78%",
+          "data": [
+            {
+              "name": "Queued",
+              "value": 0
+            },
+            {
+              "name": "Completed",
+              "value": 70
+            },
+            {
+              "name": "Failed",
+              "value": 5
+            }
+          ]
+        }
+      ]
+    },
+    "config": {
+      "tooltip": [
+        {
+          "seriesId": "outcomes",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-ring",
+    "title": "Ring",
+    "description": "Native pie series, named values and explicit radius",
+    "option": {
+      "tooltip": {
+        "trigger": "item"
+      },
+      "legend": {
+        "bottom": 0
+      },
+      "series": [
+        {
+          "id": "outcomes",
+          "name": "Outcomes",
+          "type": "pie",
+          "radius": [
+            "48%",
+            "78%"
+          ],
+          "data": [
+            {
+              "name": "Queued",
+              "value": 0
+            },
+            {
+              "name": "Completed",
+              "value": 70
+            },
+            {
+              "name": "Failed",
+              "value": 5
+            }
+          ]
+        }
+      ]
+    },
+    "config": {
+      "tooltip": [
+        {
+          "seriesId": "outcomes",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-scatter",
+    "title": "Scatter with zoom",
+    "description": "Native value domain, independent dimensions and slider",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 80,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "item"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "value",
+        "min": 0,
+        "max": 40
+      },
+      "yAxis": {
+        "type": "value",
+        "min": 0,
+        "max": 100
+      },
+      "series": [
+        {
+          "id": "load",
+          "name": "Load",
+          "type": "scatter",
+          "data": [
+            [
+              0,
+              0
+            ],
+            [
+              12.5,
+              80
+            ],
+            [
+              20,
+              55
+            ],
+            [
+              35,
+              null
+            ]
+          ]
+        }
+      ],
+      "dataZoom": [
+        {
+          "id": "zoom",
+          "type": "slider",
+          "xAxisIndex": 0,
+          "start": 0,
+          "end": 100,
+          "filterMode": "none"
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "ms"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "percent"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "load",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "Latency",
+              "format": {
+                "unit": "ms"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "Load",
+              "format": {
+                "unit": "percent"
+              }
+            }
+          ]
+        }
+      ],
+      "events": {
+        "select": true,
+        "zoom": true
+      }
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-bubble",
+    "title": "Bubble",
+    "description": "Native scatter + trusted size callback for an explicit pixel-diameter dimension",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 80,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "item"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "value",
+        "min": 0,
+        "max": 40
+      },
+      "yAxis": {
+        "type": "value",
+        "min": 0,
+        "max": 100
+      },
+      "series": [
+        {
+          "id": "bubble",
+          "name": "Load",
+          "type": "scatter",
+          "data": [
+            [
+              2,
+              20,
+              8
+            ],
+            [
+              12,
+              60,
+              24
+            ],
+            [
+              20,
+              30,
+              40
+            ]
+          ]
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "ms"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "percent"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "bubble",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "Latency",
+              "format": {
+                "unit": "ms"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "Load",
+              "format": {
+                "unit": "percent"
+              }
+            }
+          ]
+        }
+      ],
+      "events": {
+        "select": true,
+        "zoom": true
+      },
+      "bubbleSizes": [
+        {
+          "seriesId": "bubble",
+          "dimension": 2,
+          "min": 2,
+          "max": 128
+        }
+      ]
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-heatmap",
+    "title": "Heatmap",
+    "description": "Native precomputed cells; omitted missing cell differs from real zero",
+    "option": {
+      "grid": {
+        "top": 12,
+        "left": 20,
+        "right": 12,
+        "bottom": 70,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "item"
+      },
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu"
+        ]
+      },
+      "yAxis": {
+        "type": "category",
+        "data": [
+          "Morning",
+          "Afternoon",
+          "Evening"
+        ],
+        "inverse": true
+      },
+      "visualMap": {
+        "min": 0,
+        "max": 100,
+        "orient": "horizontal",
+        "bottom": 0,
+        "left": "center",
+        "inRange": {
+          "color": [
+            "#172f47",
+            "#58a6ff"
+          ]
+        }
+      },
+      "series": [
+        {
+          "id": "cells",
+          "name": "Load",
+          "type": "heatmap",
+          "label": {
+            "show": true
+          },
+          "data": [
+            {
+              "value": [
+                0,
+                0,
+                0
+              ],
+              "name": "Mon / Morning"
+            },
+            {
+              "value": [
+                0,
+                1,
+                23
+              ],
+              "name": "Mon / Afternoon"
+            },
+            {
+              "value": [
+                0,
+                2,
+                46
+              ],
+              "name": "Mon / Evening"
+            },
+            {
+              "value": [
+                1,
+                0,
+                17
+              ],
+              "name": "Tue / Morning"
+            },
+            {
+              "value": [
+                1,
+                1,
+                40
+              ],
+              "name": "Tue / Afternoon"
+            },
+            {
+              "value": [
+                1,
+                2,
+                63
+              ],
+              "name": "Tue / Evening"
+            },
+            {
+              "value": [
+                2,
+                1,
+                57
+              ],
+              "name": "Wed / Afternoon"
+            },
+            {
+              "value": [
+                2,
+                2,
+                80
+              ],
+              "name": "Wed / Evening"
+            },
+            {
+              "value": [
+                3,
+                0,
+                51
+              ],
+              "name": "Thu / Morning"
+            },
+            {
+              "value": [
+                3,
+                1,
+                74
+              ],
+              "name": "Thu / Afternoon"
+            },
+            {
+              "value": [
+                3,
+                2,
+                97
+              ],
+              "name": "Thu / Evening"
+            }
+          ]
+        }
+      ]
+    },
+    "config": {
+      "locale": "pt_BR",
+      "formats": [
+        {
+          "target": "series.0.label.formatter",
+          "format": {
+            "unit": "percent",
+            "precision": 0
+          },
+          "dimension": 2
+        },
+        {
+          "target": "visualMap.0.formatter",
+          "format": {
+            "unit": "percent"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "cells",
+          "values": [
+            {
+              "format": {
+                "unit": "percent"
+              },
+              "dimension": 2
+            }
+          ]
+        }
+      ]
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-radar",
+    "title": "Radar",
+    "description": "Native declared indicators and complete vectors",
+    "option": {
+      "legend": {
+        "bottom": 0,
+        "data": [
+          "Current",
+          "Prior"
+        ]
+      },
+      "tooltip": {
+        "trigger": "item"
+      },
+      "radar": {
+        "indicator": [
+          {
+            "name": "CPU",
+            "max": 100
+          },
+          {
+            "name": "Memory",
+            "max": 100
+          },
+          {
+            "name": "Disk",
+            "max": 100
+          },
+          {
+            "name": "Network",
+            "max": 100
+          }
+        ],
+        "radius": "65%"
+      },
+      "series": [
+        {
+          "id": "radar",
+          "type": "radar",
+          "data": [
+            {
+              "name": "Current",
+              "value": [
+                0,
+                40,
+                70,
+                55
+              ]
+            },
+            {
+              "name": "Prior",
+              "value": [
+                20,
+                50,
+                80,
+                25
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "config": {
+      "tooltip": [
+        {
+          "seriesId": "radar",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "CPU",
+              "format": {
+                "unit": "percent"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "Memory",
+              "format": {
+                "unit": "percent"
+              }
+            },
+            {
+              "dimension": 2,
+              "label": "Disk",
+              "format": {
+                "unit": "percent"
+              }
+            },
+            {
+              "dimension": 3,
+              "label": "Network",
+              "format": {
+                "unit": "percent"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-gauge",
+    "title": "Gauge",
+    "description": "Native raw range and scalar value",
+    "option": {
+      "series": [
+        {
+          "id": "capacity",
+          "type": "gauge",
+          "min": 0,
+          "max": 100,
+          "radius": "80%",
+          "data": [
+            {
+              "name": "Capacity",
+              "value": 67
+            }
+          ],
+          "center": [
+            "50%",
+            "45%"
+          ],
+          "detail": {
+            "offsetCenter": [
+              0,
+              "60%"
+            ],
+            "fontSize": 18
+          },
+          "title": {
+            "offsetCenter": [
+              0,
+              "90%"
+            ],
+            "fontSize": 10
+          },
+          "axisLabel": {
+            "fontSize": 9
+          }
+        }
+      ]
+    },
+    "config": {
+      "formats": [
+        {
+          "target": "series.0.detail.formatter",
+          "format": {
+            "unit": "percent"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "capacity",
+          "values": [
+            {
+              "format": {
+                "unit": "percent"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-gauge-missing",
+    "title": "Missing gauge",
+    "description": "Explicit empty state; missing data never becomes zero",
+    "option": {
+      "series": [
+        {
+          "id": "capacity",
+          "type": "gauge",
+          "data": []
+        }
+      ]
+    },
+    "config": {
+      "empty": true,
+      "messages": {
+        "empty": "No disponible"
+      }
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "family-area",
+    "title": "Stacked area",
+    "description": "Native stack, areaStyle, smooth and null gaps",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "a",
+          "name": "A",
+          "type": "line",
+          "data": [
+            0,
+            3,
+            null,
+            4
+          ],
+          "connectNulls": false,
+          "stack": "total",
+          "areaStyle": {},
+          "smooth": 0.2
+        },
+        {
+          "id": "b",
+          "name": "B",
+          "type": "line",
+          "data": [
+            2,
+            1,
+            3,
+            2
+          ],
+          "connectNulls": false,
+          "stack": "total",
+          "areaStyle": {},
+          "smooth": 0.2
+        }
+      ]
+    },
+    "config": {
+      "tooltip": [
+        {
+          "seriesId": "a",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              }
+            }
+          ]
+        },
+        {
+          "seriesId": "b",
+          "values": [
+            {
+              "format": {
+                "unit": "count"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "families",
+    "compact": false
+  },
+  {
+    "id": "micro-line",
+    "title": "Micro Line",
+    "description": "Native axes hidden; caller-owned 70px frame",
+    "option": {
+      "grid": {
+        "top": 4,
+        "right": 4,
+        "bottom": 4,
+        "left": 4
+      },
+      "xAxis": {
+        "type": "category",
+        "show": false,
+        "data": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ]
+      },
+      "yAxis": {
+        "type": "value",
+        "show": false
+      },
+      "series": [
+        {
+          "id": "micro",
+          "type": "line",
+          "data": [
+            0,
+            2,
+            1,
+            null,
+            4,
+            3
+          ],
+          "showSymbol": false
+        }
+      ]
+    },
+    "config": {},
+    "section": "micro",
+    "compact": false
+  },
+  {
+    "id": "micro-area",
+    "title": "Micro Area",
+    "description": "Native axes hidden; caller-owned 70px frame",
+    "option": {
+      "grid": {
+        "top": 4,
+        "right": 4,
+        "bottom": 4,
+        "left": 4
+      },
+      "xAxis": {
+        "type": "category",
+        "show": false,
+        "data": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ]
+      },
+      "yAxis": {
+        "type": "value",
+        "show": false
+      },
+      "series": [
+        {
+          "id": "micro",
+          "type": "line",
+          "data": [
+            0,
+            2,
+            1,
+            null,
+            4,
+            3
+          ],
+          "showSymbol": false,
+          "areaStyle": {}
+        }
+      ]
+    },
+    "config": {},
+    "section": "micro",
+    "compact": false
+  },
+  {
+    "id": "micro-bar",
+    "title": "Micro Bar",
+    "description": "Native axes hidden; caller-owned 70px frame",
+    "option": {
+      "grid": {
+        "top": 4,
+        "right": 4,
+        "bottom": 4,
+        "left": 4
+      },
+      "xAxis": {
+        "type": "category",
+        "show": false,
+        "data": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ]
+      },
+      "yAxis": {
+        "type": "value",
+        "show": false
+      },
+      "series": [
+        {
+          "id": "micro",
+          "type": "bar",
+          "data": [
+            0,
+            2,
+            1,
+            null,
+            4,
+            3
+          ],
+          "showSymbol": false
+        }
+      ]
+    },
+    "config": {},
+    "section": "micro",
+    "compact": false
+  },
+  {
+    "id": "micro-ring",
+    "title": "Compact ring",
+    "description": "Native pie radius; caller-owned compact frame",
+    "option": {
+      "series": [
+        {
+          "id": "micro",
+          "type": "pie",
+          "radius": [
+            "55%",
+            "90%"
+          ],
+          "label": {
+            "show": false
+          },
+          "data": [
+            {
+              "name": "Done",
+              "value": 8
+            },
+            {
+              "name": "Waiting",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    "config": {},
+    "section": "micro",
+    "compact": true
+  },
+  {
+    "id": "monitor-cpu",
+    "title": "CPU",
+    "description": "Synthetic 2-second raw history, explicit units and null gap",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 30,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": false,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "time"
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "cpu",
+          "name": "Cpu",
+          "type": "line",
+          "data": [
+            [
+              1767225600000,
+              40.0
+            ],
+            [
+              1767225602000,
+              43.973
+            ],
+            [
+              1767225604000,
+              47.788
+            ],
+            [
+              1767225606000,
+              51.293
+            ],
+            [
+              1767225608000,
+              54.347
+            ],
+            [
+              1767225610000,
+              56.829
+            ],
+            [
+              1767225612000,
+              58.641
+            ],
+            [
+              1767225614000,
+              59.709
+            ],
+            [
+              1767225616000,
+              59.991
+            ],
+            [
+              1767225618000,
+              59.477
+            ],
+            [
+              1767225620000,
+              58.186
+            ],
+            [
+              1767225622000,
+              56.17
+            ],
+            [
+              1767225624000,
+              53.509
+            ],
+            [
+              1767225626000,
+              50.31
+            ],
+            [
+              1767225628000,
+              46.7
+            ],
+            [
+              1767225630000,
+              42.822
+            ],
+            [
+              1767225632000,
+              38.833
+            ],
+            [
+              1767225634000,
+              null
+            ],
+            [
+              1767225636000,
+              31.15
+            ],
+            [
+              1767225638000,
+              27.763
+            ],
+            [
+              1767225640000,
+              24.864
+            ],
+            [
+              1767225642000,
+              22.568
+            ],
+            [
+              1767225644000,
+              20.968
+            ],
+            [
+              1767225646000,
+              20.126
+            ],
+            [
+              1767225648000,
+              20.077
+            ],
+            [
+              1767225650000,
+              20.822
+            ],
+            [
+              1767225652000,
+              22.331
+            ],
+            [
+              1767225654000,
+              24.545
+            ],
+            [
+              1767225656000,
+              27.375
+            ],
+            [
+              1767225658000,
+              30.708
+            ],
+            [
+              1767225660000,
+              34.412
+            ],
+            [
+              1767225662000,
+              38.338
+            ],
+            [
+              1767225664000,
+              42.331
+            ],
+            [
+              1767225666000,
+              46.231
+            ],
+            [
+              1767225668000,
+              49.882
+            ],
+            [
+              1767225670000,
+              53.14
+            ],
+            [
+              1767225672000,
+              55.873
+            ],
+            [
+              1767225674000,
+              57.974
+            ],
+            [
+              1767225676000,
+              59.358
+            ],
+            [
+              1767225678000,
+              59.971
+            ],
+            [
+              1767225680000,
+              59.787
+            ],
+            [
+              1767225682000,
+              58.815
+            ],
+            [
+              1767225684000,
+              57.092
+            ],
+            [
+              1767225686000,
+              54.688
+            ],
+            [
+              1767225688000,
+              51.698
+            ],
+            [
+              1767225690000,
+              48.242
+            ],
+            [
+              1767225692000,
+              44.458
+            ],
+            [
+              1767225694000,
+              40.496
+            ],
+            [
+              1767225696000,
+              36.513
+            ],
+            [
+              1767225698000,
+              32.67
+            ],
+            [
+              1767225700000,
+              29.12
+            ],
+            [
+              1767225702000,
+              26.003
+            ],
+            [
+              1767225704000,
+              23.443
+            ],
+            [
+              1767225706000,
+              21.544
+            ],
+            [
+              1767225708000,
+              20.381
+            ],
+            [
+              1767225710000,
+              20.0
+            ],
+            [
+              1767225712000,
+              20.416
+            ],
+            [
+              1767225714000,
+              21.613
+            ],
+            [
+              1767225716000,
+              23.543
+            ],
+            [
+              1767225718000,
+              26.129
+            ],
+            [
+              1767225720000,
+              29.269
+            ],
+            [
+              1767225722000,
+              32.835
+            ],
+            [
+              1767225724000,
+              36.688
+            ],
+            [
+              1767225726000,
+              40.672
+            ]
+          ],
+          "connectNulls": false,
+          "showSymbol": false
+        }
+      ]
+    },
+    "config": {
+      "locale": "pt_BR",
+      "timeZone": "UTC",
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "time"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "percent"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "cpu",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "Time",
+              "format": {
+                "unit": "time"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "CPU",
+              "format": {
+                "unit": "percent"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "monitor",
+    "compact": false
+  },
+  {
+    "id": "monitor-memory",
+    "title": "Memory",
+    "description": "Synthetic 2-second raw history, explicit units and null gap",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 30,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": false,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "time"
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "memory",
+          "name": "Memory",
+          "type": "line",
+          "data": [
+            [
+              1767225600000,
+              2147483648.0
+            ],
+            [
+              1767225602000,
+              2360803217.621
+            ],
+            [
+              1767225604000,
+              2565618409.17
+            ],
+            [
+              1767225606000,
+              2753763887.291
+            ],
+            [
+              1767225608000,
+              2917738885.5
+            ],
+            [
+              1767225610000,
+              3051006238.071
+            ],
+            [
+              1767225612000,
+              3148252996.206
+            ],
+            [
+              1767225614000,
+              3205602238.538
+            ],
+            [
+              1767225616000,
+              3220767631.752
+            ],
+            [
+              1767225618000,
+              3193144579.477
+            ],
+            [
+              1767225620000,
+              3123834325.638
+            ],
+            [
+              1767225622000,
+              3015600051.335
+            ],
+            [
+              1767225624000,
+              2872756715.53
+            ],
+            [
+              1767225626000,
+              2700999031.254
+            ],
+            [
+              1767225628000,
+              2507174435.367
+            ],
+            [
+              1767225630000,
+              2299010102.857
+            ],
+            [
+              1767225632000,
+              2084804888.762
+            ],
+            [
+              1767225634000,
+              null
+            ],
+            [
+              1767225636000,
+              1672330940.059
+            ],
+            [
+              1767225638000,
+              1490506240.15
+            ],
+            [
+              1767225640000,
+              1334873156.28
+            ],
+            [
+              1767225642000,
+              1211636288.374
+            ],
+            [
+              1767225644000,
+              1125708701.46
+            ],
+            [
+              1767225646000,
+              1080516057.266
+            ],
+            [
+              1767225648000,
+              1077860043.904
+            ],
+            [
+              1767225650000,
+              1117846548.245
+            ],
+            [
+              1767225652000,
+              1198881434.546
+            ],
+            [
+              1767225654000,
+              1317734097.609
+            ],
+            [
+              1767225656000,
+              1469666256.821
+            ],
+            [
+              1767225658000,
+              1648620856.442
+            ],
+            [
+              1767225660000,
+              1847463541.31
+            ],
+            [
+              1767225662000,
+              2058267081.064
+            ],
+            [
+              1767225664000,
+              2272627403.802
+            ],
+            [
+              1767225666000,
+              2481998639.91
+            ],
+            [
+              1767225668000,
+              2678033818.914
+            ],
+            [
+              1767225670000,
+              2852917636.852
+            ],
+            [
+              1767225672000,
+              2999678027.78
+            ],
+            [
+              1767225674000,
+              3112464118.04
+            ],
+            [
+              1767225676000,
+              3186779482.133
+            ],
+            [
+              1767225678000,
+              3219661401.006
+            ],
+            [
+              1767225680000,
+              3209798976.319
+            ],
+            [
+              1767225682000,
+              3157585391.822
+            ],
+            [
+              1767225684000,
+              3065102238.359
+            ],
+            [
+              1767225686000,
+              2936036527.412
+            ],
+            [
+              1767225688000,
+              2775533701.585
+            ],
+            [
+              1767225690000,
+              2589992502.048
+            ],
+            [
+              1767225692000,
+              2386809870.917
+            ],
+            [
+              1767225694000,
+              2174086058.517
+            ],
+            [
+              1767225696000,
+              1960301691.958
+            ],
+            [
+              1767225698000,
+              1753979679.299
+            ],
+            [
+              1767225700000,
+              1563345428.099
+            ],
+            [
+              1767225702000,
+              1395998924.372
+            ],
+            [
+              1767225704000,
+              1258611745.128
+            ],
+            [
+              1767225706000,
+              1156661083.655
+            ],
+            [
+              1767225708000,
+              1094211391.101
+            ],
+            [
+              1767225710000,
+              1073752339.636
+            ],
+            [
+              1767225712000,
+              1096099567.081
+            ],
+            [
+              1767225714000,
+              1160362159.998
+            ],
+            [
+              1767225716000,
+              1263978171.599
+            ],
+            [
+              1767225718000,
+              1402816758.482
+            ],
+            [
+              1767225720000,
+              1571342864.317
+            ],
+            [
+              1767225722000,
+              1762837885.081
+            ],
+            [
+              1767225724000,
+              1969667518.592
+            ],
+            [
+              1767225726000,
+              2183586120.052
+            ]
+          ],
+          "connectNulls": false,
+          "showSymbol": false
+        }
+      ]
+    },
+    "config": {
+      "locale": "pt_BR",
+      "timeZone": "UTC",
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "time"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "bytes",
+            "scale": "binary"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "memory",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "Time",
+              "format": {
+                "unit": "time"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "Memory",
+              "format": {
+                "unit": "bytes",
+                "scale": "binary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "monitor",
+    "compact": false
+  },
+  {
+    "id": "monitor-disk",
+    "title": "Disk",
+    "description": "Synthetic 2-second raw history, explicit units and null gap",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 30,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": false,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "time"
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "disk",
+          "name": "Disk",
+          "type": "line",
+          "data": [
+            [
+              1767225600000,
+              2097152.0
+            ],
+            [
+              1767225602000,
+              2305471.892
+            ],
+            [
+              1767225604000,
+              2505486.728
+            ],
+            [
+              1767225606000,
+              2689222.546
+            ],
+            [
+              1767225608000,
+              2849354.38
+            ],
+            [
+              1767225610000,
+              2979498.279
+            ],
+            [
+              1767225612000,
+              3074465.817
+            ],
+            [
+              1767225614000,
+              3130470.936
+            ],
+            [
+              1767225616000,
+              3145280.89
+            ],
+            [
+              1767225618000,
+              3118305.253
+            ],
+            [
+              1767225620000,
+              3050619.459
+            ],
+            [
+              1767225622000,
+              2944921.925
+            ],
+            [
+              1767225624000,
+              2805426.48
+            ],
+            [
+              1767225626000,
+              2637694.366
+            ],
+            [
+              1767225628000,
+              2448412.535
+            ],
+            [
+              1767225630000,
+              2245127.054
+            ],
+            [
+              1767225632000,
+              2035942.274
+            ],
+            [
+              1767225634000,
+              null
+            ],
+            [
+              1767225636000,
+              1633135.684
+            ],
+            [
+              1767225638000,
+              1455572.5
+            ],
+            [
+              1767225640000,
+              1303587.067
+            ],
+            [
+              1767225642000,
+              1183238.563
+            ],
+            [
+              1767225644000,
+              1099324.904
+            ],
+            [
+              1767225646000,
+              1055191.462
+            ],
+            [
+              1767225648000,
+              1052597.699
+            ],
+            [
+              1767225650000,
+              1091647.02
+            ],
+            [
+              1767225652000,
+              1170782.651
+            ],
+            [
+              1767225654000,
+              1286849.705
+            ],
+            [
+              1767225656000,
+              1435220.954
+            ],
+            [
+              1767225658000,
+              1609981.305
+            ],
+            [
+              1767225660000,
+              1804163.615
+            ],
+            [
+              1767225662000,
+              2010026.446
+            ],
+            [
+              1767225664000,
+              2219362.699
+            ],
+            [
+              1767225666000,
+              2423826.797
+            ],
+            [
+              1767225668000,
+              2615267.401
+            ],
+            [
+              1767225670000,
+              2786052.38
+            ],
+            [
+              1767225672000,
+              2929373.074
+            ],
+            [
+              1767225674000,
+              3039515.74
+            ],
+            [
+              1767225676000,
+              3112089.338
+            ],
+            [
+              1767225678000,
+              3144200.587
+            ],
+            [
+              1767225680000,
+              3134569.313
+            ],
+            [
+              1767225682000,
+              3083579.484
+            ],
+            [
+              1767225684000,
+              2993263.905
+            ],
+            [
+              1767225686000,
+              2867223.171
+            ],
+            [
+              1767225688000,
+              2710482.13
+            ],
+            [
+              1767225690000,
+              2529289.553
+            ],
+            [
+              1767225692000,
+              2330869.015
+            ],
+            [
+              1767225694000,
+              2123130.917
+            ],
+            [
+              1767225696000,
+              1914357.121
+            ],
+            [
+              1767225698000,
+              1712870.781
+            ],
+            [
+              1767225700000,
+              1526704.52
+            ],
+            [
+              1767225702000,
+              1363280.2
+            ],
+            [
+              1767225704000,
+              1229113.032
+            ],
+            [
+              1767225706000,
+              1129551.84
+            ],
+            [
+              1767225708000,
+              1068565.812
+            ],
+            [
+              1767225710000,
+              1048586.269
+            ],
+            [
+              1767225712000,
+              1070409.733
+            ],
+            [
+              1767225714000,
+              1133166.172
+            ],
+            [
+              1767225716000,
+              1234353.683
+            ],
+            [
+              1767225718000,
+              1369938.241
+            ],
+            [
+              1767225720000,
+              1534514.516
+            ],
+            [
+              1767225722000,
+              1721521.372
+            ],
+            [
+              1767225724000,
+              1923503.436
+            ],
+            [
+              1767225726000,
+              2132408.32
+            ]
+          ],
+          "connectNulls": false,
+          "showSymbol": false
+        }
+      ]
+    },
+    "config": {
+      "locale": "pt_BR",
+      "timeZone": "UTC",
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "time"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "bytes/s",
+            "scale": "binary"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "disk",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "Time",
+              "format": {
+                "unit": "time"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "Disk",
+              "format": {
+                "unit": "bytes/s",
+                "scale": "binary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "monitor",
+    "compact": false
+  },
+  {
+    "id": "monitor-network",
+    "title": "Network",
+    "description": "Synthetic 2-second raw history, explicit units and null gap",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 30,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": false,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "time"
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "network",
+          "name": "Network",
+          "type": "line",
+          "data": [
+            [
+              1767225600000,
+              4.0
+            ],
+            [
+              1767225602000,
+              4.397
+            ],
+            [
+              1767225604000,
+              4.779
+            ],
+            [
+              1767225606000,
+              5.129
+            ],
+            [
+              1767225608000,
+              5.435
+            ],
+            [
+              1767225610000,
+              5.683
+            ],
+            [
+              1767225612000,
+              5.864
+            ],
+            [
+              1767225614000,
+              5.971
+            ],
+            [
+              1767225616000,
+              5.999
+            ],
+            [
+              1767225618000,
+              5.948
+            ],
+            [
+              1767225620000,
+              5.819
+            ],
+            [
+              1767225622000,
+              5.617
+            ],
+            [
+              1767225624000,
+              5.351
+            ],
+            [
+              1767225626000,
+              5.031
+            ],
+            [
+              1767225628000,
+              4.67
+            ],
+            [
+              1767225630000,
+              4.282
+            ],
+            [
+              1767225632000,
+              3.883
+            ],
+            [
+              1767225634000,
+              null
+            ],
+            [
+              1767225636000,
+              3.115
+            ],
+            [
+              1767225638000,
+              2.776
+            ],
+            [
+              1767225640000,
+              2.486
+            ],
+            [
+              1767225642000,
+              2.257
+            ],
+            [
+              1767225644000,
+              2.097
+            ],
+            [
+              1767225646000,
+              2.013
+            ],
+            [
+              1767225648000,
+              2.008
+            ],
+            [
+              1767225650000,
+              2.082
+            ],
+            [
+              1767225652000,
+              2.233
+            ],
+            [
+              1767225654000,
+              2.454
+            ],
+            [
+              1767225656000,
+              2.737
+            ],
+            [
+              1767225658000,
+              3.071
+            ],
+            [
+              1767225660000,
+              3.441
+            ],
+            [
+              1767225662000,
+              3.834
+            ],
+            [
+              1767225664000,
+              4.233
+            ],
+            [
+              1767225666000,
+              4.623
+            ],
+            [
+              1767225668000,
+              4.988
+            ],
+            [
+              1767225670000,
+              5.314
+            ],
+            [
+              1767225672000,
+              5.587
+            ],
+            [
+              1767225674000,
+              5.797
+            ],
+            [
+              1767225676000,
+              5.936
+            ],
+            [
+              1767225678000,
+              5.997
+            ],
+            [
+              1767225680000,
+              5.979
+            ],
+            [
+              1767225682000,
+              5.881
+            ],
+            [
+              1767225684000,
+              5.709
+            ],
+            [
+              1767225686000,
+              5.469
+            ],
+            [
+              1767225688000,
+              5.17
+            ],
+            [
+              1767225690000,
+              4.824
+            ],
+            [
+              1767225692000,
+              4.446
+            ],
+            [
+              1767225694000,
+              4.05
+            ],
+            [
+              1767225696000,
+              3.651
+            ],
+            [
+              1767225698000,
+              3.267
+            ],
+            [
+              1767225700000,
+              2.912
+            ],
+            [
+              1767225702000,
+              2.6
+            ],
+            [
+              1767225704000,
+              2.344
+            ],
+            [
+              1767225706000,
+              2.154
+            ],
+            [
+              1767225708000,
+              2.038
+            ],
+            [
+              1767225710000,
+              2.0
+            ],
+            [
+              1767225712000,
+              2.042
+            ],
+            [
+              1767225714000,
+              2.161
+            ],
+            [
+              1767225716000,
+              2.354
+            ],
+            [
+              1767225718000,
+              2.613
+            ],
+            [
+              1767225720000,
+              2.927
+            ],
+            [
+              1767225722000,
+              3.284
+            ],
+            [
+              1767225724000,
+              3.669
+            ],
+            [
+              1767225726000,
+              4.067
+            ]
+          ],
+          "connectNulls": false,
+          "showSymbol": false
+        }
+      ]
+    },
+    "config": {
+      "locale": "pt_BR",
+      "timeZone": "UTC",
+      "formats": [
+        {
+          "target": "xAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "time"
+          }
+        },
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "data-rate",
+            "scale": "binary",
+            "inputUnit": "MB/s"
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "network",
+          "values": [
+            {
+              "dimension": 0,
+              "label": "Time",
+              "format": {
+                "unit": "time"
+              }
+            },
+            {
+              "dimension": 1,
+              "label": "Network",
+              "format": {
+                "unit": "data-rate",
+                "scale": "binary",
+                "inputUnit": "MB/s"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "monitor",
+    "compact": false
+  },
+  {
+    "id": "localized-category",
+    "title": "Localized timestamp categories",
+    "description": "Existing display labels are categories; raw values already use MiB/s",
+    "option": {
+      "animation": false,
+      "grid": {
+        "top": 25,
+        "left": 12,
+        "right": 20,
+        "bottom": 45,
+        "containLabel": true
+      },
+      "tooltip": {
+        "trigger": "axis"
+      },
+      "legend": {
+        "show": true,
+        "bottom": 0
+      },
+      "xAxis": {
+        "type": "category",
+        "data": [
+          "05/11 08:00:00",
+          "05/11 08:00:02",
+          "05/11 08:00:04",
+          "05/11 08:00:06"
+        ]
+      },
+      "yAxis": {
+        "type": "value"
+      },
+      "series": [
+        {
+          "id": "throughput",
+          "name": "Throughput",
+          "type": "line",
+          "data": [
+            0,
+            2.5,
+            null,
+            3.75
+          ],
+          "connectNulls": false
+        }
+      ]
+    },
+    "config": {
+      "locale": "pt_BR",
+      "formats": [
+        {
+          "target": "yAxis.0.axisLabel.formatter",
+          "format": {
+            "unit": "data-rate",
+            "inputUnit": "MiB/s",
+            "displayUnit": "MiB/s",
+            "precision": 2
+          }
+        }
+      ],
+      "tooltip": [
+        {
+          "seriesId": "throughput",
+          "values": [
+            {
+              "format": {
+                "unit": "data-rate",
+                "inputUnit": "MiB/s",
+                "displayUnit": "MiB/s",
+                "precision": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "section": "monitor",
+    "compact": false
+  }
+]

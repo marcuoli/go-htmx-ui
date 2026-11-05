@@ -7,11 +7,15 @@ import (
 )
 
 templ Page(info versioning.Info) {
- <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>UI component showcase</title><link rel="stylesheet" href="/assets/ui.css"/>
+ <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>Native ECharts component showcase</title><link rel="stylesheet" href="/assets/ui.css"/>
  <style>
- body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}.charts[hidden]{display:none}.monitor-charts .ghtui-chart-frame{height:130px;min-height:130px}.micro-charts{grid-template-columns:repeat(4,minmax(0,1fr))}.micro-charts .ghtui-chart-frame:not(.ghtui-chart-compact){height:70px;min-height:70px}#chart-event-log{display:block;margin:12px 0;font-size:12px;overflow-wrap:anywhere}.form{display:grid;gap:18px}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}a{color:var(--ghtui-accent,#79c0ff)}
- </style><script src="/assets/echarts.min.js" defer></script><script src="/assets/charts.js" defer></script></head><body><main>
- @ui.PageHeader(ui.PageHeaderProps{Title:"Component showcase",Description:"Synthetic examples · no account or production data"}) {
+ body{margin:0;background:#010409;color:#f0f6fc;font:14px/1.5 system-ui,sans-serif}main{max-width:1800px;margin:auto;padding:32px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.charts[hidden]{display:none}.micro .ghtui-chart-frame:not(.ghtui-chart-compact){height:70px}.micro{grid-template-columns:repeat(4,minmax(0,1fr))}.monitor .ghtui-chart-frame{height:130px}.form{display:grid;gap:18px}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}.light{background:#f6f8fa;color:#1f2328;--ghtui-surface:#fff;--ghtui-text:#1f2328;--ghtui-muted:#57606a;--ghtui-border:#d0d7de;--ghtui-raised:#eaeef2;--ghtui-accent:#0969da}table{width:100%;border-collapse:collapse}th,td{padding:6px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--ghtui-border,#30363d)}#chart-event-log{display:block;margin:12px 0;font-size:12px;overflow-wrap:anywhere}a{color:var(--ghtui-accent,#79c0ff)}
+ </style>
+ <script src="/assets/echarts.min.js" defer></script>
+ <script src="/assets/echarts-format.js" defer></script>
+ <script src="/assets/echarts-ui.js" defer></script>
+ </head><body><main>
+ @ui.PageHeader(ui.PageHeaderProps{Title:"Native ECharts showcase",Description:"Synthetic native options · no account or production data"}) {
   @ui.Actions() {
    @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"theme-toggle"}}) { Toggle theme }
    @ui.Button(ui.ButtonProps{Attributes:templ.Attributes{"id":"edit-button"}}) { Edit example }
@@ -29,204 +33,104 @@ templ Page(info versioning.Info) {
   @ui.WidgetMetric("Estimated value","USD 1234.56 (partial)","Example only")
  </div>
  <div class="charts">
- @ui.Widget(ui.WidgetProps{}) {
-  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Volume",Description:"Update preserves the canvas"}) {
-   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"update-chart"}}) { Update }
-  }
-  @ui.WidgetChart(ui.WidgetChartProps{ID:"volume",Label:"Synthetic request volume",Spec:`{"type":"line","labels":["Mon","Tue","Wed"],"datasets":[{"label":"Requests","data":[3,7,5],"borderColor":"#58a6ff"}]}`,NoScriptNote:"Chart data follows."})
-  @ui.WidgetData("View chart data") { <p>Monday: 3, Tuesday: 7, Wednesday: 5.</p> }
- }
- @ui.Widget(ui.WidgetProps{Attributes:templ.Attributes{"id":"forms"}}) {
-  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Form controls",Description:"Labels and options use typed props"})
-  <div class="form">
-  @ui.Field(ui.FieldProps{For:"name",Label:"Display name",Hint:"A synthetic example"}) {
-   @ui.Input(ui.InputProps{ID:"name",Name:"name",Value:"Example application"})
-  }
-  @ui.Field(ui.FieldProps{For:"mode",Label:"Mode"}) {
-   @ui.Select(ui.SelectProps{ID:"mode",Name:"mode",Value:"standard",Options:[]ui.Option{{Value:"standard",Label:"Standard"},{Value:"extended",Label:"Extended"}}})
-  }
-  @ui.Badge() { Ready }
-  </div>
- }
- </div>
- <br/>
- @ui.Actions() {
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"chart-mode"}}) { Toggle count bars/lines }
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"toggle-advanced"}}) { Hide/show advanced charts }
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"resize-charts"}}) { Resize examples }
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"show-hidden-chart"}}) { Reveal hidden chart }
- }
- <div id="advanced-charts" class="charts">
-  for _,example:=range advancedCharts() {
-   @ui.Widget(ui.WidgetProps{}) {
-    @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Title,Description:example.Description})
-    @ui.WidgetChart(ui.WidgetChartProps{ID:example.ID,Label:example.Title,Spec:example.Spec})
-    @ui.WidgetData("View chart data") {
-     <table>
-      <thead><tr>
-       for _,header:=range example.Headers {
-        <th>{ header }</th>
-       }
-      </tr></thead>
-      <tbody>
-       for _,row:=range example.Rows {
-        <tr>
-         for _,cell:=range row {
-          <td>{ cell }</td>
-         }
-        </tr>
-       }
-      </tbody>
-     </table>
-    }
+  @ui.Widget(ui.WidgetProps{}) {
+   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Go native option map",Description:"Native series/axes; zero and null stay distinct"}) {
+    @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"update-volume"}}) { Update volume }
    }
+   @ui.WidgetChart(ui.WidgetChartProps{ID:"volume",Label:"Synthetic native request volume",Option:simpleNativeOption(),Config:ui.EChartsConfig{Tooltip:[]ui.EChartsTooltip{{SeriesID:"volume",Values:[]ui.EChartsTooltipValue{{Format:ui.EChartsValueFormat{Unit:"count"}}}}}},NoScriptNote:"Chart data follows."})
+   @ui.WidgetData("Raw input values") { <p>Monday: 0, Tuesday: unavailable, Wednesday: 5. Updates change Wednesday only.</p> }
+  }
+  @ui.Widget(ui.WidgetProps{Attributes:templ.Attributes{"id":"forms"}}) {
+   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Form controls",Description:"Labels and options use typed props"})
+   <div class="form">
+    @ui.Field(ui.FieldProps{For:"name",Label:"Display name",Hint:"A synthetic example"}) { @ui.Input(ui.InputProps{ID:"name",Name:"name",Value:"Example application"}) }
+    @ui.Field(ui.FieldProps{For:"mode",Label:"Mode"}) { @ui.Select(ui.SelectProps{ID:"mode",Name:"mode",Value:"standard",Options:[]ui.Option{{Value:"standard",Label:"Standard"},{Value:"extended",Label:"Extended"}}}) }
+    @ui.Badge() { Ready }
+   </div>
   }
  </div>
- <br/>
- @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Metric unit selection",Description:"Case-sensitive bits/bytes, SI/IEC, time bases and explicit custom rules; raw data is unchanged"})
+ @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Native options and live units",Description:"The renderer consumes series/xAxis/yAxis directly. Display bindings never mutate raw data."})
  @ui.Actions() {
   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"unit-hide"}}) { Hide/show unit plot }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"unit-loading"}}) { Toggle loading }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"unit-empty"}}) { Toggle empty }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"unit-snapshot"}}) { Supply snapshot }
+  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"unit-resize"}}) { Resize unit plot }
   @ui.Field(ui.FieldProps{For:"unit-display",Label:"Display unit"}) {
-   @ui.Select(ui.SelectProps{ID:"unit-display",Name:"unit-display",Value:"MiB/h",Options:[]ui.Option{{Value:"MB/s",Label:"MB/s"},{Value:"MiB/s",Label:"MiB/s"},{Value:"Mb/s",Label:"Mb/s"},{Value:"Mib/s",Label:"Mib/s"},{Value:"MiB/h",Label:"MiB/h"},{Value:"MB/min",Label:"MB/min"},{Value:"Gb/d",Label:"Gb/d"},{Value:"auto/s",Label:"Auto /s"},{Value:"auto/h",Label:"Auto /h"}}})
-  }
-  @ui.Field(ui.FieldProps{For:"unit-scale",Label:"Auto prefix scale",Hint:"Applies only to automatic output"}) {
-   @ui.Select(ui.SelectProps{ID:"unit-scale",Name:"unit-scale",Value:"binary",Attributes:templ.Attributes{"disabled":true},Options:[]ui.Option{{Value:"binary",Label:"IEC (1024)"},{Value:"decimal",Label:"SI (1000)"}}})
+   @ui.Select(ui.SelectProps{ID:"unit-display",Name:"unit-display",Value:"MiB/h",Options:[]ui.Option{{Value:"MB/s",Label:"MB/s"},{Value:"MiB/s",Label:"MiB/s"},{Value:"Mb/s",Label:"Mb/s"},{Value:"Mib/s",Label:"Mib/s"},{Value:"MiB/h",Label:"MiB/h"},{Value:"MB/min",Label:"MB/min"},{Value:"Gb/d",Label:"Gb/d"},{Value:"auto/h",Label:"Auto /h"}}})
   }
  }
- <div id="unit-live">
- for i,example:=range unitCharts() {
-  if i==0 {
-   @FamilyExample(example,false)
-  }
- }
- </div>
- <div class="charts">
-  for i,example:=range unitCharts() {
-   if i>0 {
-    @FamilyExample(example,false)
-   }
-  }
- </div>
- <br/>
- @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Chart families",Description:"Typed shapes, common themes/units and safe interactions; open raw inputs below each chart"})
- @ui.Actions() {
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"family-update"}}) { Supply new snapshot }
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"family-loading"}}) { Toggle loading }
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"family-hide"}}) { Hide/show families }
- }
- <p class="ghtui-note">Click a bubble or use the scatter zoom slider. Events contain safe values; applications own their meaning.</p>
  <output id="chart-event-log">No interaction yet</output>
- <div id="family-charts" class="charts">
-  for _,example:=range familyCharts() {
-   @FamilyExample(example,false)
-  }
- </div>
- <br/>
- @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Microchart usage",Description:"Same contract; caller-owned70px frame height; existing compact ring"})
- <div class="charts micro-charts">
-  for _,example:=range microCharts() {
-   @FamilyExample(example,example.ID=="micro-ring")
-  }
- </div>
- <br/>
- @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Compact monitoring",Description:"IEC output; explicit raw bytes and decimal MB/s input; caller-owned synthetic snapshots"})
- @ui.Actions() {
-  @ui.Select(ui.SelectProps{ID:"monitor-locale",Attributes:templ.Attributes{"aria-label":"Monitor locale"},Name:"monitor-locale",Value:"pt-BR",Options:[]ui.Option{{Value:"en-US",Label:"English"},{Value:"pt-BR",Label:"Português"},{Value:"es-ES",Label:"Español"}}})
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"monitor-update"}}) { Update monitor samples }
-  @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"monitor-hide"}}) { Hide/show monitors }
+ for _,example:=range nativeExamples("units") {
+  <div id={ example.ID+"-container" }> @NativeExample(example) </div>
  }
- <div id="monitor-charts" class="charts monitor-charts">
-  for _,example:=range monitorCharts() {
-   @ui.Widget(ui.WidgetProps{}) {
-    @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Title,Description:example.Description})
-    @ui.WidgetChart(ui.WidgetChartProps{ID:example.ID,Label:example.Title+" synthetic history",Spec:example.Spec,EmptyMessage:"Sem dados",ErrorMessage:"Falha no gráfico"})
-    @ui.WidgetData("Latest raw samples") {
-     <table><thead><tr><th>Epoch milliseconds</th><th>Raw input value</th></tr></thead><tbody>
-      for _,row:=range example.Rows {
-       <tr><td>{ row[0] }</td><td>{ row[1] }</td></tr>
-      }
-     </tbody></table>
-    }
-   }
-  }
- </div>
+ @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Mixed and independent axes",Description:"Stacks, legend grouping, bins, percentile categories and horizontal native axes"})
  <div class="charts">
- @ui.Widget(ui.WidgetProps{}) {
-  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Localized empty state"})
-  @ui.WidgetChart(ui.WidgetChartProps{ID:"localized-empty",Label:"Synthetic empty history",Spec:`{"empty":true,"messages":{"empty":"Sem dados neste período"}}`})
- }
- @ui.Widget(ui.WidgetProps{}) {
-  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Localized configuration error"})
-  @ui.WidgetChart(ui.WidgetChartProps{ID:"localized-error",Label:"Synthetic invalid history",Spec:`{"timeZone":"Not/AZone","messages":{"error":"No se puede mostrar el gráfico"}}`,ErrorMessage:"No se puede mostrar el gráfico"})
+ for _,example:=range nativeExamples("advanced") {
+  @NativeExample(example)
  }
  </div>
- <div id="hidden-chart-example" hidden>
-  @ui.Widget(ui.WidgetProps{}) {
-   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Hidden-to-visible recovery"})
-   @ui.WidgetChart(ui.WidgetChartProps{ID:"hidden-chart",Label:"Synthetic hidden chart",Spec:`{"type":"line","labels":["A","B"],"datasets":[{"label":"Values","data":[1,2]}]}`})
-  }
+ @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"General native families",Description:"Pie/ring, scatter/bubble, heatmap, radar, gauge and stacked area"})
+ <div class="charts">
+ for _,example:=range nativeExamples("families") {
+  @NativeExample(example)
+ }
  </div>
- <br/>
+ @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Microcharts",Description:"Native options in caller-sized frames"})
+ <div class="charts micro">
+ for _,example:=range nativeExamples("micro") {
+  @NativeExample(example)
+ }
+ </div>
+ @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Monitoring and category labels",Description:"Raw values, explicit IEC units, timezone-aware instants and already-localized categories"})
+ <div class="charts monitor">
+ for _,example:=range nativeExamples("monitor") {
+  @NativeExample(example)
+ }
+ </div>
+ @ui.Widget(ui.WidgetProps{Attributes:templ.Attributes{"id":"initially-hidden","hidden":true}}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Initially hidden chart",Description:"Initialized only when a useful size becomes available"})
+  @ui.WidgetChart(ui.WidgetChartProps{ID:"hidden-native",Label:"Initially hidden native chart",Option:simpleNativeOption()})
+ }
+ @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"show-hidden"}}) { Reveal hidden chart }
  @ui.Widget(ui.WidgetProps{}) {
-  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Table composition",Description:"Rendered by go-htmx-table; this example supplies its table styling"})
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Table composition",Description:"Rendered by go-htmx-table"})
   @table.DataTable(table.DataTableProps{ID:"example-table"}) {
-   @table.DataTableHead() { @table.Col("Application") @table.Col("Status") @table.Col("Tokens") }
-   @table.DataTableBody(table.BodyProps{}) {
-    @table.Row() { @table.Cell() { Example A } @table.Cell() { Ready } @table.Cell() { 1.23K } }
-    @table.Row() { @table.Cell() { Example B } @table.Cell() { Ready } @table.Cell() { 4.56K } }
-   }
-  }
+ @table.DataTableHead() { @table.Col("Application") @table.Col("Status") @table.Col("Tokens") }
+ @table.DataTableBody(table.BodyProps{}) {
+ @table.Row() { @table.Cell() { Example A } @table.Cell() { Ready } @table.Cell() { 1.23K } }
+ @table.Row() { @table.Cell() { Example B } @table.Cell() { Ready } @table.Cell() { 4.56K } }
+ }
+ }
  }
  @ui.Dialog(ui.DialogProps{ID:"example-dialog",TitleID:"example-title"}) {
-  @ui.DialogHeader(ui.DialogHeaderProps{TitleID:"example-title",Title:"Edit example"}) {
-   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"close-dialog"}}) { Close }
-  }
-  @ui.DialogBody() { <p>Applications own modal actions and form submission.</p> }
+ @ui.DialogHeader(ui.DialogHeaderProps{TitleID:"example-title",Title:"Edit synthetic example"}) {
+  <form method="dialog"><button class="ghtui-button-secondary" type="submit">Close</button></form>
+ }
+ @ui.DialogBody() { <p>Applications own modal actions and form submission.</p> }
  }
  </main><script>
- const unitRender=()=>{const c=document.getElementById('units-network'),s=JSON.parse(c.dataset.uiChart),output=document.getElementById('unit-display').value,scale=document.getElementById('unit-scale');s.axes[0].displayUnit=output;scale.disabled=!output.startsWith('auto');if(!scale.disabled)s.axes[0].scale=scale.value;else delete s.axes[0].scale;c.dataset.uiChart=JSON.stringify(s);GoHTMXUI.charts.render(c);};
- document.getElementById('unit-hide').onclick=()=>{const node=document.getElementById('unit-live');node.hidden=!node.hidden;};
- document.getElementById('unit-display').onchange=unitRender;
- document.getElementById('unit-scale').onchange=unitRender;
- const familyRows=s=>s.datasets.flatMap((d,j)=>d.data.map((v,i)=>[d.label||String(j+1),s.type==='heatmap'?s.labels[v[0]]+' / '+s.rows[v[1]]:s.indicators?.[i]?.name||s.labels?.[i]||String(i+1),JSON.stringify(v)]));
- const familyRender=fn=>{for(const c of document.querySelectorAll('#family-charts [data-ui-chart]')){const s=JSON.parse(c.dataset.uiChart);fn(s);c.dataset.uiChart=JSON.stringify(s);const body=c.closest('.ghtui-widget').querySelector('tbody');body.replaceChildren(...familyRows(s).map(row=>{const tr=document.createElement('tr');for(const value of row){const td=document.createElement('td');td.textContent=value;tr.append(td);}return tr;}));GoHTMXUI.charts.render(c);}};
- document.getElementById('family-update').onclick=()=>familyRender(s=>{for(const d of s.datasets)d.data=d.data.map(p=>{if(Array.isArray(p)){const index=s.type==='heatmap'?2:1;return p.map((v,i)=>i===index&&v!==null?v+1:v);}return p===null?null:p+1;});});
- document.getElementById('family-loading').onclick=()=>familyRender(s=>{s.loading=!s.loading;s.messages={...s.messages,loading:'Loading snapshot…'};});
- document.getElementById('family-hide').onclick=()=>{const group=document.getElementById('family-charts');group.hidden=!group.hidden;};
- for(const name of ['select','zoom'])document.addEventListener('gohtmxui:chart-'+name,event=>{document.getElementById('chart-event-log').textContent=name+': '+JSON.stringify(event.detail);});
- const monitorRender=fn=>{for(const c of document.querySelectorAll('#monitor-charts [data-ui-chart]')){const s=JSON.parse(c.dataset.uiChart);fn(s);c.dataset.uiChart=JSON.stringify(s);const rows=c.closest(".ghtui-widget").querySelectorAll("tbody tr");s.datasets[0].data.slice(-12).forEach((p,i)=>{if(rows[i]){rows[i].cells[0].textContent=String(p[0]);rows[i].cells[1].textContent=p[1]===null?"null":String(p[1]);}});GoHTMXUI.charts.render(c);}};
- document.getElementById('monitor-locale').onchange=event=>monitorRender(s=>{s.locale=event.target.value;});
- document.getElementById('monitor-update').onclick=()=>monitorRender(s=>{for(const d of s.datasets){const last=d.data.at(-1);d.data=[...d.data.slice(1),[last[0]+2000,last[1]===null?0:last[1]*1.01]];}});
- document.getElementById('monitor-hide').onclick=()=>{const group=document.getElementById('monitor-charts');group.hidden=!group.hidden;};
- document.getElementById('chart-mode').onclick=()=>{const c=document.getElementById('mixed-latency'),s=JSON.parse(c.dataset.uiChart);s.type=s.type==='bar'?'line':'bar';for(const d of s.datasets)if(d.axis==='count')d.type=s.type;c.dataset.uiChart=JSON.stringify(s);GoHTMXUI.charts.render(c);};
- document.getElementById('toggle-advanced').onclick=()=>{const node=document.getElementById('advanced-charts');node.hidden=!node.hidden;};
- document.getElementById('resize-charts').onclick=()=>{const group=document.getElementById('advanced-charts');group.style.maxWidth=group.style.maxWidth?'':'1000px';};
- document.getElementById('show-hidden-chart').onclick=()=>{const node=document.getElementById('hidden-chart-example');node.hidden=!node.hidden;};
+ const chart=()=>document.getElementById('units-network');
+ const snapshot=()=>JSON.parse(chart().dataset.uiEcharts);
+ const config=()=>JSON.parse(chart().dataset.uiEchartsConfig);
+ document.getElementById('theme-toggle').onclick=()=>{document.body.classList.toggle('light');GoHTMXUI.echarts.render();};
  document.getElementById('edit-button').onclick=()=>document.getElementById('example-dialog').showModal();
- document.getElementById('close-dialog').onclick=()=>document.getElementById('example-dialog').close();
- document.getElementById('theme-toggle').onclick=()=>{document.body.classList.toggle('light');GoHTMXUI.charts.render();};
- document.getElementById('update-chart').onclick=()=>{const c=document.getElementById('volume'),s=JSON.parse(c.dataset.uiChart);s.datasets[0].data=s.datasets[0].data.map(n=>n+1);c.dataset.uiChart=JSON.stringify(s);GoHTMXUI.charts.render();};
+ document.getElementById('update-volume').onclick=()=>{const host=document.getElementById('volume'),option=JSON.parse(host.dataset.uiEcharts);option.series[0].data[2]++;GoHTMXUI.echarts.update(host,option);};
+ document.getElementById('unit-display').onchange=event=>{const c=config(),format={unit:'data-rate',inputUnit:'MB/s',displayUnit:event.target.value,precision:2};c.formats.find(b=>b.target==='yAxis.0.axisLabel.formatter').format=format;c.tooltip[0].values[1].format=format;GoHTMXUI.echarts.update(chart(),snapshot(),c);};
+ document.getElementById('unit-hide').onclick=()=>{const parent=document.getElementById('units-network-container');parent.hidden=!parent.hidden;};
+ document.getElementById('unit-loading').onclick=()=>{const c=config();c.loading=!c.loading;GoHTMXUI.echarts.update(chart(),snapshot(),c);};
+ document.getElementById('unit-empty').onclick=()=>{const c=config();c.empty=!c.empty;GoHTMXUI.echarts.update(chart(),snapshot(),c);};
+ document.getElementById('unit-snapshot').onclick=()=>{const option=snapshot();option.series[0].data=option.series[0].data.map(([t,v])=>[t,v===null?null:v+1]);GoHTMXUI.echarts.update(chart(),option);const panel=chart().closest('.ghtui-widget');panel.querySelector('pre').textContent=JSON.stringify(option,null,2);};
+ document.getElementById('unit-resize').onclick=()=>{const parent=document.getElementById('units-network-container');parent.style.width=parent.style.width?'':'75%';};
+ document.getElementById('show-hidden').onclick=()=>{document.getElementById('initially-hidden').hidden=false;};
+ for(const name of ['select','zoom'])document.addEventListener('gohtmxui:chart-'+name,event=>{document.getElementById('chart-event-log').textContent=name+': '+JSON.stringify(event.detail);});
  </script></body></html>
 }
 
-templ FamilyExample(example chartExample,compact bool) {
+templ NativeExample(example chartExample) {
  @ui.Widget(ui.WidgetProps{}) {
   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Title,Description:example.Description})
-  @ui.WidgetChart(ui.WidgetChartProps{ID:example.ID,Label:example.Title+" synthetic chart",Spec:example.Spec,Compact:compact})
-  @ui.WidgetData("Raw chart inputs") {
-   <table><thead><tr>
-    for _,header:=range example.Headers {
-     <th>{ header }</th>
-    }
-   </tr></thead><tbody>
-    for _,row:=range example.Rows {
-     <tr>
-      for _,cell:=range row {
-       <td>{ cell }</td>
-      }
-     </tr>
-    }
-   </tbody></table>
-  }
+  @ui.WidgetChart(ui.WidgetChartProps{ID:example.ID,Label:example.Title+" synthetic native chart",Option:example.Option,Config:example.Config,Compact:example.Compact})
+  @ui.WidgetData("Raw native options and input values") { <pre>{ rawOption(example.Option) }</pre> }
  }
 }

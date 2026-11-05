@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.5.0
+go get github.com/marcuoli/go-htmx-ui@v0.6.0
 ```
 
 ## Render a widget
@@ -32,14 +32,15 @@ mux.Handle("GET /assets/ui/", http.StripPrefix("/assets/ui/",
 <link rel="stylesheet" href="/assets/ui/ui.css">
 <!-- Optional, for charts only; keep this order. -->
 <script src="/assets/ui/echarts.min.js" defer></script>
-<script src="/assets/ui/charts.js" defer></script>
+<script src="/assets/ui/echarts-format.js" defer></script>
+<script src="/assets/ui/echarts-ui.js" defer></script>
 ```
 
 Choose any asset URL prefix. The library has no router, authentication, database, CDN, font or network transport dependency. Assets include the unmodified official Apache ECharts 6.1.0 full bundle and its required third-party notices.
 
 ## Components
 
-Widgets, widget headers, metrics, exact/compact values, chart canvases, empty states, data disclosures, page headers, action groups, tabs, buttons, link buttons, labeled fields, inputs, selects, dialog shells/headers/bodies, badges and version labels.
+Widgets, widget headers, metrics, exact/compact values, native ECharts hosts, empty states, data disclosures, page headers, action groups, tabs, buttons, link buttons, labeled fields, inputs, selects, dialog shells/headers/bodies, badges and version labels.
 
 See [component and integration guide](docs/components.md) for props, slots, theme tokens, chart lifecycle, accessibility and boundaries. Tables remain in [go-htmx-table](https://github.com/marcuoli/go-htmx-table); compose them inside widgets rather than copying a table implementation.
 
@@ -70,8 +71,8 @@ go-htmx-ui/
 ```
 
 The public Go package stays at the module root. `ui.Assets()` returns the same
-asset filenames regardless of their source directory, so consumers keep their
-imports and asset URLs. Go tests remain beside their Go source files.
+asset filenames without a repository prefix; v0.6.0 intentionally changes the
+chart API and runtime filenames. See the migration guide before upgrading. Go tests remain beside their Go source files.
 
 ## Compatibility
 
@@ -95,46 +96,45 @@ For dependencies outside the checkout, set `GO_HTMX_UI_NODE_MODULES` to an
 absolute `node_modules` directory containing the pinned frontend dependencies.
 The asset builder resolves sources relative to its own script and uses the OS
 temporary directory selected by the caller (for example, `TEMP`/`TMPDIR`).
-Generated assets are always written to `web/assets/`.
+Use `--output-dir /absolute/artifact/directory` for retained outputs and optionally
+`--write-source` to promote snapshots. With no arguments the builder stages in the
+configured temporary directory and promotes checked-in assets for normal CI.
 
 MIT license. See [third-party notices](NOTICE.md).
 
-## ECharts migration
+## Native ECharts (v0.6.0)
 
-Version0.2.0 uses Apache ECharts while preserving Go widget props, the canvas host,
-`GoHTMXUI.charts.render/destroy`, and the existing core JSON chart spec. New layouts
-load `echarts.min.js` before `charts.js`; the old `chart.umd.js` URL remains a
-virtual alias to that same bundle. No `window.Chart` implementation is provided.
-Arbitrary Chart.js plugin/options APIs are outside the shared spec.
+`WidgetChartProps.Option` accepts a native ECharts object: `series`, `xAxis`,
+`yAxis`, `legend`, `grid`, `dataZoom` and upstream coordinate systems. There is no
+labels/datasets browser translation layer. `EChartsOption` is a Go map, and
+`MarshalEChartsOption` serializes it as JSON; `EChartsConfig` supplies validated
+unit/date callbacks and lifecycle state separately.
 
-The adapter supports line/bar/doughnut, mixed line/bar series, independent value
-axes and units, real timestamp axes, explicit ranges/null gaps, grouped legends,
-pre-binned histograms, currency and safe text tooltips. See the
-[declarative spec](docs/components.md#charts-and-live-updates) and synthetic
-showcase. Consumer data collection, transport, permissions and preferences remain
-outside the library. Canvas is the supported host/renderer in this release.
+```go
+option := ui.EChartsOption{
+    "xAxis": map[string]any{"type": "category", "data": []string{"A", "B", "C"}},
+    "yAxis": map[string]any{"type": "value"},
+    "series": []any{map[string]any{
+        "id": "requests", "name": "Requests", "type": "line",
+        "data": []any{0, nil, 5},
+    }},
+}
+// In templ: @ui.WidgetChart(ui.WidgetChartProps{ID:"requests", Label:"Requests", Option:option})
+```
 
-Preserve `_echarts_instance_`, `data-zr-dom-id`, canvas dimensions/styles and all
-engine-owned children during live DOM patches. The showcase exercises resize,
-hidden recovery, mode/theme changes and grouped legends. Real-engine SVG tests
-verify option translation; browser checks separately cover the Canvas lifecycle.
+The official unmodified `echarts.min.js` is the only third-party engine asset.
+First-party `echarts-format.js` contains display arithmetic; `echarts-ui.js`
+handles initialization, native snapshots, reading state, resize, themes and HTMX
+cleanup. No functions are revived from JSON. Tooltips use ECharts rich text.
 
-For retained build evidence, pass `--output-dir /absolute/artifact/directory`
-and `--write-source` to the asset builder. With no arguments it stages in the
-caller's temporary directory and deliberately promotes checked-in assets for
-normal builds/CI. The builder verifies the exact locked official npm distribution
-and copies its bytes/notices unchanged; `echarts.provenance.json` records hashes.
+This is a **breaking pre-1.0 release**: upgrade native options, the host markup,
+script includes and `GoHTMXUI.echarts` calls together. Older published versions
+remain unchanged; there is no silent old-schema fallback or compatibility bundle
+URL in v0.6.0. Consumer upgrades/deployments are separate.
 
-Monitoring charts support explicit IEC/decimal byte and throughput conversions,
-locale/timezone and translated fallbacks, and optional axis labels/point markers.
-See [the shared contract and JavaScript-only integration](docs/components.md#localized-monitoring-example-v030).
-The synthetic showcase includes130px charts with1800 samples; applications keep
-ownership of collection, transport, history and business calculations.
+- [Native API, chart families and JavaScript-only integration](docs/charts.md)
+- [Concrete v0.5-to-v0.6 migration and live DOM preservation](docs/migration-native-echarts.md)
+- [Display units, locale and time bases](docs/units.md)
 
-The [general chart support matrix](docs/charts.md) documents line/area/bar, pie/ring,
-scatter/bubble, heatmap, radar, gauge and microchart usage; zoom/pan, safe DOM
-events, loading and JS-only integration are part of the shared contract.
-
-[Metric units](docs/units.md) cover case-sensitive bits/bytes, SI/IEC prefixes,
-/s/min/h/d time bases, matching named rates and explicit custom conversion rules.
-Applications can switch display units live while raw samples remain unchanged.
+The library owns presentation and lifecycle. Applications retain collection,
+transport/authentication, history, preferences, aggregation and business logic.
