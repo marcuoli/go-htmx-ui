@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.1+20261105.22
 
 - Make the default Modal a desktop window with title/X header, an independently
   scrolling content area and a persistent footer. Supply a Close footer action
