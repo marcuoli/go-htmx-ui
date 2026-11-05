@@ -100,10 +100,37 @@ cannot encode, localized messages and lifecycle flags; it does not build geometr
 | locale / timeZone | Intl display context, default en-US / UTC; underscore locales accepted |
 | formats | Allowlisted native callback bindings below |
 | tooltip | Mixed/scalar/vector tooltip value bindings by one seriesId or seriesIndex |
+| tooltipOutside | Opt-in text popup outside the canvas for sparklines and other short charts; default false |
 | bubbleSizes | Native scatter symbolSize callback from an explicit numeric dimension |
 | events | Boolean select/zoom DOM event opt-ins |
 | empty / loading | Application-declared presentation state; no data aggregation/inference |
 | messages | empty, error, unavailable, loading plain-text overrides |
+
+### Tooltips on short charts
+
+Canvas tooltips cannot fit a multi-series popup inside a 24px or 44px sparkline.
+Set `EChartsConfig{TooltipOutside:true}` in Go, or `"tooltipOutside":true` in
+`data-ui-echarts-config`, to use a shared text-only popup outside the canvas.
+Keep the native `tooltip.trigger` and the existing `Tooltip` value bindings:
+locale, precision and IEC/SI conversions still apply to the original values.
+No application CSS, executable callbacks or HTML formatter are needed.
+
+The popup uses the chart host's theme and font, stays within the viewport and
+scrolls if its content exceeds the viewport. It uses the browser's Popover top
+layer when available, with a fixed portal in the nearest dialog or document body
+as a fallback. In older browsers, a transformed dialog may still constrain that
+fallback. Hover or focus keeps scrollable content open; Escape dismisses it.
+The application's accessible data table remains the keyboard alternative for
+chart samples. The popup adds its own `aria-describedby` reference while visible
+and preserves existing references.
+
+Native HTML rendering remains disabled. In outside mode, native tooltip string
+templates are replaced by shared plain-text formatting, including nested native
+overrides. Explicit `Tooltip` bindings provide the exact display contract; without
+them, labels and scalar/vector values use plain text (including a bound native
+`series.N.tooltip.valueFormatter`, if supplied through `Formats`). Option/theme
+updates, loading and resizing hide stale content without replacing the chart.
+Destroy/HTMX cleanup removes the owned popup, listeners, timers and ARIA reference.
 
 Format binding example:
 

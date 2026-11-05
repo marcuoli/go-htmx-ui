@@ -68,15 +68,18 @@ type EChartsMessages struct {
 // EChartsConfig contains only callbacks JSON cannot encode and shared lifecycle
 // state. Geometry, chart families and data are always native Option fields.
 type EChartsConfig struct {
-	Locale      string                 `json:"locale,omitempty"`
-	TimeZone    string                 `json:"timeZone,omitempty"`
-	Formats     []EChartsFormatBinding `json:"formats,omitempty"`
-	Tooltip     []EChartsTooltip       `json:"tooltip,omitempty"`
-	BubbleSizes []EChartsBubbleSize    `json:"bubbleSizes,omitempty"`
-	Events      EChartsEvents          `json:"events,omitzero"`
-	Messages    EChartsMessages        `json:"messages,omitzero"`
-	Empty       bool                   `json:"empty,omitempty"`
-	Loading     bool                   `json:"loading,omitempty"`
+	// TooltipOutside keeps short-chart tooltips outside the canvas. The shared
+	// runtime owns a text-only, viewport-bounded popup; native HTML stays disabled.
+	TooltipOutside bool                   `json:"tooltipOutside,omitempty"`
+	Locale         string                 `json:"locale,omitempty"`
+	TimeZone       string                 `json:"timeZone,omitempty"`
+	Formats        []EChartsFormatBinding `json:"formats,omitempty"`
+	Tooltip        []EChartsTooltip       `json:"tooltip,omitempty"`
+	BubbleSizes    []EChartsBubbleSize    `json:"bubbleSizes,omitempty"`
+	Events         EChartsEvents          `json:"events,omitzero"`
+	Messages       EChartsMessages        `json:"messages,omitzero"`
+	Empty          bool                   `json:"empty,omitempty"`
+	Loading        bool                   `json:"loading,omitempty"`
 }
 
 // MarshalEChartsOption serializes native JSON without generating JavaScript or

@@ -243,6 +243,11 @@ labels/datasets browser translation layer. `EChartsOption` is a Go map, and
 `MarshalEChartsOption` serializes it as JSON; `EChartsConfig` supplies validated
 unit/date callbacks and lifecycle state separately.
 
+For short charts, set `EChartsConfig.TooltipOutside = true` (JSON
+`tooltipOutside:true`) to keep multi-series tooltips readable outside the canvas.
+The shared text-only popup preserves tooltip value bindings and follows the
+host's theme. See the [chart contract](docs/charts.md#tooltips-on-short-charts).
+
 ```go
 option := ui.EChartsOption{
     "xAxis": map[string]any{"type": "category", "data": []string{"A", "B", "C"}},

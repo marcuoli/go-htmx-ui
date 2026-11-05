@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add opt-in `TooltipOutside` / `tooltipOutside` for complete tooltips on short
+  charts. Keep native HTML disabled; use a themed text-only popup with viewport
+  bounds, scrolling, dialog support and shared lifecycle cleanup.
+
 ## 0.10.1+20261105.22
 
 - Make the default Modal a desktop window with title/X header, an independently
