@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.2+20261105.24
 
 - Add opt-in `TooltipOutside` / `tooltipOutside` for complete tooltips on short
   charts. Keep native HTML disabled; use a themed text-only popup with viewport
