@@ -1,18 +1,31 @@
 @layer components {
- .ghtui-modal { width:min(560px,calc(100vw - 32px)); max-width:calc(100vw - 32px); max-height:calc(100dvh - 32px); font-family:var(--ghtui-font,system-ui,sans-serif); font-size:var(--ghtui-body-size,14px); line-height:1.5; }
+ .ghtui-modal { width:min(560px,calc(100vw - 32px)); max-width:calc(100vw - 32px); max-height:calc(100dvh - 32px); overflow:hidden; box-shadow:0 16px 48px rgb(0 0 0 / .32); font-family:var(--ghtui-font,system-ui,sans-serif); font-size:var(--ghtui-body-size,14px); line-height:1.5; }
+ /* Preserve native closed-dialog display; flex applies only in the open state.
+    Fixed chrome and one shrinking content area match go-acst's desktop shell. */
+ .ghtui-modal[open] { display:flex; flex-direction:column; }
  .ghtui-modal[data-ui-size="small"] { width:min(380px,calc(100vw - 32px)); }
  .ghtui-modal[data-ui-size="large"] { width:min(900px,calc(100vw - 32px)); }
- .ghtui-modal-header { position:sticky; top:0; z-index:1; display:flex; align-items:start; justify-content:space-between; gap:16px; padding:20px; background:var(--ghtui-surface,#161b22); border-bottom:1px solid var(--ghtui-border,#68758a); }
- .ghtui-modal-header h2 { margin:0; font-size:18px; line-height:1.4; }
- .ghtui-modal-header p { margin:6px 0 0; color:var(--ghtui-muted,#9aa9bd); }
- .ghtui-modal-body { padding:20px; min-width:0; overflow-wrap:anywhere; }
+ .ghtui-modal-header { display:flex; flex:none; align-items:center; justify-content:space-between; gap:16px; min-height:48px; padding:0 0 0 20px; background:var(--ghtui-raised,#21262d); border-bottom:1px solid var(--ghtui-border,#68758a); }
+ .ghtui-modal-header h2 { min-width:0; margin:0; padding:10px 0; font-size:15px; line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+ .ghtui-modal-body { flex:1 1 auto; min-height:0; padding:20px; min-width:0; overflow:auto; overflow-wrap:anywhere; }
+ .ghtui-modal-description { margin:0 0 16px; color:var(--ghtui-muted,#9aa9bd); }
  .ghtui-modal-body > :first-child { margin-top:0; }
  .ghtui-modal-body > :last-child { margin-bottom:0; }
- .ghtui-modal-footer { display:flex; flex-wrap:wrap; justify-content:end; gap:10px; padding:16px 20px; border-top:1px solid var(--ghtui-border,#68758a); }
+ /* Custom action groups may wrap at high zoom. Keep their own overflow
+    reachable instead of clipping actions outside the height-limited window. */
+ .ghtui-modal-footer { display:flex; flex:none; flex-wrap:wrap; justify-content:end; gap:10px; min-height:0; max-height:40dvh; overflow:auto; padding:12px 20px; background:var(--ghtui-raised,#21262d); border-top:1px solid var(--ghtui-border,#68758a); }
+ .ghtui-modal-body:focus-visible,.ghtui-modal-footer:focus-visible { outline:2px solid var(--ghtui-accent,#79c0ff); outline-offset:-4px; }
+ @media(max-height:320px) {
+  .ghtui-modal-body { padding:8px 16px; }
+  .ghtui-modal-footer { padding:8px 16px; }
+ }
  .ghtui-dismiss { display:inline-flex; align-items:center; justify-content:center; flex:none; width:36px; height:36px; padding:0; border:1px solid transparent; border-radius:6px; background:transparent; color:inherit; font:inherit; font-size:24px; line-height:1; cursor:pointer; }
  .ghtui-dismiss:hover { background:var(--ghtui-raised,#21262d); }
  .ghtui-dismiss:disabled { opacity:.6; cursor:not-allowed; }
  .ghtui-dismiss:focus-visible { outline:2px solid var(--ghtui-accent,#79c0ff); outline-offset:2px; }
+ .ghtui-modal-close { align-self:stretch; width:48px; height:auto; min-height:48px; border:0; border-radius:0; }
+ .ghtui-modal-close:hover { color:var(--ghtui-on-danger,#fff); background:var(--ghtui-danger,#b42335); }
+ .ghtui-modal-close:focus-visible { outline-color:currentColor; outline-offset:-4px; }
  .ghtui-message { --ghtui-message-color:var(--ghtui-accent,#79c0ff); box-sizing:border-box; display:flex; align-items:start; gap:12px; padding:16px; min-width:0; border:1px solid var(--ghtui-border,#68758a); border-inline-start:4px solid var(--ghtui-message-color); border-radius:var(--ghtui-radius,8px); background:var(--ghtui-surface,#161b22); color:var(--ghtui-text,#f0f6fc); font-family:var(--ghtui-font,system-ui,sans-serif); font-size:var(--ghtui-body-size,14px); line-height:1.5; overflow-wrap:anywhere; }
  .ghtui-message[data-ui-tone="success"] { --ghtui-message-color:var(--ghtui-success,#56d364); }
  .ghtui-message[data-ui-tone="warning"] { --ghtui-message-color:var(--ghtui-warning,#f2cc60); }

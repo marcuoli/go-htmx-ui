@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.10.0+20261105.20
+go get github.com/marcuoli/go-htmx-ui@v0.10.1+20261105.22
 ```
 
 ## Render a widget
@@ -97,7 +97,7 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.10.0+20261105.20`, with immutable tag `v0.10.0+20261105.20`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
+Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.10.1+20261105.22`, with immutable tag `v0.10.1+20261105.22`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
 
 ## Repository layout
 
@@ -202,10 +202,10 @@ Use go-versioning's official CLI rather than a separate bare-core allocator:
 
 ```sh
 go run github.com/marcuoli/go-versioning/cmd/go-versioning inspect --repo . --json
-go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 20 --bump minor --json
+go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 22 --bump patch --json
 ```
 
-`next` is read-only. This release selects a minor bump from the previous
+`next` is read-only. This release selects a patch bump from the previous
 full-identity tag; ordinary later allocations inherit the previous core unless
 an explicit bump is selected. After verifying the merged commit and plan, an authorized
 release uses the same arguments with `tag --push --remote origin`. The allocator
