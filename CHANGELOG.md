@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.3+20261105.26
 
 - Adopt official go-versioning `0.3.0+20261105.9`, pin its CLI tool and use shared
   read-only build metadata in the showcase. Document the source-only library's
