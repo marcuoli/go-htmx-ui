@@ -31,15 +31,15 @@ type WidgetMetricProps struct {
 	Heading     bool
 }
 
-// Spec is the feature's serialized chart configuration. It stays in an escaped
-// attribute so the shared live renderer can reuse the existing canvas by ID. Specs use the documented shared core, not arbitrary
-// renderer-specific options.
+// WidgetChartProps accepts native ECharts options and safe callback/lifecycle
+// metadata. Option may be EChartsOption, a JSON-marshallable struct or RawMessage.
+// v0.6.0 intentionally replaces Spec; older pinned releases retain that API.
 type WidgetChartProps struct {
-	ID, Spec, Label            string
-	EmptyMessage, NoScriptNote string
-	// ErrorMessage also applies when malformed JSON cannot supply messages.error.
-	ErrorMessage string
-	Compact      bool
+	ID, Label                                string
+	Option                                   any
+	Config                                   EChartsConfig
+	EmptyMessage, ErrorMessage, NoScriptNote string
+	Compact                                  bool
 }
 
 func widgetClassAttributes(class string) templ.Attributes {

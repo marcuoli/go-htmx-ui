@@ -11,7 +11,7 @@
 .ghtui-metric-value { @apply m-0 text-[29px] font-semibold tracking-[-.03em] leading-[1.4] tabular-nums; }
 .ghtui-metric-note { @apply m-0 text-[10px] leading-[1.5]; color:var(--ghtui-muted,#8b949e); }
 .ghtui-chart-frame { @apply relative min-w-0; height:var(--ghtui-chart-height,238px); }
-.ghtui-chart-frame canvas { display:block; }
+.ghtui-chart-frame [data-ui-echarts] { display:block; width:100%; height:100%; }
 .ghtui-chart-compact { height:24px; width:24px; }
 .ghtui-chart-empty { @apply hidden m-0; color:var(--ghtui-muted,#8b949e); font-size:12px; text-align:center; padding:48px 0; }
 .ghtui-chart-frame.is-empty { display:none; }

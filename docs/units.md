@@ -1,11 +1,11 @@
 # Metric units — v0.5.0+
 
-Pass formatting fields on a chart value axis, numeric `domain`, or dataset. The
-same compiled converter formats axis labels, tooltips and special-chart values.
-Raw samples and bounds remain in **input units**. A user selector can change the
-formatting declaration and call `GoHTMXUI.charts.render(canvas)` without replacing
-the canvas or resetting valid legend/zoom state. Go/templ and JavaScript-only
-consumers use identical JSON; no Go runtime is needed by the latter.
+Supply a value format in `EChartsConfig.formats` at an allowlisted native callback
+path, or in a tooltip value binding. Both use the same compiled arithmetic. Native
+samples and bounds stay in **input units**; update metadata and call
+`GoHTMXUI.echarts.update(host, nativeOption, config)` to change display units.
+Go/templ and JavaScript-only consumers share this native option/config contract.
+See [native charts](charts.md) and [migration](migration-native-echarts.md).
 
 ## Standard data quantities and rates
 
@@ -124,24 +124,26 @@ text rather than HTML. Numbers use JavaScript Number precision; a converted
 nonfinite result displays the chart's localized unavailable message. Null remains
 missing, and real zero remains a real value (an explicit custom offset can map it).
 
-## Inheritance and live use
+## Explicit native bindings and live use
 
-All series sharing a numeric axis must share input/output/conversion semantics.
-These may be inferred from unambiguous dataset declarations. Equal numeric custom
-rules compare semantically: `{factor:2}` equals `{offset:0,factor:2}`. Conflicting
-rules require separate axes. Dataset precision can deliberately differ from its
-axis; special-family tooltips/cell labels/gauge details honor dataset precision,
-while axis/color-scale labels use axis precision. Invalid inherited settings
-are rejected consistently across chart families.
+v0.6.0 has no axis/dataset chart-schema inference. Bind the same format explicitly
+at every native coordinate that needs it; axis and series precision can differ.
+The callback target must reference an existing native axis, series or visualMap.
 
 ```js
-const spec=JSON.parse(canvas.dataset.uiChart);
-spec.axes[0]={unit:'data-rate',inputUnit:'MB/s',displayUnit:'Mb/s',precision:2};
-canvas.dataset.uiChart=JSON.stringify(spec);
-GoHTMXUI.charts.render(canvas);
+const format = {unit:'data-rate',inputUnit:'MB/s',displayUnit:'Mb/s',precision:2};
+const config = {
+  formats:[{target:'yAxis.0.axisLabel.formatter',format}],
+  tooltip:[{seriesId:'network',values:[{dimension:1,format}]}]
+};
+GoHTMXUI.echarts.update(host, nativeOption, config);
 ```
 
-Keep a useful raw-input disclosure and identify its original units. Unit changes
-are not data collection, aggregation, pricing, history storage or transport.
-See the synthetic metric-unit selector and the [general support matrix](charts.md)
-for chart-family, lifecycle and Go/templ/JavaScript-only integration details.
+For a gauge use `series.0.detail.formatter`; for heatmap labels select dimension 2
+at `series.0.label.formatter`; visualMap can have its own formatter. Numeric domain
+axes use the same xAxis/yAxis binding paths. Time formatting uses `{unit:'time'}`
+with config locale/timeZone and timezone-aware raw instants. Already-localized
+category strings need no time formatter.
+
+Keep a raw-input disclosure labeled with its original units. Unit changes are
+not collection, aggregation, history storage, pricing or transport.

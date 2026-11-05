@@ -1,177 +1,203 @@
-# General chart contract — v0.4.0+
+# Native ECharts contract — v0.6.0
 
-Use `WidgetChart(WidgetChartProps{ID,Spec,Label})` with the same JSON spec, or the
-JavaScript-only canvas markup in [components](components.md#javascript-only-consumers).
-Serve `ui.css`, `echarts.min.js`, then `charts.js` locally. Go is optional for
-frontend integration. Version0.4.0 bundles the official unmodified ECharts6.1.0
-**full** distribution so every exposed series/component is present. This is a
-validated shared API, not the entire native ECharts option/callback surface.
+The public chart option is an **ordinary native ECharts option object**. Geometry,
+data, axes, stacks, names, legends, zoom controls, grids, coordinates and chart
+families come directly from the [upstream option contract](https://echarts.apache.org/en/option.html).
+The runtime does not translate labels/datasets or choose a chart type.
 
-## Chart-type and usage matrix
+## Go and templ
 
-| Family | Public spec | Axes / units | Missing inputs |
-| --- | --- | --- | --- |
-| Line / smooth line | `type:"line"`; dataset `tension:0..1` | Category/value/time domain; independent value axes | Null breaks a line |
-| Area / stacked area | Line plus dataset `fill:true`; `stacked:true` or dataset `stack` | Same Cartesian axes | Null remains a gap |
-| Vertical bars | `type:"bar"` | Category/value/time; independent value axes | Null remains missing;0 remains0 |
-| Horizontal bars | `type:"bar",horizontal:true` | Category scalars/pairs or time pairs; independent value axes | Numeric/value domain bars unsupported (rejected); zero/null preserved |
-| Grouped / stacked bars | Multiple datasets; optional `stacked:true`/`stack` | Same Cartesian axes | No aggregation inferred |
-| Histogram | Bar with application-supplied labels/counts and optional `bounds` | Supplied bucket labels and count/value axis | No bins calculated by renderer |
-| Pie / doughnut | `type:"pie"` / `"doughnut"`; category labels + scalar datasets | Shared scalar format; item tooltip | Null retained as missing; no equal slices invented for zero total |
-| Scatter | `type:"scatter"`; pairs `[x,y]` / `{x,y}` | Default numeric value domain; category/time also explicit | Null y omits a point |
-| Bubble | `type:"bubble"`; `[x,y,size]` / `{x,y,size}` | Same scatter axes; size is declared pixel diameter2–128 | Null y omits a point; no weight/area scaling invented |
-| Heatmap | `type:"heatmap"`; `labels`, `rows`, one dataset of `[columnIndex,rowIndex,value]` | Category grid; one shared value format; optional `colorRange` | Null cell omitted, distinct from zero; duplicate/out-of-grid cells rejected |
-| Radar | `type:"radar"`; `indicators:[{name,max,min?}]`; one numeric vector per dataset | Three or more explicit finite ranges, common comparable unit | Complete finite vectors required; null/incomplete vectors rejected |
-| Gauge | `type:"gauge"`; one dataset with one scalar | `axes:[{min,max,unit,...}]`; defaults range0–100, count unit | Null displays localized unavailable text, never a zero reading |
-| Microcharts / sparklines | Line/area/bar + `showAxisLabels:false`, `showPoints:false`, caller CSS height | Same Cartesian contract | Same zero/null semantics |
-| Compact ring | Doughnut + `compact:true`, `WidgetChartProps.Compact:true` | Existing24px ring contract | Existing behavior preserved |
-
-For scatter/bubble on category domains, x is a declared category label or its
-integer index. Numeric category coordinates are indices, even when displayed labels are numbers. Public Cartesian pairs keep [domain,value] order when axes swap. Numeric/value and time points are sorted stably; categorical
-line/bar order is application supplied. A numeric domain uses `domain.unit`,
-`precision`, byte-conversion fields and optional `label` for x-axis/tooltip
-formatting. Existing `axes` describe y (or the value axes for horizontal charts).
-Horizontal numeric/value domains work for line/scatter/bubble; bar datasets in that combination are rejected because the native bar layout chooses its base axis differently. Use category/time horizontal bars or vertical value bars.
-Mix line/bar/scatter/bubble datasets with `type` and `axis` bindings; pie and
-special-coordinate families cannot be mixed with Cartesian series.
-
-Radar and gauge accept one shared format axis; dataset `axis`, when supplied,
-must name it. Radar needs complete comparable vectors; compose multiple widgets
-for unrelated units. Gauge uses one value per widget; compose widgets for
-multiple gauges. Caller ranges can clip plotted extents while details retain raw
-values. Heatmap `colorRange:{min,max,palette?}` controls a display color extent;
-without bounds it uses observed finite values and safely expands a constant
-extent. This never creates cells, buckets or business statistics. `cellLabels`
-(boolean, defaultfalse) adds formatted values.
-
-## Reusable capabilities and boundaries
-
-All families use stable canvas IDs, shared theme tokens, safe rich-text tooltips,
-local assets, frame ResizeObserver updates, hidden-to-visible initialization,
-static snapshots and application-supplied live updates. The same render/destroy
-API and HTMX cleanup apply. Options replace obsolete series/components; explicit
-legend selections survive new snapshots. Accessible `Label`/`role="img"` and a
-useful `WidgetData` disclosure remain application responsibilities.
-
-- Units/precision: existing count/rate/QPS/ms/us/USD/percent plus explicit byte
-  and throughput conversions. Prefer IEC where appropriate, but declare actual
-  input semantics. `percent` means already-scaled percentages:67 displays67%,
-  not6700%. No implicit ratio conversion. See [formatting](components.md).
-- Locale/timezone: `locale:"pt_BR"` normalizes to `pt-BR`; en-US/pt-BR/es-ES
-  examples and Intl timezone names supported. Numeric tooltip headers include x
-  and its unit; time headers use the chosen timezone, not engine-local labels.
-- Legend: existing `legend:{show}` and grouped Cartesian series; radar names
-  select vectors, pie names select categories. Heatmaps use a value color key;
-  gauges have no categorical legend.
-- Tooltip: `tooltip:false` or `{show:true,trigger:"axis"|"item"}`. Scatter/bubble
-  default to item; line/bar to axis. Pie, heatmap, radar and gauge require item.
-  Unknown tooltip keys (including native formatter callbacks) are rejected.
-- Zoom/pan: Cartesian-only `zoom:true` or
-  `{enabled:true,slider:true,start:0,end:100}`. The inside control handles
-  wheel/pinch/pan; the optional bottom slider controls the domain, including
-  horizontal-bar category axes. Percent bounds require0<=start<end<=100.
-  The current user percentage window survives snapshots while the declared zoom
-  configuration is unchanged; changing it resets the selection. With a slider,
-  the legend uses one scrollable row to reserve separate plot/control space.
-  Zoom does not delete, persist or aggregate application history.
-- Events: `events:{select:true,zoom:true}` opts into bubbling DOM events
-  `gohtmxui:chart-select` and `gohtmxui:chart-zoom`. Selection details contain
-  `chartId`, series/data indexes, seriesId/name and primitive/raw coordinate
-  values; zoom details contain start/end percentages. Native event objects,
-  callbacks and arbitrary engine payloads are not forwarded. Application code
-  attaches normal JavaScript listeners; none are serialized into chart JSON.
-- Loading: `loading:true` with `messages.loading` shows safe text while retaining
-  an existing instance; a valid next snapshot renders it in place. Initial
-  loading waits to initialize. `empty:true` and invalid/error states release the
-  instance as before. Messages empty/error/unavailable/loading are plain strings.
-  `WidgetChartProps.ErrorMessage` also covers malformed JSON.
-- Small charts: use caller CSS frame dimensions and optional label/marker flags.
-  No mobile layout, collection cadence, history storage or chart transport is
-  imposed. Line/area/bar sparklines and compact rings share the same renderer.
-
-### Scatter/bubble with independent units
-
-```json
-{
-  "type":"bubble", "locale":"en-US",
-  "domain":{"type":"value","unit":"ms","label":"Latency"},
-  "axes":[{"id":"load","unit":"percent","min":0,"max":100}],
-  "zoom":{"enabled":true,"slider":true}, "events":{"select":true,"zoom":true},
-  "datasets":[{"label":"Load","axis":"load","data":[[2,20,8],[12,60,24],[20,null,40]]}]
+```go
+option := ui.EChartsOption{
+    "tooltip": map[string]any{"trigger": "axis"},
+    "xAxis": map[string]any{"type":"category", "data":[]string{"A","B","C"}},
+    "yAxis": map[string]any{"type":"value"},
+    "series": []any{map[string]any{
+        "id":"network", "name":"Network", "type":"line",
+        "data":[]any{0, nil, 12.5},
+    }},
+}
+rate := ui.EChartsValueFormat{Unit:"data-rate", InputUnit:"MB/s", DisplayUnit:"MiB/h"}
+config := ui.EChartsConfig{
+    Locale:"pt_BR", TimeZone:"UTC",
+    Formats: []ui.EChartsFormatBinding{
+        {Target:"yAxis.0.axisLabel.formatter", Format:rate},
+    },
+    Tooltip: []ui.EChartsTooltip{
+        {SeriesID:"network", Values:[]ui.EChartsTooltipValue{{Format:rate}}},
+    },
+    Events: ui.EChartsEvents{Select:true, Zoom:true},
 }
 ```
 
-### Heatmap and gauge
-
-```json
-{"type":"heatmap","labels":["Mon","Tue"],"rows":["AM","PM"],"axes":[{"unit":"percent"}],"colorRange":{"min":0,"max":100},"datasets":[{"data":[[0,0,0],[1,0,null],[1,1,80]]}]}
+```templ
+@ui.WidgetChart(ui.WidgetChartProps{
+    ID:"network", Label:"Reported throughput", Option:option, Config:config,
+    NoScriptNote:"Open the raw input disclosure below.",
+})
 ```
 
-```json
-{"type":"gauge","axes":[{"min":0,"max":100,"unit":"percent"}],"datasets":[{"label":"Capacity","data":[67]}]}
-```
+`Option` also accepts JSON-marshallable structs or `json.RawMessage` containing a
+native object. `MarshalEChartsOption(value)` returns JSON and an error. The
+component propagates encoding/root-shape errors. Text/JSON is attribute-escaped,
+not interpolated into executable JavaScript. Native option fields retain their
+upstream names; this library does not maintain a complete typed ECharts DSL.
 
-### Go/templ and JavaScript-only updates
+## JavaScript-only / Django
 
-```go
-// go get github.com/marcuoli/go-htmx-ui@v0.4.0
-// Marshal application-owned data, then pass the JSON string as Spec.
-encoded, err := json.Marshal(spec)
-// Handle err before rendering the component.
-// @ui.WidgetChart(ui.WidgetChartProps{ID:"load",Label:"Load history",Spec:string(encoded),ErrorMessage:"Cannot display chart"})
-// Compose WidgetData with the underlying permitted values.
-```
+Serve the exact versioned module assets and notices from the application's static
+pipeline. No Go runtime is needed. Load each script once, in this order:
 
 ```html
-<link rel="stylesheet" href="/shared/ui.css">
-<script src="/shared/echarts.min.js" defer></script>
-<script src="/shared/charts.js" defer></script>
-<div class="ghtui-chart-frame">
-  <canvas id="load" role="img" aria-label="Load scatter"
-    data-ui-chart='{"type":"scatter","events":{"select":true},"datasets":[{"data":[[0,0],[12.5,80]]}]}'></canvas>
+<link rel="stylesheet" href="/static/ui/ui.css">
+<script src="/static/ui/echarts.min.js" defer></script>
+<script src="/static/ui/echarts-format.js" defer></script>
+<script src="/static/ui/echarts-ui.js" defer></script>
+<div class="ghtui-chart-frame" style="--ghtui-chart-height:130px">
+  <div id="network" role="img" aria-label="Reported throughput"
+       data-ui-echarts='{"xAxis":{"type":"category","data":["08:00","08:02","08:04"]},"yAxis":{"type":"value"},"series":[{"id":"network","name":"Network","type":"line","data":[0,null,2.5]}]}'
+       data-ui-echarts-config='{"locale":"pt_BR","formats":[{"target":"yAxis.0.axisLabel.formatter","format":{"unit":"data-rate","inputUnit":"MiB/s","displayUnit":"MiB/s"}}]}'></div>
 </div>
-<p class="ghtui-chart-empty" data-ui-empty-message="No samples" data-ui-error-message="Cannot display chart">No samples</p>
+<p class="ghtui-chart-empty" data-ui-empty-message="No samples"
+   data-ui-error-message="Cannot display chart">No samples</p>
+<details class="ghtui-data"><summary>Raw inputs</summary>
+  <p>08:00: 0 MiB/s; 08:02: missing; 08:04: 2.5 MiB/s.</p>
+</details>
 ```
 
-For Django or another server template, HTML-escape the JSON attribute using its
-normal escaping; do not mark application JSON as safe HTML. Add a useful data
-disclosure table. Obtain exact assets/notices/provenance from v0.4.0's release
-archive (`web/assets`), serve them locally, and apply the same markup contract.
-No Go service/runtime is needed in the consumer.
+HTML-escape both JSON attributes using the server template engine. In Django,
+serialize server objects to JSON and use ordinary autoescaped attributes; never
+mark untrusted JSON safe. Labels already formatted as local timestamps remain
+native **category strings**. Do not parse them into instants or convert already
+converted MiB/s values again.
 
 ```js
-const canvas=document.getElementById('load');
-canvas.addEventListener('gohtmxui:chart-select',event=>{
-  document.getElementById('selected-value').textContent=JSON.stringify(event.detail);
-});
-canvas.dataset.uiChart=JSON.stringify(nextSnapshot);
-GoHTMXUI.charts.render(canvas); // Includes the canvas root; reuses the instance.
-GoHTMXUI.charts.destroy(container); // Before non-HTMX removal.
+const host = document.getElementById('network');
+const option = JSON.parse(host.dataset.uiEcharts);
+const config = JSON.parse(host.dataset.uiEchartsConfig || '{}');
+option.series[0].data = [1, null, 3.75]; // native data, still MiB/s
+GoHTMXUI.echarts.update(host, option, config);
+// Or update escaped DOM attributes, then:
+GoHTMXUI.echarts.render(host); // default document; also accepts a subtree
+// Before removing a subtree outside HTMX:
+GoHTMXUI.echarts.destroy(container); // omitted root destroys all tracked charts
 ```
 
-External DOM patchers preserve stable hosts, width/height/style,
-`_echarts_instance_`, `data-zr-dom-id` and engine-owned descendants. Static and
-realtime consumers use the same API. Applications own auth/SSE/reconnection,
-metric collection, retained history, histogram bins, summaries and business
-calculations.
+`update` accepts JSON data only and throws on functions, undefined, nonfinite
+numbers, prototype keys or excessive nesting. DOM parsing/render failures show a
+text-only error fallback and dispose partial instances. Native option JSON is
+application-defined configuration: keep permissions and allowed option sources
+in the application. Functions are never evaluated or revived from strings.
+Tooltips are forced to `richText`, including native string templates.
 
-## Explicit remaining coverage
+## Safe callback metadata
 
-The official full distribution contains broader analytical/hierarchical/flow
-series, but the public typed adapter does **not** currently expose boxplot,
-candlestick, treemap, sunburst, funnel, Sankey or graph/network. These need
-separate typed schemas, missing-data rules, interactions and useful data
-alternatives; they are follow-up coverage, not raw option pass-through. Likewise,
-maps/geo, custom renderers, engine plugins, HTML tooltip rendering, gradients or
-image/pattern objects and serialized callbacks are outside this contract.
+`EChartsConfig` is separate from the native option. It contains callbacks JSON
+cannot encode, localized messages and lifecycle flags; it does not build geometry.
 
-Analytical follow-up: [issue #7](https://github.com/marcuoli/go-htmx-ui/issues/7).
-Until an explicit adapter is released, unsupported types fail safely rather than
-silently claiming support. The support matrix lists the implemented common
-families; it makes no claim to cover every native ECharts feature.
+| Field | Purpose |
+| --- | --- |
+| locale / timeZone | Intl display context, default en-US / UTC; underscore locales accepted |
+| formats | Allowlisted native callback bindings below |
+| tooltip | Mixed/scalar/vector tooltip value bindings by one seriesId or seriesIndex |
+| bubbleSizes | Native scatter symbolSize callback from an explicit numeric dimension |
+| events | Boolean select/zoom DOM event opt-ins |
+| empty / loading | Application-declared presentation state; no data aggregation/inference |
+| messages | empty, error, unavailable, loading plain-text overrides |
 
-## Metric units (v0.5.0+)
+Format binding example:
 
-The [metric-unit contract](units.md) adds generic data/data-rate, bits/bytes,
-SI/IEC prefixes, second/minute/hour/day time bases and custom labels/rules.
-All families share the converter; raw samples and bounds are never rewritten.
+```json
+{"target":"yAxis.0.axisLabel.formatter","format":{"unit":"data-rate","inputUnit":"MB/s","displayUnit":"MiB/h","precision":2},"compact":false}
+```
+
+Allowed targets are `xAxis.N.axisLabel.formatter`, `yAxis.N.axisLabel.formatter`,
+`radiusAxis.N.axisLabel.formatter`, `angleAxis.N.axisLabel.formatter`,
+`series.N.label.formatter`, `series.N.detail.formatter`,
+`series.N.tooltip.valueFormatter`, and `visualMap.N.formatter`. N is a zero-based
+index, including when upstream allows a single object. The referenced object must
+exist. Duplicate targets, unknown fields and arbitrary function/property paths
+reject. Bindings currently target the root native option; nested baseOption/media/timeline
+callback paths are not exposed. Those native JSON structures still pass through
+and their tooltip overrides are forced to richText. `dimension` optionally selects a nonnegative vector coordinate for a
+series label; omit it for scalar data. `compact` affects compact count labels.
+
+`format` supports count/rate/qps/ms/us/usd/percent/bytes/bytes/s/bits/bits/s/data/
+data-rate/custom and **time**. See [unit conversion](units.md). Time accepts only
+its unit declaration; locale/timeZone determine date display. Native time data
+uses epoch milliseconds or ISO instants with a timezone; localized category text
+uses no time binding. Formatting never changes native samples, ranges or geometry.
+
+Mixed tooltip metadata is explicit rather than inferred from another chart DSL:
+
+```json
+{
+  "tooltip":[{
+    "seriesId":"load",
+    "values":[
+      {"dimension":0,"label":"Latency","format":{"unit":"ms"}},
+      {"dimension":1,"label":"Load","format":{"unit":"percent"}}
+    ]
+  }]
+}
+```
+
+This installs a trusted rich-text formatter; native `tooltip.trigger` and
+`axisPointer` still control interaction. Each value's precision is independent
+from axis precision. Use stable native series IDs. Without global tooltip
+metadata, native templates/formatting apply; a per-series valueFormatter binding
+is also available. `bubbleSizes:[{seriesId:"load",dimension:2,min:2,max:128}]`
+uses the third scatter coordinate as pixel diameter, validating explicit data
+and bounds rather than inventing weights. Native datasets/encode are supported;
+bubble callback metadata currently requires explicit `series.data`.
+
+## Lifecycle and reading state
+
+- One ECharts instance per stable host. Equal snapshots skip setOption; new
+  snapshots use native `notMerge:true` to remove stale axes/series.
+- Compatible native legend names/IDs and zoom IDs/bindings retain the reader's
+  selection/range across data, formatting and theme updates. Changed explicit
+  initial selection/ranges reset it. Mixed value/percentage zoom bounds keep
+  their individual native rangeMode. Removing a control removes its state.
+  Shared reading-state retention targets root controls; nested native timeline/
+  media controls retain upstream behavior rather than a separate state adapter.
+- Native grouping uses common series names; pie/radar datum names are preserved.
+- ResizeObserver sizes from the caller-owned frame, including initial hidden
+  hosts and updates while hidden. A window resize fallback is installed.
+- Initial loading waits without creating an engine instance. Loading with an
+  existing instance retains its last snapshot, suppresses selection events and
+  shows an overlay. Clearing loading applies the latest options. Loading/empty states may omit pending option fields while retaining a stable
+  formatter config. Explicit empty
+  disposes the chart and shows the fallback; a later valid snapshot recovers.
+- Set CSS `--ghtui-*` theme tokens and call render, or dispatch
+  `document.dispatchEvent(new Event('gohtmxui:theme'))`. Default styles update on
+  the same instance; explicit native option colors remain authoritative.
+- HTMX afterSwap renders the affected subtree. beforeCleanupElement disposes it.
+  Disconnected hosts and partial init/setOption failures are also cleaned up.
+- Preserve host identity, `_echarts_instance_`, engine-owned children and canvas
+  attributes/styles during custom SSE DOM patches. See the migration guide.
+
+Opt-in events bubble from the host: `gohtmxui:chart-select` contains chartId,
+seriesId/seriesIndex, dataIndex, name and a primitive/flat primitive-array value.
+`gohtmxui:chart-zoom` contains chartId, start and end. Callbacks, DOM nodes and
+arbitrary engine internals are not exposed. Applications own event meaning.
+
+## Validated families and boundaries
+
+Synthetic native options and actual-engine tests cover line/area/stacked area,
+bar/mixed line-bar, horizontal ranking, independent axes, histogram bins,
+percentile categories, pie/ring, scatter/bubble, heatmap, radar, gauge and missing
+gauge, micro line/area/bar/ring, time histories and localized categories. Numeric
+domains, dataset/encode, zoom/legend/theme/resize and 1800-point snapshots are
+also exercised. Examples live in `examples/showcase/native-charts.json` and the
+Go map in `native.go`.
+
+Missing line values remain null; explicit zero stays zero. For native gauges use
+empty data plus config.empty for missing readings; never send a missing gauge as
+zero. Native heatmaps omit missing cells. Native ECharts owns accepted geometry
+and option semantics. Other upstream JSON options can pass through, but that is
+not a claim that every native combination or custom callback is covered here.
+
+The library does not collect, store, resample, aggregate, price or transport data.
+Accessibility includes host labels, fallback messages and caller-provided raw
+input disclosure. Preserve upstream engine/license/provenance files unchanged.

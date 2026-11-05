@@ -54,7 +54,7 @@ func TestVersionLabelUsesVersioningValidation(t *testing.T) {
 }
 
 func TestEmbeddedAssetsAndLicenses(t *testing.T) {
-	for _, name := range []string{"ui.css", "charts.js", "chart.umd.js", "echarts.min.js", "echarts.LICENSE.txt", "echarts.NOTICE.txt", "echarts-d3.LICENSE.txt", "zrender.LICENSE.txt", "tslib.LICENSE.txt", "tslib.CopyrightNotice.txt", "echarts.provenance.json"} {
+	for _, name := range []string{"ui.css", "echarts-ui.js", "echarts-format.js", "echarts.min.js", "echarts.LICENSE.txt", "echarts.NOTICE.txt", "echarts-d3.LICENSE.txt", "zrender.LICENSE.txt", "tslib.LICENSE.txt", "tslib.CopyrightNotice.txt", "echarts.provenance.json"} {
 		data, err := fs.ReadFile(Assets(), name)
 		if err != nil || len(data) == 0 {
 			t.Errorf("asset %s: %v", name, err)
@@ -75,15 +75,9 @@ func TestStylesDoNotReadHostTailwindTokens(t *testing.T) {
 }
 
 func TestLegacyChartBundleURLServesECharts(t *testing.T) {
-	legacy, e := fs.ReadFile(Assets(), "chart.umd.js")
-	if e != nil {
-		t.Fatal(e)
-	}
-	current, e := fs.ReadFile(Assets(), "echarts.min.js")
-	if e != nil {
-		t.Fatal(e)
-	}
-	if string(legacy) != string(current) || !strings.Contains(string(current), "Apache") {
-		t.Fatal("legacy URL does not serve the verified ECharts asset")
+	for _, name := range []string{"charts.js", "chart.umd.js"} {
+		if _, err := fs.ReadFile(Assets(), name); err == nil {
+			t.Fatalf("retired asset %s still served", name)
+		}
 	}
 }

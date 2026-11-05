@@ -3,8 +3,10 @@ package ui
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"html"
 	"io"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -74,31 +76,47 @@ func TestWidgetMetricSupportsExactLabelsAndCustomBody(t *testing.T) {
 	}
 }
 
-func TestWidgetChartKeepsLosslessEscapedSpecAndAccessibleFallbacks(t *testing.T) {
-	spec := `{"type":"bar","labels":["\"><script>untrusted</script>"],"empty":false}`
-	body := renderWidgetContract(t, WidgetChart(WidgetChartProps{
-		ID: "stable-chart", Spec: spec, Label: `Usage "quoted"`, Compact: true,
-		EmptyMessage: "No retained history.", NoScriptNote: "Open the data table.",
-	}), "")
-	match := regexp.MustCompile(`data-ui-chart="([^"]*)"`).FindStringSubmatch(body)
-	if len(match) != 2 || html.UnescapeString(match[1]) != spec {
-		t.Fatal("chart JSON did not survive attribute escaping", body)
+func TestNativeChartEscapesOptionsAndConfig(t *testing.T) {
+	option := EChartsOption{"series": []any{map[string]any{"type": "pie", "data": []any{map[string]any{"name": `"><script>untrusted</script>`, "value": 0}}}}}
+	body := renderWidgetContract(t, WidgetChart(WidgetChartProps{ID: "stable-chart", Option: option, Config: EChartsConfig{Locale: "pt_BR", Messages: EChartsMessages{Unavailable: "<missing>"}}, Label: `Usage "quoted"`, Compact: true, EmptyMessage: "No retained history.", NoScriptNote: "Open the data table."}), "")
+	match := regexp.MustCompile(`data-ui-echarts="([^"]*)"`).FindStringSubmatch(body)
+	var actual, want any
+	if len(match) != 2 {
+		t.Fatal(body)
 	}
-	for _, want := range []string{`id="stable-chart"`, `ghtui-chart-compact`, `role="img"`, `aria-label="Usage &#34;quoted&#34;"`, "No retained history.", "<noscript>", "Open the data table."} {
-		if !strings.Contains(body, want) {
-			t.Errorf("chart missing %q: %s", want, body)
+	if err := json.Unmarshal([]byte(html.UnescapeString(match[1])), &actual); err != nil {
+		t.Fatal(err)
+	}
+	encoded, _ := json.Marshal(option)
+	_ = json.Unmarshal(encoded, &want)
+	if !reflect.DeepEqual(actual, want) {
+		t.Fatal("Native options changed", body)
+	}
+	for _, value := range []string{`data-ui-echarts-config=`, `id="stable-chart"`, `ghtui-chart-compact`, `role="img"`, `aria-label="Usage &#34;quoted&#34;"`, "No retained history.", "<noscript>", "Open the data table."} {
+		if !strings.Contains(body, value) {
+			t.Errorf("Missing %q", value)
 		}
 	}
-	if strings.Count(body, "<canvas") != 1 || strings.Contains(body, "<script>") {
-		t.Fatal("chart spec became executable markup", body)
+	if strings.Contains(body, "<script>") || strings.Contains(body, "data-ui-chart=") || strings.Contains(body, "<canvas") {
+		t.Fatal("Unsafe or retired host", body)
 	}
 }
-
+func TestNativeOptionsRejectLegacyAndExecutableValues(t *testing.T) {
+	for _, value := range []any{nil, []int{1}, "not an object", EChartsOption{"datasets": []int{1}}, EChartsOption{"x": func() {}}} {
+		if _, err := MarshalEChartsOption(value); err == nil {
+			t.Errorf("Accepted invalid option %T", value)
+		}
+		var output bytes.Buffer
+		if err := WidgetChart(WidgetChartProps{Option: value}).Render(context.Background(), &output); err == nil {
+			t.Errorf("Widget accepted invalid option %T", value)
+		}
+	}
+}
 func TestChartLocalizedFallbackEscaping(t *testing.T) {
-	body := renderWidgetContract(t, WidgetChart(WidgetChartProps{ID: "localized", Label: "Synthetic", Spec: "bad json", EmptyMessage: "Sem dados", ErrorMessage: "Erro <unsafe>"}), "")
+	body := renderWidgetContract(t, WidgetChart(WidgetChartProps{ID: "localized", Label: "Synthetic", Option: EChartsOption{}, EmptyMessage: "Sem dados", ErrorMessage: "Erro <unsafe>"}), "")
 	for _, want := range []string{`data-ui-error-message="Erro &lt;unsafe&gt;"`, `data-ui-empty-message="Sem dados"`, `role="img"`, `aria-label="Synthetic"`} {
 		if !strings.Contains(body, want) {
-			t.Errorf("missing %q", want)
+			t.Errorf("Missing %q", want)
 		}
 	}
 }

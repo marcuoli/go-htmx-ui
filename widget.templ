@@ -57,14 +57,18 @@ templ WidgetMetricValue(value, exact string) {
 	<p class="ghtui-metric-value" title={ widgetExactLabel(value, exact) } aria-label={ widgetExactLabel(value, exact) }>{ MetricText(value) }</p>
 }
 
-// The stable canvas and fallback remain siblings. ECharts sizes its Canvas
-// renderer from the parent frame and keeps one instance across live snapshots.
+// The stable native ECharts host and its fallback remain siblings. Preserve the
+// host and engine-owned children during application DOM patches; call update.
 templ WidgetChart(props WidgetChartProps) {
-	<div class={ "ghtui-chart-frame", templ.KV("ghtui-chart-compact", props.Compact) }><canvas id={ props.ID } data-ui-chart={ props.Spec } role="img" aria-label={ props.Label }></canvas></div>
-	<p class="ghtui-chart-empty" data-ui-error-message={ props.ErrorMessage } data-ui-empty-message={ widgetChartEmpty(props.EmptyMessage) }>{ widgetChartEmpty(props.EmptyMessage) }</p>
-	if props.NoScriptNote != "" {
-		<noscript><p class="ghtui-note">{ props.NoScriptNote }</p></noscript>
-	}
+ {{ option, config, err := widgetChartJSON(props) }}
+ if err != nil {
+  {{ return err }}
+ }
+ <div class={ "ghtui-chart-frame", templ.KV("ghtui-chart-compact", props.Compact) }><div id={ props.ID } data-ui-echarts={ option } data-ui-echarts-config={ config } role="img" aria-label={ props.Label }></div></div>
+ <p class="ghtui-chart-empty" data-ui-error-message={ props.ErrorMessage } data-ui-empty-message={ widgetChartEmpty(props.EmptyMessage) }>{ widgetChartEmpty(props.EmptyMessage) }</p>
+ if props.NoScriptNote != "" {
+  <noscript><p class="ghtui-note">{ props.NoScriptNote }</p></noscript>
+ }
 }
 
 templ WidgetEmpty() {
