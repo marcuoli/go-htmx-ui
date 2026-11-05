@@ -26,7 +26,13 @@ templ Tab(props TabProps) {
 }
 
 templ Button(props ButtonProps) {
- <button type={ buttonType(props.Type) } class={ "ghtui-button", buttonClass(props.Kind), props.Class } disabled?={ props.Disabled } { props.Attributes... }>{ children... }</button>
+ <button type={ buttonType(props.Type) } class={ "ghtui-button", buttonClass(props.Kind), props.Class } disabled?={ props.Disabled || props.Loading } { controlAttributes(props.Attributes,stateAttributes(props.Loading,"aria-busy"))... }>
+  if props.Loading {
+   <span class="ghtui-spinner" aria-hidden="true"></span>{ defaultText(props.LoadingLabel,"Working…") }
+  } else {
+   { children... }
+  }
+ </button>
 }
 
 templ LinkButton(props LinkButtonProps) {
@@ -38,17 +44,20 @@ templ Field(props FieldProps) {
   <label for={ props.For }>{ props.Label }</label>
   { children... }
   if props.Hint != "" {
-   <p class="ghtui-hint">{ props.Hint }</p>
+   <p class="ghtui-hint" { fieldIDAttributes(props.For,"hint")... }>{ props.Hint }</p>
+  }
+  if props.Error != "" {
+   <p class="ghtui-field-error" { fieldIDAttributes(props.For,"error")... }>{ props.Error }</p>
   }
  </div>
 }
 
 templ Input(props InputProps) {
- <input class={ "ghtui-input", props.Class } type={ inputType(props.Type) } id={ props.ID } name={ props.Name } value={ props.Value } placeholder={ props.Placeholder } required?={ props.Required } disabled?={ props.Disabled } { props.Attributes... }/>
+ <input class={ "ghtui-input", props.Class } type={ inputType(props.Type) } id={ props.ID } name={ props.Name } value={ props.Value } placeholder={ props.Placeholder } required?={ props.Required } disabled?={ props.Disabled } { controlAttributes(props.Attributes,stateAttributes(props.Invalid,"aria-invalid"),descriptionAttributes(props.DescribedBy))... }/>
 }
 
 templ Select(props SelectProps) {
- <select class={ "ghtui-input", props.Class } id={ props.ID } name={ props.Name } required?={ props.Required } disabled?={ props.Disabled } { props.Attributes... }>
+ <select class={ "ghtui-input", props.Class } id={ props.ID } name={ props.Name } required?={ props.Required } disabled?={ props.Disabled } { controlAttributes(props.Attributes,stateAttributes(props.Invalid,"aria-invalid"),descriptionAttributes(props.DescribedBy))... }>
   for _,option := range props.Options {
    <option value={ option.Value } selected?={ props.Value==option.Value } disabled?={ option.Disabled }>{ option.Label }</option>
   }

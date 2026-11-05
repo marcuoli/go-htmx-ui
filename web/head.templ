@@ -5,6 +5,9 @@ package web
 // does not insert a page shell, inline code, fonts or global routes.
 templ Head(props HeadProps) {
  <link rel="stylesheet" href={ templ.URL(assetPrefix(props.AssetPrefix)+"ui.css") }/>
+ if props.Interactive {
+  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"ui-runtime.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+ }
  if props.Charts {
   <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"echarts.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
   <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"echarts-format.js") } defer { headNonceAttributes(props.Nonce)... }></script>

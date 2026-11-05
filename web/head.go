@@ -9,6 +9,9 @@ import "github.com/a-h/templ"
 type HeadProps struct {
 	AssetPrefix string
 	Charts      bool
+	// Interactive loads the shared appearance/navigation runtime. Page enables
+	// it automatically; existing Head calls keep their CSS-only behavior.
+	Interactive bool
 	Nonce       string
 }
 

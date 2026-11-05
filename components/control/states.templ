@@ -1,0 +1,29 @@
+package control
+
+templ LoadingState(props LoadingStateProps) {
+ <div class={ "ghtui-loading", props.Class } role="status"><span class="ghtui-spinner" aria-hidden="true"></span><span>{ defaultText(props.Label,"Loading…") }</span></div>
+}
+
+templ EmptyState(props EmptyStateProps) {
+ <div class={ "ghtui-empty-state", props.Class }>
+  <h2>{ defaultText(props.Title,"No items yet") }</h2>
+  if props.Description!="" {
+   <p>{ props.Description }</p>
+  }
+  { children... }
+ </div>
+}
+
+templ TextField(props TextFieldProps) {
+ {{ input := textFieldInput(props) }}
+ @Field(FieldProps{For:input.ID,Label:props.Label,Hint:props.Hint,Error:props.Error,Class:props.Class}) {
+  @Input(input)
+ }
+}
+
+templ SelectField(props SelectFieldProps) {
+ {{ input := selectFieldInput(props) }}
+ @Field(FieldProps{For:input.ID,Label:props.Label,Hint:props.Hint,Error:props.Error,Class:props.Class}) {
+  @Select(input)
+ }
+}

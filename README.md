@@ -51,6 +51,31 @@ Route shared component, API, style and asset requests through this module's
 designated owning development session. Consuming apps retain domain logic and
 adopt released shared versions rather than maintaining divergent copies.
 
+## A complete app with defaults (unreleased)
+
+The App/theme additions below are awaiting publication. The installation command
+above continues to identify the current published release.
+
+```templ
+@ui.Page(ui.PageProps{Title: "My app"}) {
+    @ui.AppShell(ui.AppShellProps{Title: "My app"}) {
+        @ui.Stack() {
+            @ui.TextField(ui.TextFieldProps{
+                Label: "Project", Input: ui.InputProps{Name: "project"},
+            })
+            @ui.Button(ui.ButtonProps{}) { Save }
+        }
+    }
+}
+```
+
+Register `ui.AssetHandler("")` at `/assets/ui/` once. Page supplies shared assets
+and Standard/System appearance; the shell includes a persistent theme switcher.
+Standard, Ocean and Forest each have Light and Dark variants. Typography,
+spacing, controls, states and chart colors inherit the selected theme.
+See [defaults, themes and app layout](docs/themes.md) for configuration and the
+optional smaller App wrapper. Open `/themes` in the showcase to compare variants.
+
 ## Showcase
 
 ```sh
@@ -83,7 +108,9 @@ go-htmx-ui/
 │   ├── control/        # Headings, actions, tabs, buttons, forms and dialogs
 │   ├── widget/         # Dashboard containers, metrics and chart hosts
 │   ├── status/         # Status labels, pulsing circles and Alpine bindings
-│   └── auth/           # Explicit authentication lock/text indicators
+│   ├── auth/           # Explicit authentication lock/text indicators
+│   └── layout/         # App scope, shell, switcher, Stack and Grid
+├── theme/              # Appearance types, normalization and render context
 ├── chart/              # Native ECharts types and JSON validation
 ├── metric/             # Exact compact numeric label formatting
 ├── web/
@@ -147,7 +174,13 @@ go vet ./...
 go mod verify
 ```
 
-`web/styles/components.css` is the canonical Tailwind source. `web/assets/ui.css` is generated without preflight, global body styles or fonts. Component rules use the standard `components` cascade layer so downstream utilities and custom classes can override them. The build scopes Tailwind fallback initialization and namespaces its internal custom properties. Applications can use the prebuilt CSS or adapt the source into their asset pipeline; preserve those isolation steps. App layout classes stay outside this library.
+`web/styles/components.css`, `layout.css` and `themes.json` are the canonical
+style inputs. Generated `web/assets/ui.css` has no global preflight or external
+fonts; complete-page defaults are scoped to the opt-in App/Page helpers.
+Component rules use the standard components layer so downstream utilities and
+custom classes can override defaults. The build scopes Tailwind initialization
+and namespaces internal custom properties. Preserve those isolation steps when
+adapting the sources into an application pipeline.
 
 The latest official Go and frontend releases are checked during dependency
 reviews. Current direct versions: templ v0.3.1100, go-htmx-table v0.2.0,

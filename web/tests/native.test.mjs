@@ -2,6 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {fixture,base} from './native-fixture.mjs';
 const plain=v=>JSON.parse(JSON.stringify(v));
+
+test('scoped theme palettes update the existing chart while explicit native colors win',()=>{
+ const f=fixture({tokens:{'--ghtui-chart-1':'#123456','--ghtui-chart-2':'#654321'}});
+ assert.equal(f.instances[0].option.color[0],'#123456');assert.equal(f.instances[0].option.color[1],'#654321');
+ f.setToken('--ghtui-chart-1','#abcdef');f.events['gohtmxui:theme']();assert.equal(f.instances.length,1);assert.equal(f.instances[0].option.color[0],'#abcdef');
+ const option=base();option.color=['#cc0000'];f.set(option);assert.deepEqual(plain(f.instances[0].option.color),['#cc0000']);f.cleanup();
+});
 test('native ECharts geometry/options pass through without a chart DSL',()=>{const option=base();option.series[0].step='end';option.grid={left:37};const f=fixture({option});assert.deepEqual(plain(f.instances[0].option.series),option.series);assert.equal(f.instances[0].option.grid.left,37);f.cleanup()});
 test('zero/null values and removed native series survive live snapshots',()=>{const f=fixture();const first=f.instances[0];f.set({...base(),series:[{id:'other',name:'Other',type:'bar',data:[9,0,null]}]});assert.equal(f.instances.length,1);assert.deepEqual(plain(first.option.series[0].data),[9,0,null]);assert.equal(first.option.series[0].id,'other');assert.equal(first.updates.at(-1).flags.notMerge,true);f.cleanup()});
 test('native callback metadata converts display only',()=>{const f=fixture({config:{formats:[{target:'yAxis.0.axisLabel.formatter',format:{unit:'data-rate',inputUnit:'MB/s',displayUnit:'MiB/h'}}]}});assert.equal(f.instances[0].option.yAxis[0].axisLabel.formatter(12.5),'42,915.34 MiB/h');assert.deepEqual(plain(f.instances[0].option.series[0].data),[0,null,3]);f.cleanup()});

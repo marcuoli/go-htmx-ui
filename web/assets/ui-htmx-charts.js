@@ -28,7 +28,8 @@
  function text(v){if(typeof v!=="string")throw Error("Expected text");return v;}
  function theme(host) {
   const css=getComputedStyle(host),token=(n,f)=>css.getPropertyValue("--ghtui-"+n).trim()||f;
-  return {muted:token("muted","#8b949e"),text:token("text","#f0f6fc"),surface:token("surface","#161b22"),border:token("border","#30363d"),accent:token("accent","#58a6ff"),font:css.fontFamily||"system-ui"};
+  const accent=token("accent","#58a6ff"),fallback=[accent,"#a78bfa","#fbbf24","#fb7185","#34d399","#22d3ee"];
+  return {muted:token("muted","#8b949e"),text:token("text","#f0f6fc"),surface:token("surface","#161b22"),border:token("border","#30363d"),accent,font:css.fontFamily||"system-ui",palette:fallback.map((value,index)=>token("chart-"+(index+1),value))};
  }
  function defaults(target,key,value){if(target[key]===undefined)target[key]=value;return target[key];}
  // Native option variants (baseOption/media/timeline) and per-series/item
@@ -42,7 +43,7 @@
   }
  }
  function styles(option,t) {
-  defaults(option,"animation",false);defaults(option,"color",[t.accent,"#a78bfa","#fbbf24","#fb7185","#34d399","#22d3ee"]);
+  defaults(option,"animation",false);defaults(option,"color",t.palette);
   const label=target=>{if(object(target)){defaults(target,"color",t.muted);defaults(target,"fontFamily",t.font);}};
   label(defaults(option,"textStyle",{}));
   for(const name of ["xAxis","yAxis","radiusAxis","angleAxis"])for(const axis of list(option[name]))if(object(axis)) {

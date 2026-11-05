@@ -1,0 +1,23 @@
+package web
+
+import "github.com/marcuoli/go-htmx-ui/components/layout"
+
+templ Page(props PageProps) {
+ <!DOCTYPE html>
+ <html lang={ pageLanguage(props) }>
+  <head>
+   <meta charset="utf-8"/>
+   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+   <title>{ pageTitle(props) }</title>
+   @Head(HeadProps{AssetPrefix:props.AssetPrefix, Charts:props.Charts, Nonce:props.Nonce, Interactive:true})
+   if props.ExtraHead != nil {
+    @props.ExtraHead
+   }
+  </head>
+  <body class="ghtui-document">
+   @layout.App(props.App) {
+    { children... }
+   }
+  </body>
+ </html>
+}

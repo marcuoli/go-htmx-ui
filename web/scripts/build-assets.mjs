@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 import {join,resolve,isAbsolute} from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
+import {themeCSS} from './theme-css.mjs';
 
 const webRoot=fileURLToPath(new URL('../',import.meta.url));
 const modules=process.env.GO_HTMX_UI_NODE_MODULES?resolve(process.env.GO_HTMX_UI_NODE_MODULES):join(webRoot,'node_modules');
@@ -21,7 +22,9 @@ const input=join(scratch,'components.css');
 const sha=path=>createHash('sha256').update(readFileSync(path)).digest('hex');
 try {
  const reference=JSON.stringify(join(modules,'tailwindcss/index.css').replaceAll('\\','/'));
- writeFileSync(input,readFileSync(join(webRoot,'styles/components.css'),'utf8').replace('@reference "tailwindcss";',`@reference ${reference};`));
+ const palettes=JSON.parse(readFileSync(join(webRoot,'styles/themes.json'),'utf8'));
+ const styles=readFileSync(join(webRoot,'styles/components.css'),'utf8')+'\n'+themeCSS(palettes)+'\n'+readFileSync(join(webRoot,'styles/layout.css'),'utf8');
+ writeFileSync(input,styles.replace('@reference "tailwindcss";',`@reference ${reference};`));
  const result=spawnSync(process.execPath,[join(modules,'@tailwindcss/cli/dist/index.mjs'),'-i',input,'-o',join(output,'ui.css'),'--minify'],{cwd:webRoot,stdio:'inherit'});
  if(result.error)throw result.error;
  if(result.status!==0)throw new Error(`Tailwind build failed (${result.status??result.signal??'unknown'})`);
