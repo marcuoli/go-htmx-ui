@@ -1,0 +1,82 @@
+package widget
+
+import "github.com/marcuoli/go-htmx-ui/metric"
+
+// Keep the existing root element, classes and live attributes without adding a
+// wrapper: table scrolling, semantic landmarks and DOM patch identity depend on them.
+templ Widget(props WidgetProps) {
+	switch props.Element {
+		case WidgetDiv:
+			<div class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</div>
+		case WidgetAside:
+			<aside class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</aside>
+		case WidgetNav:
+			<nav class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</nav>
+		default:
+			<section class={ "ghtui-widget", props.Class } { props.Attributes... }>{ children... }</section>
+	}
+}
+
+// The children slot holds the view's actions or badges. Counts retain exact
+// tooltips while using the same compact formatter as other numeric widgets.
+templ WidgetHeader(props WidgetHeaderProps) {
+	<div class={ "ghtui-widget-heading", props.Class }>
+		<div>
+			<h2 { widgetClassAttributes(props.TitleClass)... }>{ props.Title }
+				if props.Count != "" {
+					{ " " }<span class="ghtui-accent" title={ props.Count }>{ metric.MetricText(props.Count) }</span>
+				}
+			</h2>
+			if props.Description != "" {
+				<p { widgetClassAttributes(props.DescriptionClass)... }>{ props.Description }</p>
+			}
+		</div>
+		{ children... }
+	</div>
+}
+
+templ WidgetMetricFrame(props WidgetMetricProps) {
+	<article class="ghtui-metric-card">
+		if props.Heading {
+			<h2 class="ghtui-metric-label">{ props.Label }</h2>
+		} else {
+			<p class="ghtui-metric-label">{ props.Label }</p>
+		}
+		{ children... }
+		if props.Note != "" {
+			<p class="ghtui-metric-note">{ props.Note }</p>
+		}
+	</article>
+}
+
+templ WidgetMetric(label, value, note string) {
+	@WidgetMetricFrame(WidgetMetricProps{Label: label, Note: note}) {
+		@WidgetMetricValue(value, value)
+	}
+}
+
+templ WidgetMetricValue(value, exact string) {
+	<p class="ghtui-metric-value" title={ widgetExactLabel(value, exact) } aria-label={ widgetExactLabel(value, exact) }>{ metric.MetricText(value) }</p>
+}
+
+// The stable native ECharts host and its fallback remain siblings. Preserve the
+// host and engine-owned children during application DOM patches; call update.
+templ WidgetChart(props WidgetChartProps) {
+ {{ option, config, err := widgetChartJSON(props) }}
+ if err != nil {
+  {{ return err }}
+ }
+ <div class={ "ghtui-chart-frame", templ.KV("ghtui-chart-compact", props.Compact) }><div id={ props.ID } data-ui-echarts={ option } data-ui-echarts-config={ config } role="img" aria-label={ props.Label }></div></div>
+ <p class="ghtui-chart-empty" data-ui-error-message={ props.ErrorMessage } data-ui-empty-message={ widgetChartEmpty(props.EmptyMessage) }>{ widgetChartEmpty(props.EmptyMessage) }</p>
+ if props.NoScriptNote != "" {
+  <noscript><p class="ghtui-note">{ props.NoScriptNote }</p></noscript>
+ }
+}
+
+templ WidgetEmpty() {
+	<p class="ghtui-empty">{ children... }</p>
+}
+
+templ WidgetData(label string) {
+	<details class="ghtui-data"><summary>{ label }</summary>{ children... }</details>
+}

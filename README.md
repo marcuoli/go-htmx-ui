@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.7.0
+go get github.com/marcuoli/go-htmx-ui@v0.8.0+20261105.16
 ```
 
 ## Render a widget
@@ -71,27 +71,57 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Application metadata uses [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). Pass validated application build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's module version. An unversioned example correctly displays `0.0.0+unknown`. Library releases use conventional Go module tags (`v0.2.0`), separate from consuming applications' date/PR build versions.
+Release and application metadata use [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). This release's full identity is `0.8.0+20261105.16`, with immutable tag `v0.8.0+20261105.16`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`.
 
 ## Repository layout
 
 ```text
 go-htmx-ui/
-├── *.go, *.templ       # Public ui components and generated Go
+├── doc.go, ui.go       # Stable root ui API: aliases and forwarding functions
+├── ui_test.go          # Root import and asset compatibility contracts
+├── components/
+│   ├── control/        # Headings, actions, tabs, buttons, forms and dialogs
+│   ├── widget/         # Dashboard containers, metrics and chart hosts
+│   ├── status/         # Status labels, pulsing circles and Alpine bindings
+│   └── auth/           # Explicit authentication lock/text indicators
+├── chart/              # Native ECharts types and JSON validation
+├── metric/             # Exact compact numeric label formatting
 ├── web/
+│   ├── *.go, *.templ   # Asset embedding, HTTP handler and page-head component
 │   ├── assets/        # Embedded CSS, JavaScript and license notices
 │   ├── styles/        # Canonical Tailwind sources
 │   ├── scripts/       # Frontend build tooling
 │   ├── tests/         # JavaScript contract tests
 │   └── package*.json  # Frontend dependency manifest and lockfile
 ├── examples/showcase/
+├── internal/testutil/  # Shared component rendering helper for Go tests
 ├── docs/
 └── .github/workflows/
 ```
 
-The public Go package stays at the module root. `ui.Assets()` returns the same
-asset filenames without a repository prefix; v0.6.0 intentionally changes the
-chart API and runtime filenames. See the migration guide before upgrading. Go tests remain beside their Go source files.
+The root `ui` imports above remain supported. Implementations live in the
+responsibility packages, which can also be imported directly, for example:
+
+```templ
+import "github.com/marcuoli/go-htmx-ui/components/status"
+
+templ Connection() {
+    @status.StatusIndicator(status.StatusIndicatorProps{
+        Label: "Connected", Tone: status.StatusSuccess, Pulse: true,
+    })
+}
+```
+
+The root types are aliases, so both import styles can be composed without
+conversions. Component packages never import the root facade. Widgets use
+`chart` for configuration and `metric` for labels; `web` owns embedding and
+asset URLs. Keep Go tests beside their implementation and generated `_templ.go`
+files beside their `.templ` sources. Regenerate from the repository root.
+`examples/showcase` deliberately uses the root API to check existing consumers.
+
+`ui.Assets()` and `web.Assets()` return the same filenames without a repository
+prefix. Folder organization does not change public asset URLs. The earlier
+v0.6.0 chart API migration is documented separately in the migration guide.
 
 ## Compatibility
 
@@ -130,24 +160,35 @@ remain as upstream ships them; no dependency sources or bundles are patched.
 
 ## Version maintenance
 
-Use the existing go-versioning dependency for conventional module-core policy:
+Use the full `CORE+YYYYMMDD.PR` identity in release names, changelogs, version
+output and immutable `v`-prefixed tags. The date comes from the final commit's
+committer date in `America/Sao_Paulo`; the suffix is the merged PR number.
+Use go-versioning's official CLI rather than a separate bare-core allocator:
 
 ```sh
-go run ./scripts/module-version -previous v0.6.0 -bump minor -check v0.7.0
+go run github.com/marcuoli/go-versioning/cmd/go-versioning inspect --repo . --json
+go run github.com/marcuoli/go-versioning/cmd/go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 16 --initial-core 0.8.0 --json
 ```
 
-The read-only command emits a JSON plan using `versioning.ParseCore` and
-`Core.Bump`; it rejects application date/PR tags and mismatched expected tags.
-CI checks the pending release plan. Tag creation and publication remain separate
-authorized release steps; the planner never writes Git refs or publishes.
+`next` is read-only. This first full-identity allocation needs an explicit
+initial core; later allocations inherit the previous core unless an explicit
+bump is selected. After verifying the merged commit and plan, an authorized
+release uses the same arguments with `tag --push --remote origin`. The allocator
+never moves an existing tag. CI records explicit source metadata with `inspect`.
+
+Go accepts the full tag in the installation command above but records a
+canonical pseudo-version in `go.mod` and `go.sum`. This is Go's dependency
+bookkeeping, not another displayed release identity. Pin the full tag explicitly:
+Go's `@latest` discovery may select an earlier conventional module tag. This
+release does not create a second bare-core tag.
 
 For first-party development against a local go-versioning checkout, create an
 external Go workspace containing both repositories and set `GOWORK` to that
 workspace file while validating. Keep that workspace outside source; do not
 commit machine paths or a local `replace`. Release checks use `GOWORK=off` and
-the published dependency. The optional go-versioning `inspect` command can
-record explicit source metadata; its date/PR `tag` allocator belongs to consuming
-applications and does not replace this library's conventional module tags.
+the published dependency. Publication uses the reviewed local go-versioning CLI
+to allocate the full identity against the final merge commit; source inspection
+and release validation never infer it from a dependency's version or wall clock.
 
 For dependencies outside the checkout, set `GO_HTMX_UI_NODE_MODULES` to an
 absolute `node_modules` directory containing the pinned frontend dependencies.
