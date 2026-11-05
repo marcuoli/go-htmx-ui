@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.0+20261105.20
 
 - Add ready-to-use native Modal with trigger/close helpers, title/body/footer,
   size variants, native focus handling and optional backdrop dismissal.

@@ -1,7 +1,9 @@
 # Modals, alerts and toast notifications
 
-These additions are unreleased. They use the shared Light/Dark palettes and
-standalone color fallbacks, with no new dependencies. `Page` supplies the
+Available in `0.10.0+20261105.20`. Pin the full release tag:
+`go get github.com/marcuoli/go-htmx-ui@v0.10.0+20261105.20`.
+These components use the shared Light/Dark palettes and standalone color
+fallbacks, with no new dependencies. `Page` supplies the
 external feedback runtime and an empty toast region automatically. Register
 `ui.AssetHandler("")` once at `/assets/ui/`, as in the themes guide.
 

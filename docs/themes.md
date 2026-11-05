@@ -1,7 +1,7 @@
 # Defaults, themes and app layout
 
-Available in `0.9.0+20261105.18`. Pin the full release tag:
-`go get github.com/marcuoli/go-htmx-ui@v0.9.0+20261105.18`.
+Available since `0.9.0+20261105.18`. Pin the current full release tag:
+`go get github.com/marcuoli/go-htmx-ui@v0.10.0+20261105.20`.
 
 `Page` supplies a complete document with shared CSS and the external UI runtime.
 `AppShell` adds a header, optional navigation/sidebar, content and optional
