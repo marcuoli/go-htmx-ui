@@ -16,6 +16,7 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: go mod download
+      - run: go run ./scripts/module-version -previous v0.6.0 -bump minor -check v0.7.0
       - run: go tool templ generate
       - run: npm --prefix web ci && npm --prefix web run build && npm --prefix web test
       - run: git diff --exit-code

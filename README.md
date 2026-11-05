@@ -112,6 +112,27 @@ does not implement. Recheck that upstream exception on the next review.
 ECharts' exact transitive versions and Tailwind's bundled WASI dependencies
 remain as upstream ships them; no dependency sources or bundles are patched.
 
+## Version maintenance
+
+Use the existing go-versioning dependency for conventional module-core policy:
+
+```sh
+go run ./scripts/module-version -previous v0.6.0 -bump minor -check v0.7.0
+```
+
+The read-only command emits a JSON plan using `versioning.ParseCore` and
+`Core.Bump`; it rejects application date/PR tags and mismatched expected tags.
+CI checks the pending release plan. Tag creation and publication remain separate
+authorized release steps; the planner never writes Git refs or publishes.
+
+For first-party development against a local go-versioning checkout, create an
+external Go workspace containing both repositories and set `GOWORK` to that
+workspace file while validating. Keep that workspace outside source; do not
+commit machine paths or a local `replace`. Release checks use `GOWORK=off` and
+the published dependency. The optional go-versioning `inspect` command can
+record explicit source metadata; its date/PR `tag` allocator belongs to consuming
+applications and does not replace this library's conventional module tags.
+
 For dependencies outside the checkout, set `GO_HTMX_UI_NODE_MODULES` to an
 absolute `node_modules` directory containing the pinned frontend dependencies.
 The asset builder resolves sources relative to its own script and uses the OS

@@ -14,6 +14,8 @@
   go-htmx-table v0.2.0, and refresh Tailwind to 4.3.4 and compatible dependencies.
 - Keep the official ECharts 6.1.0 engine unchanged. Retain upstream's compatible
   parse revision until templ implements the newer Parser.Match interface.
+- Use go-versioning's core policy in a read-only module-release planner and
+  validate the expected conventional release tag in CI.
 
 Upgrade consuming applications' templ runtime and regenerate their templates
 together. Prior releases remain immutable; the v0.6 native ECharts API and old
