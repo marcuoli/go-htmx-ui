@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.8.0+20261105.16
 
 - Group Go implementations into control, widget, status, auth, chart, metric and
   web packages, with tests beside their sources. Preserve the root `ui` API
   through aliases and forwarding functions, and keep existing asset URLs.
+- Allocate the full `CORE+YYYYMMDD.PR` release identity with go-versioning's
+  official CLI, replacing the bare-core planner. Pin the full tag for Go
+  installation; Go records its resolved pseudo-version internally.
 
 ## v0.7.0
 
