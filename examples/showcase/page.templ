@@ -22,6 +22,20 @@ templ Page(info versioning.Info) {
   }
  }
  @ui.VersionLabel(info)
+ @ui.Widget(ui.WidgetProps{Attributes:templ.Attributes{"id":"auth-statuses"}}) {
+  @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Authentication status",Description:"Explicit application observations; unknown is neither signed in nor signed out"})
+  @ui.Actions() {
+   @ui.AuthStatus(ui.AuthStatusProps{State:ui.AuthSignedIn})
+   @ui.AuthStatus(ui.AuthStatusProps{State:ui.AuthSignedOut})
+   @ui.AuthStatus(ui.AuthStatusProps{UnknownLabel:"Checking sign-in",Attributes:templ.Attributes{"id":"auth-live","role":"status"}})
+  }
+  <p>Application-owned state changes:</p>
+  @ui.Actions() {
+   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"auth-in"}}) { Signed in }
+   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"auth-out"}}) { Signed out }
+   @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Attributes:templ.Attributes{"id":"auth-unknown"}}) { Unknown / stale }
+  }
+ }
  @ui.Widget(ui.WidgetProps{Attributes:templ.Attributes{"id":"status-indicators"}}) {
   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Status indicators",Description:"CSS-only pulsing rings; reduced motion keeps the solid dots and labels"})
   @ui.Actions() {
@@ -121,6 +135,7 @@ templ Page(info versioning.Info) {
  }
  </main><script>
  const chart=()=>document.getElementById('units-network');
+ for(const [id,state] of [['auth-in','signed-in'],['auth-out','signed-out'],['auth-unknown','unknown']])document.getElementById(id).onclick=()=>{document.getElementById('auth-live').dataset.authState=state;};
  const snapshot=()=>JSON.parse(chart().dataset.uiEcharts);
  const config=()=>JSON.parse(chart().dataset.uiEchartsConfig);
  document.getElementById('theme-toggle').onclick=()=>{document.body.classList.toggle('light');GoHTMXUI.echarts.render();};

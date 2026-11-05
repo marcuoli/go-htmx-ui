@@ -7,7 +7,10 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "4.3.4",
-    "tailwindcss": "4.3.4"
+    "tailwindcss": "4.3.4",
+    "alpinejs": "3.17.5",
+    "htmx.org": "2.0.11",
+    "htmx4": "npm:htmx.org@4.0.1"
   },
   "dependencies": {
     "echarts": "6.1.0"

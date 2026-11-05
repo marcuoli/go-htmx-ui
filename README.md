@@ -43,9 +43,13 @@ Choose any asset URL prefix. The library has no router, authentication, database
 
 ## Components
 
-Widgets, widget headers, metrics, exact/compact values, native ECharts hosts, empty states, data disclosures, page headers, action groups, tabs, buttons, link buttons, labeled fields, inputs, selects, dialog shells/headers/bodies, badges, status indicators with optional pulsing rings, and version labels.
+Widgets, widget headers, metrics, exact/compact values, native ECharts hosts, empty states, data disclosures, page headers, action groups, tabs, buttons, link buttons, labeled fields, inputs, selects, dialog shells/headers/bodies, badges, status indicators with optional pulsing rings, explicit authentication lock/text indicators, and version labels.
 
 See [component and integration guide](docs/components.md) for props, slots, theme tokens, chart lifecycle, accessibility and boundaries. Tables remain in [go-htmx-table](https://github.com/marcuoli/go-htmx-table); compose them inside widgets rather than copying a table implementation.
+
+Route shared component, API, style and asset requests through this module's
+designated owning development session. Consuming apps retain domain logic and
+adopt released shared versions rather than maintaining divergent copies.
 
 ## Showcase
 
@@ -54,6 +58,18 @@ go run ./examples/showcase -listen 127.0.0.1:8099
 ```
 
 Open `http://127.0.0.1:8099` for synthetic dark/light widgets, forms, a modal, an updating chart and composition with published `go-htmx-table v0.2.0`. Example page layout and table styling belong to the example.
+
+For the neutral standalone Alpine/HTMX consumer at `/alpine`, run the showcase
+with `-runtime-assets /external/node_modules` pointing to installed development
+dependencies. The example application serves those official runtimes itself;
+the library does not bundle them or register Alpine globally. See the component
+guide for `StatusAlpineBindings`, live classes/visibility and pulse styles.
+
+The same example supports HTMX 4.0.1 with `-htmx4`, selecting the development-only
+official npm alias and loading its `hx-alpine-compat` extension before Alpine.
+The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
+are still application-owned; selecting HTMX 4 is a separate application
+migration, particularly for inherited attributes and event/error handling.
 
 Application metadata uses [go-versioning v0.1.1](https://github.com/marcuoli/go-versioning). Pass validated application build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's module version. An unversioned example correctly displays `0.0.0+unknown`. Library releases use conventional Go module tags (`v0.2.0`), separate from consuming applications' date/PR build versions.
 

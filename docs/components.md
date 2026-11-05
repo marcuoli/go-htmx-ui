@@ -19,7 +19,8 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 | Dialog | DialogProps: ID, TitleID, Class, Attributes; native dialog body slot |
 | DialogHeader / DialogBody | TitleID, Title, Description and actions slot / content slot |
 | Badge / VersionLabel | children / versioning.Info validated by go-versioning |
-| StatusIndicator | StatusIndicatorProps: Label, Tone, Pulse, Class, LabelClass, Attributes, LabelAttributes; dot and text |
+| StatusIndicator | StatusIndicatorProps: Label, Tone, Pulse, PulseStyle, Alpine, Class, LabelClass, Attributes, LabelAttributes; dot and text |
+| AuthStatus | AuthStatusProps: State, SignedInLabel, SignedOutLabel, UnknownLabel, Class, LabelClass, Attributes; explicit lock/text presentation |
 | Head / AssetHandler | HeadProps: AssetPrefix, Charts, Nonce / application-owned asset route |
 
 Use unique IDs and associate Field.For with the control ID. Give every dialog a TitleID matching DialogHeader.TitleID; applications call showModal(), implement close actions and restore focus. Forms and modal shells do not submit, move or fetch content automatically. Tokens, capability checks and permissions stay in the application.
@@ -111,6 +112,107 @@ danger token is separate from the existing button background token.
 `--ghtui-status-color` overrides all tones, `--ghtui-status-label-color` can give
 the text its own color, and `--ghtui-status-dot-size` changes the solid dot's
 diameter (default `10px`). Custom `Class` rules can change typography and spacing.
+
+`PulseStyle: ui.StatusRing` (default) uses the two-second stroked ring.
+`ui.StatusPing` uses a filled circle with a one-second
+`cubic-bezier(0,0,.2,1)` animation, reaching scale 2 and opacity 0 at 75%/end.
+Both styles retain reduced-motion support and require `Pulse: true` or a true
+live pulse binding. `--ghtui-status-pulse-duration` and
+`--ghtui-status-pulse-easing` customize timing on a containing element.
+
+### Optional Alpine bindings
+
+```templ
+@ui.StatusIndicator(ui.StatusIndicatorProps{
+    Label: "Starting", PulseStyle: ui.StatusPing,
+    Alpine: &ui.StatusAlpineBindings{
+        Show: "visible", Label: "statusText", LabelClass: "statusTextClass",
+        Tone: "statusTone", Pulse: "active",
+    },
+})
+```
+
+These neutral fields are trusted developer expressions evaluated by the
+application's existing Alpine runtime. They bind visibility, text, text classes,
+semantic tone and explicit pulse without a consumer rendering/binding adapter.
+Empty fields add no binding. Explicit `Attributes`/`LabelAttributes` override
+equivalent convenience directives, including shorthand (`:class`) and modifiers
+(`x-show.important`), and static `LabelClass` is retained by Alpine's
+dynamic class binding. Never put untrusted user text in an expression; pass it
+as application state instead. Application state, health/freshness policy,
+transport, CSP and announcement semantics remain application-owned.
+
+The library neither installs Alpine nor bundles its runtime; the ordinary
+component and attributes API work without it. On HTMX 2, Alpine's normal mutation
+observer initializes newly inserted indicators. On HTMX 4, load its official
+`hx-alpine-compat` extension before Alpine to coordinate initialization/settling
+and morph state. No module-global registration or full-document Alpine
+reinitialization is needed. See the standalone `/alpine`
+showcase consumer for direct usage and a server-rendered fragment. Its explicit
+runtime-assets option serves the development-only official Alpine/HTMX packages
+from an external node_modules directory; they are not part of `ui.Assets()`.
+
+Qualified runtime combinations: Alpine 3.17.5 with HTMX 2.0.11, and Alpine
+3.17.5 with HTMX 4.0.1 plus its official compatibility extension. Live innerHTML
+fragment swaps initialized bindings and charts; repeated replacements disposed
+old charts and initialized new ones under both versions. This does not qualify
+every application's inheritance, morph/history, SSE or error-response behavior.
+See [HTMX 4 adoption](htmx-4.md) before migrating a consuming app.
+
+## Authentication status
+
+```templ
+@ui.AuthStatus(ui.AuthStatusProps{
+    State: ui.AuthSignedIn,
+    Attributes: templ.Attributes{"id": "sign-in-state", "role": "status"},
+})
+```
+
+| Explicit state | Icon and default visible label |
+|---|---|
+| AuthSignedIn | Closed lock, Signed in |
+| AuthSignedOut | Open lock, Signed out |
+| AuthUnknown, zero or invalid value | Neutral question icon, Authentication unknown |
+
+`SignedInLabel`, `SignedOutLabel` and `UnknownLabel` accept escaped localized
+text; empty values use those defaults. For checking or unavailable observations,
+an application can choose `UnknownLabel: "Checking sign-in"` or `"Sign-in unavailable"`.
+These labels never determine state. A healthy endpoint is not proof of sign-in;
+a failed check is not proof of sign-out. The component never reads credentials,
+contacts a provider or performs authorization. Applications must map stale
+authentication evidence to `AuthUnknown` when freshness expires.
+
+The compact inline SVGs are decorative (`aria-hidden`, `focusable=false`);
+visible text conveys the meaning without relying on a lock icon or color.
+`Class`, `LabelClass` and inherited `--ghtui-auth-color`,
+`--ghtui-auth-label-color`, `--ghtui-auth-icon-size` (default `14px`),
+`--ghtui-auth-signed-in-color` and `--ghtui-auth-signed-out-color` provide styling
+hooks. Shared CSS is required for state-fragment visibility, including static
+SSR; there is no icon font, external image or authentication JavaScript bundle.
+
+All state fragments remain in stable markup. An app can rerender with HTMX/SSE
+or update only the wrapper's `data-auth-state` to `signed-in`, `signed-out` or
+`unknown`; shared CSS switches the corresponding icon and label together.
+Unrecognized live values also fall back to the neutral fragment. Changing a
+previously signed-in observation to unknown hides its verified lock and label.
+Root `Attributes` preserve IDs, dashboard keys, live-region settings and bindings
+such as `x-bind:data-auth-state`. The application owns updates and announcement
+policy; the component adds no implicit live region.
+
+Compose transport/observation and authentication separately when needed:
+
+```templ
+@ui.Actions() {
+    @ui.StatusIndicator(ui.StatusIndicatorProps{Label: "Updates current", Tone: ui.StatusSuccess, Pulse: true})
+    @ui.AuthStatus(ui.AuthStatusProps{State: ui.AuthUnknown, UnknownLabel: "Checking sign-in"})
+}
+```
+
+Shared component/API/style/asset changes belong in this module's designated
+owning development session. Consuming apps should request changes there and
+adopt released versions; keep domain state, routes and transport in the app
+instead of maintaining divergent shared component copies. Private session
+identifiers belong in application-owned coordination records, not public docs.
 
 ## Native charts and live updates (v0.6.0)
 
