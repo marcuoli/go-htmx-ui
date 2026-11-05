@@ -1,0 +1,14 @@
+package ui
+
+import "strconv"
+
+// StatusIndicator renders a decorative dot and an escaped, visible label.
+// Only the ring animates; the solid core and label remain readable. Connection
+// checks, freshness and transport belong to the caller, which can update
+// data-tone, data-pulse and the label without replacing the component's markup.
+templ StatusIndicator(props StatusIndicatorProps) {
+ <span class={ "ghtui-status", templ.KV(props.Class, props.Class != "") } data-tone={ string(statusTone(props.Tone)) } data-pulse={ strconv.FormatBool(props.Pulse) } data-pulse-style={ string(statusPulseStyle(props.PulseStyle)) } { statusAttributes(props, false)... }>
+  <span class="ghtui-status-dot" aria-hidden="true"></span>
+  <span class={ "ghtui-status-label", templ.KV(props.LabelClass, props.LabelClass != "") } { statusAttributes(props, true)... }>{ props.Label }</span>
+ </span>
+}

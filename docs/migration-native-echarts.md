@@ -1,5 +1,11 @@
 # Migrate to native ECharts — v0.6.0
 
+For v0.7.0, use `Head`/`AssetHandler` to manage the native assets or load
+`ui-htmx-charts.js` after `echarts-format.js`. The v0.6.0 `echarts-ui.js` URL
+remains a serving alias; load only one controller name. v0.7.0 also requires
+templ v0.3.1100 and compatible regenerated consumer templates. See the component
+guide and README for the dependency boundary and page helpers.
+
 This release removes the browser chart-schema adapter. Existing published v0.2.0
 and v0.5.0 modules/assets remain unchanged. Upgrade a consumer only when its option
 generation, host markup, scripts and live DOM lifecycle have all been migrated.
@@ -13,7 +19,7 @@ Non-chart component APIs remain unchanged.
 | WidgetChartProps.Spec string | WidgetChartProps.Option native object + Config EChartsConfig |
 | canvas[data-ui-chart] | div[data-ui-echarts] + data-ui-echarts-config |
 | labels/datasets/type at root | Native xAxis/yAxis/series/legend/grid/dataZoom |
-| charts.js controller | echarts-format.js followed by echarts-ui.js |
+| charts.js controller | echarts-format.js followed by ui-htmx-charts.js |
 | GoHTMXUI.charts.render/destroy | GoHTMXUI.echarts.render/update/destroy |
 | Virtual compatibility bundle URL | Removed; load official echarts.min.js explicitly |
 | Inferred axis/dataset formatting | Explicit callback targets and tooltip dimensions |

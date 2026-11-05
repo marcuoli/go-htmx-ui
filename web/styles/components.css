@@ -1,4 +1,8 @@
 @reference "tailwindcss";
+/* Establish Tailwind's standard layer order even when this stylesheet loads
+   first. Host utilities and unlayered custom classes can override components. */
+@layer theme, base, components, utilities;
+@layer components {
 .ghtui-widget,.ghtui-metric-card,.ghtui-dialog { box-sizing:border-box; color:var(--ghtui-text,#f0f6fc); background:var(--ghtui-surface,#161b22); border:1px solid var(--ghtui-border,#30363d); border-radius:8px; }
 .ghtui-widget { @apply min-w-0 px-5 py-[18px]; }
 .ghtui-widget-heading { @apply flex items-start justify-between gap-3 mb-4; }
@@ -43,4 +47,30 @@
 .ghtui-dialog-header p { @apply mt-[6px] mb-0 text-[11px]; color:var(--ghtui-muted,#8b949e); }
 .ghtui-dialog-body { padding:24px 26px; }
 .ghtui-badge { @apply inline-flex items-center gap-[6px] rounded-[6px] px-2 py-[3px] text-[10px] leading-[1.5] whitespace-nowrap; border:1px solid var(--ghtui-border,#30363d); }
+.ghtui-auth { --ghtui-auth-tone:var(--ghtui-muted,#8b949e); display:inline-flex; color:var(--ghtui-auth-color,var(--ghtui-auth-tone)); font-size:12px; line-height:1.5; }
+.ghtui-auth[data-auth-state="signed-in"] { --ghtui-auth-tone:var(--ghtui-auth-signed-in-color,var(--ghtui-success,#3fb950)); }
+.ghtui-auth[data-auth-state="signed-out"] { --ghtui-auth-tone:var(--ghtui-auth-signed-out-color,var(--ghtui-muted,#8b949e)); }
+.ghtui-auth > .ghtui-auth-state { display:none; align-items:center; gap:6px; }
+.ghtui-auth > [data-auth-part="unknown"] { display:inline-flex; }
+.ghtui-auth[data-auth-state="signed-in"] > [data-auth-part="unknown"],.ghtui-auth[data-auth-state="signed-out"] > [data-auth-part="unknown"] { display:none; }
+.ghtui-auth[data-auth-state="signed-in"] > [data-auth-part="signed-in"],.ghtui-auth[data-auth-state="signed-out"] > [data-auth-part="signed-out"] { display:inline-flex; }
+.ghtui-auth-icon { width:var(--ghtui-auth-icon-size,14px); height:var(--ghtui-auth-icon-size,14px); flex:none; }
+.ghtui-auth-label { color:var(--ghtui-auth-label-color,inherit); }
+.ghtui-status { --ghtui-status-tone:var(--ghtui-muted,#8b949e); --ghtui-status-animation:ghtui-status-pulse var(--ghtui-status-pulse-duration,2s) var(--ghtui-status-pulse-easing,ease-out) infinite; display:inline-flex; align-items:center; gap:8px; color:var(--ghtui-status-color,var(--ghtui-status-tone)); font-size:12px; font-weight:500; line-height:1.5; }
+.ghtui-status[data-tone="success"] { --ghtui-status-tone:var(--ghtui-success,#3fb950); }
+.ghtui-status[data-tone="warning"] { --ghtui-status-tone:var(--ghtui-warning,#d29922); }
+.ghtui-status[data-tone="danger"] { --ghtui-status-tone:var(--ghtui-status-danger,#f85149); }
+.ghtui-status[data-tone="info"] { --ghtui-status-tone:var(--ghtui-accent,#79c0ff); }
+.ghtui-status-dot { position:relative; display:inline-block; flex:none; width:var(--ghtui-status-dot-size,10px); height:var(--ghtui-status-dot-size,10px); border-radius:50%; background:currentColor; }
+/* Keep the core visible and animate only the decorative ring. A false/missing
+   data-pulse stops it immediately when the caller marks an observation stale. */
+.ghtui-status-dot::after { content:""; position:absolute; inset:-3px; box-sizing:border-box; border:2px solid currentColor; border-radius:50%; opacity:0; }
+.ghtui-status[data-pulse="true"] .ghtui-status-dot::after { animation:var(--ghtui-status-animation,ghtui-status-pulse 2s ease-out infinite); }
+.ghtui-status[data-pulse-style="ping"] { --ghtui-status-animation:ghtui-status-ping var(--ghtui-status-pulse-duration,1s) var(--ghtui-status-pulse-easing,cubic-bezier(0,0,.2,1)) infinite; }
+.ghtui-status[data-pulse-style="ping"] .ghtui-status-dot::after { inset:0; border:0; background:currentColor; }
+.ghtui-status-label { color:var(--ghtui-status-label-color,inherit); }
+@keyframes ghtui-status-pulse { 0% { transform:scale(.75); opacity:.75; } 100% { transform:scale(1.5); opacity:0; } }
+@keyframes ghtui-status-ping { 0% { transform:scale(1); opacity:.75; } 75%,100% { transform:scale(2); opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .ghtui-status[data-pulse="true"] .ghtui-status-dot::after { animation:none; } }
 .ghtui-version { @apply block text-[11px] italic font-normal leading-[1.25] text-right tabular-nums; color:var(--ghtui-muted,#8b949e); overflow-wrap:anywhere; }
+}

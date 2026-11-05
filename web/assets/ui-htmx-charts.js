@@ -177,7 +177,7 @@
    const frame=host.parentElement,fallback=frame?.nextElementSibling;if(!frame)continue;
    let message=fallback?.dataset.uiErrorMessage||"Chart unavailable. Open the chart data table below.";
    try {
-    if(!window.GoHTMXUI?.echartsFormat?.compile)throw Error("Load echarts-format.js before echarts-ui.js");
+    if(!window.GoHTMXUI?.echartsFormat?.compile)throw Error("Load echarts-format.js before ui-htmx-charts.js");
     const config=configuration(JSON.parse(host.dataset.uiEchartsConfig||"{}"),fallback?.dataset);message=config.messages.error;
     const t=theme(host);
     const prior=entries.get(host);
@@ -214,5 +214,10 @@
  document.addEventListener("gohtmxui:theme",()=>render());
  document.addEventListener("htmx:beforeCleanupElement",event=>destroy(event.detail.elt));
  document.addEventListener("htmx:afterSwap",event=>render(event.detail.elt));
+ // HTMX 4 renamed its lifecycle events. Cleanup uses event.target rather
+ // than detail.elt; a single after-swap event can cover multiple swap tasks,
+ // so discover across the document (also releasing detached chart entries).
+ document.addEventListener("htmx:before:cleanup",event=>destroy(event.target));
+ document.addEventListener("htmx:after:swap",()=>render());
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>render());else render();
 })();

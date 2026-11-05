@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"bytes"
 	"github.com/a-h/templ"
 	versioning "github.com/marcuoli/go-versioning"
 	"io/fs"
@@ -54,7 +55,7 @@ func TestVersionLabelUsesVersioningValidation(t *testing.T) {
 }
 
 func TestEmbeddedAssetsAndLicenses(t *testing.T) {
-	for _, name := range []string{"ui.css", "echarts-ui.js", "echarts-format.js", "echarts.min.js", "echarts.LICENSE.txt", "echarts.NOTICE.txt", "echarts-d3.LICENSE.txt", "zrender.LICENSE.txt", "tslib.LICENSE.txt", "tslib.CopyrightNotice.txt", "echarts.provenance.json"} {
+	for _, name := range []string{"ui.css", "ui-htmx-charts.js", "echarts-format.js", "echarts.min.js", "echarts.LICENSE.txt", "echarts.NOTICE.txt", "echarts-d3.LICENSE.txt", "zrender.LICENSE.txt", "tslib.LICENSE.txt", "tslib.CopyrightNotice.txt", "echarts.provenance.json"} {
 		data, err := fs.ReadFile(Assets(), name)
 		if err != nil || len(data) == 0 {
 			t.Errorf("asset %s: %v", name, err)
@@ -79,5 +80,19 @@ func TestLegacyChartBundleURLServesECharts(t *testing.T) {
 		if _, err := fs.ReadFile(Assets(), name); err == nil {
 			t.Fatalf("retired asset %s still served", name)
 		}
+	}
+}
+
+func TestPreviousControllerFilenameAliasesCanonicalAsset(t *testing.T) {
+	canonical, err := fs.ReadFile(Assets(), "ui-htmx-charts.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	previous, err := fs.ReadFile(Assets(), "echarts-ui.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(previous, canonical) {
+		t.Fatal("previous controller URL does not serve the canonical script")
 	}
 }

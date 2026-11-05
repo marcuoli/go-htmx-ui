@@ -1,0 +1,13 @@
+package ui
+
+// Head emits shared assets once in a full page's head, not in HTMX/SSE fragments.
+// It uses external deferred scripts, leaves CSP policy to the application, and
+// does not insert a page shell, inline code, fonts or global routes.
+templ Head(props HeadProps) {
+ <link rel="stylesheet" href={ templ.URL(assetPrefix(props.AssetPrefix)+"ui.css") }/>
+ if props.Charts {
+  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"echarts.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"echarts-format.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"ui-htmx-charts.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+ }
+}

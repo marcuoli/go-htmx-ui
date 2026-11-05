@@ -19,7 +19,7 @@ export function fixture({width=600,height=238,observe=true,actual=false,option=b
  class CustomEvent{constructor(type,options){this.type=type;Object.assign(this,options)}}
  const document={readyState:'complete',querySelectorAll:()=>host.isConnected?[host]:[],addEventListener:(n,f)=>events[n]=f};
  const context={document,echarts,Intl,Map,JSON,CustomEvent,ResizeObserver:observe?ResizeObserver:undefined,getComputedStyle:()=>({fontFamily:'system-ui',getPropertyValue:n=>n==='--ghtui-muted'?muted:''}),addEventListener:(n,f)=>events['window:'+n]=f};context.window=context;
- for(const file of ['echarts-format.js','echarts-ui.js'])vm.runInNewContext(fs.readFileSync(new URL('../assets/'+file,import.meta.url),'utf8'),context);
+ for(const file of ['echarts-format.js','ui-htmx-charts.js'])vm.runInNewContext(fs.readFileSync(new URL('../assets/'+file,import.meta.url),'utf8'),context);
  return {api:context.GoHTMXUI.echarts,format:context.GoHTMXUI.echartsFormat,host,frame,events,instances,observers,dispatched,context,
   set(o,c=JSON.parse(host.dataset.uiEchartsConfig)){host.dataset.uiEcharts=JSON.stringify(o);host.dataset.uiEchartsConfig=JSON.stringify(c);this.api.render(host)},resize(w,h){frame.clientWidth=w;frame.clientHeight=h;for(const o of [...observers])if(!o.disconnected)o.callback()},setTheme(v){muted=v},fail(v){failure=v},cleanup(){this.api.destroy(host)}};
 }
