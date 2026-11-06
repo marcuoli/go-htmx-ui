@@ -26,6 +26,32 @@
   .ghtui-grid[data-ui-columns="3"] { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .ghtui-grid[data-ui-columns="4"] { grid-template-columns:repeat(4,minmax(0,1fr)); }
  }
+ /* Dense metric rows keep existing cards and app-owned keyed shells (#30).
+    Container units scale values to the actual card width, including sidebars. */
+ .ghtui-metric-strip { display:grid; grid-template-columns:minmax(0,1fr); grid-auto-rows:1fr; align-items:stretch; gap:clamp(6px,.6vw,12px); min-width:0; }
+ .ghtui-metric-strip .ghtui-metric-group { display:contents; }
+ .ghtui-metric-strip > *,.ghtui-metric-strip .ghtui-metric-group > * { min-width:0; }
+ .ghtui-metric-strip .ghtui-metric-card { display:flex; flex-direction:column; gap:4px; height:100%; padding:10px; container-type:inline-size; }
+ .ghtui-metric-strip .ghtui-metric-label { min-height:3em; font-size:11px; line-height:1.5; overflow-wrap:anywhere; }
+ .ghtui-metric-strip .ghtui-metric-value { font-size:18px; font-size:clamp(14px,11cqi,22px); line-height:1.35; overflow-wrap:anywhere; white-space:normal; }
+ .ghtui-metric-strip .ghtui-metric-note { margin-top:auto; font-size:10px; line-height:1.5; overflow-wrap:anywhere; }
+ .ghtui-metric-strip[hidden],.ghtui-metric-strip [hidden] { display:none!important; }
+ .ghtui-metric-strip[data-ui-metric-columns="1"] { grid-template-columns:minmax(0,1fr); }
+ @media(min-width:480px) {
+  .ghtui-metric-strip { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .ghtui-metric-strip[data-ui-metric-columns="2"] { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ }
+ @media(min-width:960px) {
+  .ghtui-metric-strip { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .ghtui-metric-strip[data-ui-metric-columns="3"] { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .ghtui-metric-strip[data-ui-metric-columns="4"] { grid-template-columns:repeat(4,minmax(0,1fr)); }
+ }
+ @media(min-width:1600px) {
+  .ghtui-metric-strip { grid-template-columns:repeat(8,minmax(0,1fr)); }
+  .ghtui-metric-strip[data-ui-metric-columns="5"] { grid-template-columns:repeat(5,minmax(0,1fr)); }
+  .ghtui-metric-strip[data-ui-metric-columns="6"] { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .ghtui-metric-strip[data-ui-metric-columns="7"] { grid-template-columns:repeat(7,minmax(0,1fr)); }
+ }
  .ghtui-theme-switcher { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
  .ghtui-theme-switcher label { display:grid; gap:3px; font-size:12px; }
  .ghtui-theme-switcher .ghtui-input { width:auto; min-width:100px; }

@@ -35,6 +35,12 @@ templ WidgetHeader(props WidgetHeaderProps) {
 	</div>
 }
 
+// Compact sizing is scoped to this container. Generic marked group shells stay
+// in the DOM for app-owned keyed updates; CSS only removes their layout boxes.
+templ WidgetMetricStrip(props WidgetMetricStripProps) {
+	<div class={ "ghtui-metric-strip", templ.KV(props.Class, props.Class != "") } data-ui-metric-columns={ metricStripColumns(props) } { metricStripAttributes(props)... }>{ children... }</div>
+}
+
 templ WidgetMetricFrame(props WidgetMetricProps) {
 	<article class="ghtui-metric-card">
 		if props.Heading {

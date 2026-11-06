@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.10.5+20261106.29
+go get github.com/marcuoli/go-htmx-ui@v0.11.0+20261106.31
 ```
 
 ## Render a widget
@@ -73,6 +73,10 @@ spacing, controls, states and chart colors inherit the selected theme.
 See [defaults, themes and app layout](docs/themes.md) for configuration and the
 optional smaller App wrapper. Open `/themes` in the showcase to compare variants.
 
+[Compact metric strips](docs/metrics.md) compose existing metric cards into a dense
+responsive row, with paired theme support and exact accessible values. Open
+`/metrics` in the showcase for eight cards and keyed group examples.
+
 ## Showcase
 
 The [modals, alerts and toast notifications](docs/feedback.md) add
@@ -97,7 +101,7 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). The latest UI release's full identity is `0.10.5+20261106.29`, with immutable tag `v0.10.5+20261106.29`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
+Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). The latest UI release's full identity is `0.11.0+20261106.31`, with immutable tag `v0.11.0+20261106.31`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
 
 ## Repository layout
 

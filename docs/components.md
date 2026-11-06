@@ -6,6 +6,7 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 |---|---|
 | Widget | WidgetProps: semantic Element (section/div/aside/nav), Class, Attributes; body slot |
 | WidgetHeader | WidgetHeaderProps: Title, Description, Count, Class, TitleClass, DescriptionClass; actions slot |
+| WidgetMetricStrip | WidgetMetricStripProps: Columns (1–8, default 8), Class, Attributes; compact responsive card children |
 | WidgetMetricFrame | WidgetMetricProps: Label, Note, Heading; custom value/chart slot |
 | WidgetMetric | label, value, note strings; compact display, exact tooltip and accessible label |
 | WidgetMetricValue | display and exact strings; MetricText also formats strings independently |
@@ -31,6 +32,8 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 | LoadingState / EmptyState | Default state labels, custom text/classes and optional empty-state actions |
 
 Use unique IDs and associate Field.For with the control ID. Low-level Dialog needs a TitleID matching DialogHeader.TitleID and application-owned behavior. The new Modal convenience API supplies its labels and native open/close/focus behavior. Forms and modal shells do not submit, move or fetch content automatically. Tokens, capability checks and permissions stay in the application. See [modals, alerts and toasts](feedback.md) for complete defaults and examples.
+
+See [compact metric strips](metrics.md) for dense dashboard rows, optional fields and keyed group shells.
 
 ## Appearance
 

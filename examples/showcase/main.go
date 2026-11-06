@@ -90,6 +90,12 @@ func showcaseHandlerWithRuntime(info versioning.Info, runtimeAssets fs.FS) http.
 			log.Print(err)
 		}
 	})
+	mux.HandleFunc("GET /metrics", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := MetricsPage(info).Render(r.Context(), w); err != nil {
+			log.Print(err)
+		}
+	})
 	mux.HandleFunc("GET /feedback", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := FeedbackPage(info, runtimeAssets != nil).Render(r.Context(), w); err != nil {

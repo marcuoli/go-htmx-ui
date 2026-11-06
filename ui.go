@@ -47,11 +47,12 @@ type (
 	LoadingStateProps = control.LoadingStateProps
 	EmptyStateProps   = control.EmptyStateProps
 
-	WidgetElement     = widget.WidgetElement
-	WidgetProps       = widget.WidgetProps
-	WidgetHeaderProps = widget.WidgetHeaderProps
-	WidgetMetricProps = widget.WidgetMetricProps
-	WidgetChartProps  = widget.WidgetChartProps
+	WidgetElement          = widget.WidgetElement
+	WidgetProps            = widget.WidgetProps
+	WidgetHeaderProps      = widget.WidgetHeaderProps
+	WidgetMetricProps      = widget.WidgetMetricProps
+	WidgetMetricStripProps = widget.WidgetMetricStripProps
+	WidgetChartProps       = widget.WidgetChartProps
 
 	StatusTone           = status.StatusTone
 	StatusPulseStyle     = status.StatusPulseStyle
@@ -163,6 +164,9 @@ func WidgetHeader(props WidgetHeaderProps) templ.Component {
 }
 func WidgetMetricFrame(props WidgetMetricProps) templ.Component {
 	return widget.WidgetMetricFrame(props)
+}
+func WidgetMetricStrip(props WidgetMetricStripProps) templ.Component {
+	return widget.WidgetMetricStrip(props)
 }
 func WidgetMetric(label, value, note string) templ.Component {
 	return widget.WidgetMetric(label, value, note)
