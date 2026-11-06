@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.4+20261106.28
 
 - Correct future `VERSION` placement to permanent canonical main and hold counter
   writers until official support preserves the journal and reservation contract.
