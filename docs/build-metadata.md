@@ -10,13 +10,17 @@ The official shared dependency/tool release is
 [`0.3.0+20261105.9`](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.0%2B20261105.9),
 source `db72d5637162e89cd0ffc26126ff008c270c2789`. Go records its coordinate as
 `v0.3.1-0.20261105212739-db72d5637162`. Use the pinned `go tool go-versioning`
-commands and the [released counter contract](https://github.com/marcuoli/go-versioning/blob/v0.3.0%2B20261105.9/docs/build-counters.md).
+commands for read-only metadata and version maintenance. The
+[0.3.0 counter contract](https://github.com/marcuoli/go-versioning/blob/v0.3.0%2B20261105.9/docs/build-counters.md)
+predates the corrected placement below; its store-local `VERSION` instructions
+must not be used for a new writer or cutover.
 
 ## Current build boundary
 
 `examples/showcase` reads `versioning.CurrentBuild()`. Builders can inject the
-shared `Info.LinkerFlags()` output, or the CLI's `build --format ldflags` output
-for a real artifact reservation. The example no longer uses private `main.version`,
+shared `Info.LinkerFlags()` output for supplied validation metadata. A production
+reservation requires an official writer supporting the placement below; none is
+enabled here. The example no longer uses private `main.version`,
 `main.commit` or `main.buildTime` linker variables. Its startup log records the
 validated metadata, and its footer displays the full application identity.
 Without injection, the overall build number remains zero/unknown and actual
@@ -42,23 +46,39 @@ contained no prior numeric build-number algorithm/value or source `VERSION` file
 candidate one-time continuity seed, not a claim about historical build attempts
 or a frozen baseline for future initialization. It was not allocated or stored.
 
-If an owned production-artifact entry point is introduced, first recheck history,
-external state and every cooperating builder. Use stable application ID
-`go-htmx-ui` and one explicitly configured absolute external authority. No source
-checkout or cloud-sync copy becomes the live store. All production builders must
-use the compatible shared release and the same authority; CI needs a qualified
-mount or one allocation job before it can produce counted artifacts.
+## Canonical VERSION placement and writer hold
 
-Only after confirming no earlier method/value or existing authority, the shared
-`counter-init --seed-commits --branch main --evidence ...` command can collect a
-fresh canonical HEAD/count/check time. Preserve that receipt and the live store's
-one-line decimal `VERSION` plus journal/reservations. If earlier evidence or an
-authority exists, use the reviewed seed/migration workflow instead; never reset,
-clone, hand-edit or recount on normal builds.
+`VERSION` belongs at `<permanent-canonical-main>/VERSION`, alongside the owning
+application's permanent main checkout. A temporary worktree, artifact directory,
+journal store or independently writable CI/cloud-sync copy is not that location.
+Journal, cache and build storage remain separate. Exact machine paths belong in
+the owning project's local operational evidence.
 
-Allocate once before each deliberate artifact-production invocation/matrix using
-`build --request-id NEW_ID --format ldflags`, then pass those exact flags to the
-compiler. A new compile needs a new ID; failed attempts consume their reservation.
-Retrying only a lost allocation response reuses its original ID/metadata. Any
-allocation/state error stops the build. Preserve immutable old releases and
-receipts; migration is not blanket republication of historical artifacts.
+This library has no live authority or production-artifact writer, so its canonical
+`VERSION` path is intentionally absent. Do not create a counter or an unused file
+merely to satisfy the location rule. Existing source releases, validation jobs and
+read-only runtime metadata need no relocation.
+
+Counter-writing initialization, allocation, cutover and production publication
+using the old store-local placement remain on hold. The pinned 0.3.0 release
+supports this library's read-only metadata/version operations, but its writer
+contract does not implement the corrected split. Before adding a production
+writer, adopt an official compatible release that supports the canonical file and
+preserves the authority/journal contract. Do not patch the dependency or move,
+edit, reset or reseed live files manually.
+
+A future owned production-artifact entry point must recheck canonical history,
+existing state and every cooperating builder. Use stable application ID
+`go-htmx-ui` and one supported authority whose writers reach the same permanent
+canonical `VERSION` and journal. CI needs qualified access or one allocation job;
+it must not create a per-run or per-checkout sequence. Any supported relocation
+must preserve the current number/baseline, authority identity, every reservation,
+retry and published artifact. Already-reserved attempts may finish safely.
+
+Only if the investigation confirms no previous method/value or authority, the
+official supported initialization may collect a fresh canonical HEAD/count/check
+time once. Preserve its receipt; never recount on normal builds. Allocate once
+per deliberate production invocation/matrix, with a new request ID for a new
+compile. Failed attempts consume reservations; retrying only a lost allocation
+response retains its original metadata. Any state/allocation error stops new
+compilation. Do not republish historical artifacts to apply this correction.

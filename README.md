@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.10.3+20261105.26
+go get github.com/marcuoli/go-htmx-ui@v0.10.4+20261106.28
 ```
 
 ## Render a widget
@@ -97,7 +97,7 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Release and application metadata use [go-versioning 0.3.0+20261105.9](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.0%2B20261105.9). The latest UI release's full identity is `0.10.3+20261105.26`, with immutable tag `v0.10.3+20261105.26`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [build metadata boundary](docs/build-metadata.md) for read-only runtime metadata and future external `VERSION` authorities.
+Release and application metadata use [go-versioning 0.3.0+20261105.9](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.0%2B20261105.9). The latest UI release's full identity is `0.10.4+20261106.28`, with immutable tag `v0.10.4+20261106.28`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [build metadata boundary](docs/build-metadata.md#canonical-version-placement-and-writer-hold) for canonical-root `VERSION` placement and the hold on unsupported counter writers. This source-only library creates no unused authority.
 
 ## Repository layout
 
@@ -202,7 +202,7 @@ Use this checkout's pinned official go-versioning tool rather than a separate ba
 
 ```sh
 go tool go-versioning inspect --repo . --json
-go tool go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 26 --bump patch --json
+go tool go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 28 --bump patch --json
 ```
 
 `next` is read-only. This release selects a patch bump from the previous
