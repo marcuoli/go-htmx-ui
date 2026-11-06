@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.11.0+20261106.31
 
 - Add opt-in WidgetMetricStrip for compact responsive dashboard cards, including
   up to eight desktop columns, generic keyed group shells, hidden optional fields,
