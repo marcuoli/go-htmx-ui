@@ -5,7 +5,7 @@ go 1.27.3
 require (
 	github.com/a-h/templ v0.3.1100
 	github.com/marcuoli/go-htmx-table v0.2.0
-	github.com/marcuoli/go-versioning v0.3.1-0.20261105212739-db72d5637162
+	github.com/marcuoli/go-versioning v0.3.2-0.20261106100520-4c3c478eb827
 )
 
 require (

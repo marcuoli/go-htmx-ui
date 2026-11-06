@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.5+20261106.29
+
+- Adopt official go-versioning `0.3.1+20261106.13` and its canonical-main ownership,
+  validation and relocation contract. Review ignores for both operational files;
+  keep this source-only module N/A for live counters without creating unused state.
+
 ## 0.10.4+20261106.28
 
 - Correct future `VERSION` placement to permanent canonical main and hold counter

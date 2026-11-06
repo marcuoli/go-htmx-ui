@@ -1,2 +1,6 @@
 node_modules/
 /web/node_modules/
+
+# Shared operational counter files belong only to permanent canonical main.
+/VERSION
+/VERSION.authority.json
