@@ -1,0 +1,40 @@
+package main
+
+import (
+	ui "github.com/marcuoli/go-htmx-ui"
+	versioning "github.com/marcuoli/go-versioning"
+)
+
+templ MetricsPage(info versioning.Info) {
+	@ui.Page(ui.PageProps{Title: "Compact metrics", AssetPrefix: "/assets/", Charts: true, App: ui.AppProps{ID: "metrics-app", DisablePersistence: true}}) {
+		@ui.AppShell(ui.AppShellProps{Title: "Metric showcase", Description: "Compact rows using existing metric cards", Nav: []ui.NavItem{{Label: "Overview", Href: "/"}, {Label: "Themes", Href: "/themes"}, {Label: "Compact metrics", Href: "/metrics", Active: true}}, Footer: ui.VersionLabel(info)}) {
+			@ui.Stack() {
+				@ui.PageHeader(ui.PageHeaderProps{Title: "Eight compact metrics", Description: "Synthetic values. Desktop cards share one row; smaller viewports wrap. Exact values remain available to assistive technology and through each value's tooltip."})
+				@ui.WidgetMetricStrip(ui.WidgetMetricStripProps{Attributes: templ.Attributes{"id": "compact-metrics", "data-dashboard-key": "metric-root"}}) {
+					<div class="ghtui-metric-group" data-dashboard-key="metric-primary">
+						for _, item := range stripExamples()[:4] {
+							@StripCard(item)
+						}
+					</div>
+					<div class="ghtui-metric-group" data-dashboard-key="metric-extra">
+						for _, item := range stripExamples()[4:] {
+							@StripCard(item)
+						}
+					</div>
+				}
+				@ui.Widget(ui.WidgetProps{}) {
+					@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "An independent chart", Description: "Metric layout does not replace chart hosts or own their data lifecycle."})
+					@ui.WidgetChart(ui.WidgetChartProps{ID: "metric-reference-chart", Label: "Synthetic requests and warnings", Option: themeOption()})
+				}
+			}
+		}
+	}
+}
+
+templ StripCard(item metricExample) {
+	<div class="ghtui-metric-group" data-dashboard-key={ "metric-" + item.Key }>
+		@ui.WidgetMetricFrame(ui.WidgetMetricProps{Label: item.Label, Note: item.Note}) {
+			@ui.WidgetMetricValue(item.Value, item.Exact)
+		}
+	</div>
+}

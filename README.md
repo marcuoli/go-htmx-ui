@@ -73,6 +73,10 @@ spacing, controls, states and chart colors inherit the selected theme.
 See [defaults, themes and app layout](docs/themes.md) for configuration and the
 optional smaller App wrapper. Open `/themes` in the showcase to compare variants.
 
+[Compact metric strips](docs/metrics.md) compose existing metric cards into a dense
+responsive row, with paired theme support and exact accessible values. Open
+`/metrics` in the showcase for eight cards and keyed group examples.
+
 ## Showcase
 
 The [modals, alerts and toast notifications](docs/feedback.md) add

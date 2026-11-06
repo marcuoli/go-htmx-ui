@@ -1,6 +1,9 @@
 package widget
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/a-h/templ"
 	"github.com/marcuoli/go-htmx-ui/chart"
 )
@@ -32,6 +35,33 @@ type WidgetHeaderProps struct {
 type WidgetMetricProps struct {
 	Label, Note string
 	Heading     bool
+}
+
+// WidgetMetricStripProps composes existing metric cards into a compact row.
+// Columns is the visible card count (1–8); zero/invalid values default to eight.
+// Attributes retain application-owned keys, IDs and hidden state. Class and the
+// column marker are configured through props so they cannot be duplicated.
+type WidgetMetricStripProps struct {
+	Columns    int
+	Class      string
+	Attributes templ.Attributes
+}
+
+func metricStripColumns(props WidgetMetricStripProps) string {
+	if props.Columns < 1 || props.Columns > 8 {
+		return "8"
+	}
+	return strconv.Itoa(props.Columns)
+}
+
+func metricStripAttributes(props WidgetMetricStripProps) templ.Attributes {
+	attrs := templ.Attributes{}
+	for key, value := range props.Attributes {
+		if !strings.EqualFold(key, "class") && !strings.EqualFold(key, "data-ui-metric-columns") {
+			attrs[key] = value
+		}
+	}
+	return attrs
 }
 
 // WidgetChartProps accepts native ECharts options and safe callback/lifecycle

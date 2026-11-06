@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add opt-in WidgetMetricStrip for compact responsive dashboard cards, including
+  up to eight desktop columns, generic keyed group shells, hidden optional fields,
+  theme inheritance and exact accessible values. Keep existing metric defaults.
+- Add a synthetic /metrics showcase and integration guide.
+
 ## 0.10.5+20261106.29
 
 - Adopt official go-versioning `0.3.1+20261106.13` and its canonical-main ownership,
