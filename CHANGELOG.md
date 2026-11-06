@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Correct future `VERSION` placement to permanent canonical main and hold counter
+  writers until official support preserves the journal and reservation contract.
+  Keep this source-only library non-allocating and preserve published releases.
+
 ## 0.10.3+20261105.26
 
 - Adopt official go-versioning `0.3.0+20261105.9`, pin its CLI tool and use shared
