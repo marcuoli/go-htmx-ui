@@ -97,7 +97,7 @@ The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
 are still application-owned; selecting HTMX 4 is a separate application
 migration, particularly for inherited attributes and event/error handling.
 
-Release and application metadata use [go-versioning 0.3.0+20261105.9](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.0%2B20261105.9). The latest UI release's full identity is `0.10.4+20261106.28`, with immutable tag `v0.10.4+20261106.28`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [build metadata boundary](docs/build-metadata.md#canonical-version-placement-and-writer-hold) for canonical-root `VERSION` placement and the hold on unsupported counter writers. This source-only library creates no unused authority.
+Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). The latest UI release's full identity is `0.10.4+20261106.28`, with immutable tag `v0.10.4+20261106.28`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
 
 ## Repository layout
 
@@ -186,7 +186,7 @@ adapting the sources into an application pipeline.
 
 The latest official Go and frontend releases are checked during dependency
 reviews. Current direct versions: templ v0.3.1100, go-htmx-table v0.2.0,
-go-versioning 0.3.0+20261105.9, Tailwind 4.3.4 and ECharts 6.1.0. The generator is pinned as
+go-versioning 0.3.1+20261106.13, Tailwind 4.3.4 and ECharts 6.1.0. The generator is pinned as
 a Go tool. Retain official parse v0.0.0-20250122154542-74294addb73e: the newer
 v0.0.0-20261027111828-db2689052003 adds `Parser.Match`, which templ's generator
 does not implement. Recheck that upstream exception on the next review.
