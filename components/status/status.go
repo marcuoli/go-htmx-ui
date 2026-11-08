@@ -28,11 +28,12 @@ const (
 )
 
 // StatusAlpineBindings holds optional, trusted developer-written expressions.
-// The application loads Alpine and owns the state these expressions reference.
+// The shared frontend loads Alpine; the application owns referenced state.
 // Empty expressions add no binding. Pulse is converted to a true/false data
 // attribute; LabelClass augments the label's static classes using Alpine rules.
 type StatusAlpineBindings struct {
 	Show, Label, LabelClass, Tone, Pulse string
+	Description                          string
 }
 
 // StatusIndicatorProps configures a dot and visible text label. The zero tone
@@ -41,7 +42,10 @@ type StatusAlpineBindings struct {
 // LabelAttributes target the text span (for example, Alpine's x-text).
 // Attributes and classes must be server-defined, as with the other controls.
 type StatusIndicatorProps struct {
-	Label, Class    string
+	Label, Class string
+	// Description supplies the full tooltip and accessible name. Include Label
+	// when presenting a stable label such as "Live updates" with changing state.
+	Description     string
 	LabelClass      string
 	Tone            StatusTone
 	Pulse           bool
@@ -65,30 +69,44 @@ func statusAttributes(props StatusIndicatorProps, label bool) templ.Attributes {
 	if label {
 		attributes = props.LabelAttributes
 	}
-	if props.Alpine == nil {
+	if props.Alpine == nil && (label || props.Description == "") {
 		return attributes
 	}
-	bindings := props.Alpine
 	result := templ.Attributes{}
-	if label {
-		if bindings.Label != "" {
-			result["x-text"] = bindings.Label
-		}
-		if bindings.LabelClass != "" {
-			result["x-bind:class"] = bindings.LabelClass
-		}
-	} else {
-		if bindings.Show != "" {
-			result["x-show"] = bindings.Show
-		}
-		if bindings.Tone != "" {
-			result["x-bind:data-tone"] = bindings.Tone
-		}
-		if bindings.Pulse != "" {
-			result["x-bind:data-pulse"] = "(" + bindings.Pulse + ") ? 'true' : 'false'"
+	// Generic spans cannot have accessible names. A named non-live group exposes
+	// the full description while live announcements remain caller-controlled.
+	if !label && (props.Description != "" || props.Alpine != nil && props.Alpine.Description != "") {
+		result["role"] = "group"
+	}
+	if !label && props.Description != "" {
+		result["title"] = props.Description
+		result["aria-label"] = props.Description
+	}
+	if bindings := props.Alpine; bindings != nil {
+		if label {
+			if bindings.Label != "" {
+				result["x-text"] = bindings.Label
+			}
+			if bindings.LabelClass != "" {
+				result["x-bind:class"] = bindings.LabelClass
+			}
+		} else {
+			if bindings.Description != "" {
+				result["x-bind:title"] = bindings.Description
+				result["x-bind:aria-label"] = bindings.Description
+			}
+			if bindings.Show != "" {
+				result["x-show"] = bindings.Show
+			}
+			if bindings.Tone != "" {
+				result["x-bind:data-tone"] = bindings.Tone
+			}
+			if bindings.Pulse != "" {
+				result["x-bind:data-pulse"] = "(" + bindings.Pulse + ") ? 'true' : 'false'"
+			}
 		}
 	}
-	for name, value := range attributes {
+	for name := range attributes {
 		// Alpine treats shorthand and modified directives as the same base
 		// binding. Suppress convenience observers for all those spellings,
 		// including x-show.important, so they cannot overwrite caller state.
@@ -100,6 +118,13 @@ func statusAttributes(props StatusIndicatorProps, label bool) templ.Attributes {
 			binding, _, _ = strings.Cut(binding, ".")
 			delete(result, binding)
 		}
+		if name == "title" || name == "aria-label" {
+			delete(result, "x-bind:"+name)
+		}
+	}
+	// Copy after suppression so map iteration cannot remove an explicit binding
+	// when the caller supplies both its static fallback and dynamic expression.
+	for name, value := range attributes {
 		result[name] = value
 	}
 	return result

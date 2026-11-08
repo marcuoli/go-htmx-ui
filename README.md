@@ -51,6 +51,11 @@ Route shared component, API, style and asset requests through this module's
 designated owning development session. Consuming apps retain domain logic and
 adopt released shared versions rather than maintaining divergent copies.
 
+Go and [rust-htmx-ui](https://github.com/marcuoli/rust-htmx-ui) share a
+[bidirectional UI parity contract](docs/ui-parity.md) for features, patterns and
+defaults. Each change reviews the counterpart and records tested releases or
+owner-linked pending gaps; this does not claim complete historical API parity.
+
 ## A complete app with defaults
 
 ```templ
@@ -68,6 +73,11 @@ adopt released shared versions rather than maintaining divergent copies.
 
 Register `ui.AssetHandler("")` at `/assets/ui/` once. Page supplies shared assets
 and Standard/System appearance; the shell includes a persistent theme switcher.
+Its palette selector stays independent of the plain sun/moon appearance action;
+a boxed button is explicitly available with `Style: ui.AppearanceButton`.
+`AppearanceToggle` is reusable inside any App. Status labels default to neutral
+text; use `Description` for the full tooltip and accessible state while keeping
+"Live updates" stable. Pulse remains opt-in.
 Standard, Ocean and Forest each have Light and Dark variants. Typography,
 spacing, controls, states and chart colors inherit the selected theme.
 See [defaults, themes and app layout](docs/themes.md) for configuration and the

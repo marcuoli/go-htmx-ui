@@ -10,6 +10,7 @@ export function uiFixture({saved,storageFails=false,dark=false,narrow=false,init
  class Node {
   constructor(attrs={},tag='div') {this.attrs={};this.dataset={};this.children=[];this.events=[];this.isConnected=true;this.nodeType=1;this.tag=tag;for(const [k,v]of Object.entries(attrs))this.setAttribute(k,v);}
   setAttribute(name,value) {if(name.startsWith('data-'))this.dataset[dataKey(name)]=String(value);else this.attrs[name]=String(value);}
+  toggleAttribute(name,enabled) {if(enabled)this.setAttribute(name,'');else delete this.attrs[name];}
   hasAttribute(name) {return name.startsWith('data-')?dataKey(name) in this.dataset:name in this.attrs;}
   getAttribute(name) {return name.startsWith('data-')?this.dataset[dataKey(name)]:this.attrs[name];}
   matches(selector) {return selector.split(',').some(s=>{s=s.trim();if(s.startsWith('dialog')&&this.tag!=='dialog')return false;return [...s.matchAll(/\[([^\]=]+)(?:="([^"]*)")?\]/g)].every(([,name,value])=>this.hasAttribute(name)&&(value===undefined||this.getAttribute(name)===value));});}
@@ -25,7 +26,7 @@ export function uiFixture({saved,storageFails=false,dark=false,narrow=false,init
  document={readyState:'complete',documentElement:tree,activeElement:null,querySelectorAll:s=>tree.querySelectorAll(s),addEventListener:(name,fn)=>(events[name]??=[]).push(fn)};
  const app=(config={})=>new Node({'data-ui-app':'','data-ui-theme':config.theme||'standard','data-ui-mode':config.mode||'system','data-ui-density':config.density||'comfortable',...(config.noPersist?{'data-ui-persist':'false'}:{}),...(config.key?{'data-ui-storage-key':config.key}:{})});
  const root=tree.append(app(initial));
- const switcher=parent=>{const group=parent.append(new Node());const theme=group.append(new Node({'data-ui-theme-select':''},'select'));const mode=group.append(new Node({'data-ui-mode-select':''},'select'));theme.disabled=mode.disabled=true;return {group,theme,mode};};
+ const switcher=parent=>{const group=parent.append(new Node());const theme=group.append(new Node({'data-ui-theme-select':''},'select'));const mode=group.append(new Node({'data-ui-mode-select':''},'select'));const button=group.append(new Node({'data-ui-mode-toggle':''},'button'));const moon=button.append(new Node({'data-ui-mode-icon':'moon'},'svg')),sun=button.append(new Node({'data-ui-mode-icon':'sun'},'svg'));const path=moon.append(new Node({},'path'));theme.disabled=mode.disabled=button.disabled=true;return {group,theme,mode,button,moon,sun,path};};
  const controls=switcher(root);
  const shell=root.append(new Node({'data-ui-shell':''}));
  const toggle=shell.append(new Node({'data-ui-shell-toggle':''},'button'));

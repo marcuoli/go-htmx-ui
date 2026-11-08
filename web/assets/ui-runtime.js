@@ -38,6 +38,14 @@
    select.value=select.hasAttribute("data-ui-theme-select")?prefs.theme:prefs.mode;
    select.disabled=false;
   }
+  const next=resolved(prefs)==="dark"?"light":"dark";
+  for(const button of root.querySelectorAll("[data-ui-mode-toggle]")) {
+   if(button.closest(appSelector)!==root)continue;
+   const label=(next==="light"?button.dataset.uiLightLabel:button.dataset.uiDarkLabel)||`Switch to ${next} mode`;
+   button.setAttribute("aria-label",label);button.setAttribute("title",label);
+   for(const icon of button.querySelectorAll("[data-ui-mode-icon]"))icon.toggleAttribute("hidden",icon.dataset.uiModeIcon!==(next==="dark"?"moon":"sun"));
+   button.disabled=false;
+  }
  }
  function reconcile(root,{persist=false,force=false}={}) {
   const prefs=read(root),state=apps.get(root),mode=resolved(prefs);
@@ -119,6 +127,12 @@
   setAppearance(root,select.hasAttribute("data-ui-theme-select")?{theme:select.value}:{mode:select.value});
  });
  document.addEventListener("click",event=>{
+  // closest includes SVG paths; native buttons supply Enter/Space activation.
+  const appearance=event.target.closest?.("[data-ui-mode-toggle]");
+  if(appearance) {
+   const root=appearance.closest(appSelector);if(!root||appearance.disabled)return;
+   setAppearance(root,{mode:resolved(read(root))==="dark"?"light":"dark"});return;
+  }
   const toggle=event.target.closest?.("[data-ui-shell-toggle]");if(!toggle)return;
   const shell=toggle.closest(shellSelector);if(!shell)return;
   enhanceShell(shell);const state=shells.get(shell);if(!state)return;

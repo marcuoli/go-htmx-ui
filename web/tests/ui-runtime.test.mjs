@@ -3,6 +3,41 @@ import assert from 'node:assert/strict';
 import {uiFixture} from './ui-fixture.mjs';
 const plain=value=>JSON.parse(JSON.stringify(value));
 
+test('appearance actions follow OS until a native/SVG click saves an explicit choice',()=>{
+ const f=uiFixture(),c=f.controls;
+ assert.equal(c.button.disabled,false);assert.equal(c.button.getAttribute('aria-label'),'Switch to dark mode');
+ assert.equal(c.sun.hasAttribute('hidden'),true);assert.equal(c.moon.hasAttribute('hidden'),false);
+ f.media('dark',true);assert.equal(c.button.getAttribute('title'),'Switch to light mode');
+ assert.equal(c.sun.hasAttribute('hidden'),false);assert.equal(f.root.dataset.uiMode,'system');
+ f.fire('click',c.path);assert.equal(f.root.dataset.uiMode,'light');
+ assert.equal(JSON.parse(f.storage.get('go-htmx-ui:appearance')).mode,'light');
+ f.media('dark',false);f.media('dark',true);assert.equal(f.root.dataset.uiResolvedMode,'light');
+ f.fire('click',c.button);assert.equal(f.root.dataset.uiMode,'dark');
+ f.api.setAppearance(f.root,{mode:'system'});f.media('dark',false);assert.equal(f.root.dataset.uiResolvedMode,'light');
+});
+
+test('repeated, inserted and nested appearance controls reconcile only their owning root',()=>{
+ const f=uiFixture(),second=f.switcher(f.root);
+ const nested=f.root.append(f.app({mode:'dark',noPersist:true})),inner=f.switcher(nested);
+ f.mutate([{type:'childList',addedNodes:[second.group,nested]}]);
+ f.fire('click',second.sun);assert.equal(f.controls.button.getAttribute('title'),'Switch to light mode');
+ assert.equal(inner.button.getAttribute('title'),'Switch to light mode');
+ f.fire('click',inner.sun);assert.equal(nested.dataset.uiMode,'light');assert.equal(f.root.dataset.uiMode,'dark');
+ second.button.dataset.uiLightLabel='Use light';f.api.init(second.group);
+ assert.equal(second.button.getAttribute('aria-label'),'Use light');
+ f.reloadScript();f.fire('click',second.button);assert.equal(f.root.dataset.uiMode,'light','duplicate listeners toggled twice');
+});
+
+test('appearance actions survive blocked storage and synchronize cross-tab updates and clears',()=>{
+ const blocked=uiFixture({storageFails:true,dark:true});
+ assert.doesNotThrow(()=>blocked.fire('click',blocked.controls.button));assert.equal(blocked.root.dataset.uiMode,'light');
+ const f=uiFixture();
+ f.storage.set('go-htmx-ui:appearance',JSON.stringify({mode:'dark'}));f.fire('window:storage',null,{key:'go-htmx-ui:appearance'});
+ assert.equal(f.controls.button.getAttribute('aria-label'),'Switch to light mode');
+ f.storage.clear();f.fire('window:storage',null,{key:null});assert.equal(f.root.dataset.uiMode,'system');
+ f.media('dark',true);assert.equal(f.controls.sun.hasAttribute('hidden'),false);
+});
+
 test('HTMX4 settling defers enhancement and chart refresh until the final swap signal',()=>{
  const f=uiFixture(),ctx={};
  f.fire('htmx:before:swap',f.root,{detail:{ctx}});

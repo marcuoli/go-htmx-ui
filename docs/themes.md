@@ -1,7 +1,7 @@
 # Defaults, themes and app layout
 
-Available since `0.9.0+20261105.18`. Pin the current full release tag:
-`go get github.com/marcuoli/go-htmx-ui@v0.10.5+20261106.29`.
+Available since `0.9.0+20261105.18`. Pin the exact current full release tag in the
+[README](../README.md).
 
 `Page` supplies a complete document with shared CSS and the external UI runtime.
 `AppShell` adds a header, optional navigation/sidebar, content and optional
@@ -89,7 +89,23 @@ Page/Head support an application-provided CSP nonce on their external scripts.
 AppShell includes ThemeSwitcher by default; HideThemeSwitcher omits it. Extra
 `ThemeSwitcher(ThemeSwitcherProps{})` components inherit their owning App. Labels
 can be localized. SSR selections reflect render-scoped settings; the runtime
-synchronizes switchers and remembers theme, mode and density.
+synchronizes switchers and remembers theme, mode and density. The palette
+selector remains separate from the sun/moon `AppearanceToggle`. Light shows a
+moon named "Switch to dark mode"; Dark shows a sun named "Switch to light mode".
+The first activation persists an explicit light/dark mode; System follows OS
+changes until then. Use `setAppearance(root, {mode: "system"})` to restore it.
+Native buttons support keyboard and SVG clicks without app JavaScript.
+The default icon has no persistent background, border or shadow, with a full
+control-height hit area and visible keyboard focus. Opt into the boxed style
+with `AppearanceToggleProps{Style: ui.AppearanceButton}` or
+`ThemeSwitcherProps{AppearanceStyle: ui.AppearanceButton}`.
+
+`AppearanceToggleProps.LightLabel` and `DarkLabel` localize the next action.
+ThemeSwitcher exposes the same props; its existing ModeLabel labels the
+appearance group. Legacy custom `data-ui-mode-select` controls remain supported.
+Header Theme labels sit inline so adjacent buttons/selectors align in both
+densities; standalone switchers retain stacked labels. Glyphs remain 20px square.
+See the [Go/Rust shared contract](ui-parity.md) for qualification and gaps.
 
 StorageKey defaults to `go-htmx-ui:appearance`. Use separate keys for apps on a
 shared origin, or DisablePersistence for embedded previews. Valid remembered

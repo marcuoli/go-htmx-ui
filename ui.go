@@ -73,21 +73,25 @@ type (
 	EChartsMessages      = chart.EChartsMessages
 	EChartsConfig        = chart.EChartsConfig
 
-	HeadProps          = web.HeadProps
-	HTMXVersion        = web.HTMXVersion
-	PageProps          = web.PageProps
-	AppProps           = layout.AppProps
-	AppShellProps      = layout.AppShellProps
-	ThemeSwitcherProps = layout.ThemeSwitcherProps
-	NavItem            = layout.NavItem
-	GridProps          = layout.GridProps
-	Theme              = theme.Name
-	Mode               = theme.Mode
-	Density            = theme.Density
-	ThemeConfig        = theme.Config
+	HeadProps             = web.HeadProps
+	HTMXVersion           = web.HTMXVersion
+	PageProps             = web.PageProps
+	AppProps              = layout.AppProps
+	AppShellProps         = layout.AppShellProps
+	ThemeSwitcherProps    = layout.ThemeSwitcherProps
+	AppearanceToggleProps = layout.AppearanceToggleProps
+	AppearanceToggleStyle = layout.AppearanceToggleStyle
+	NavItem               = layout.NavItem
+	GridProps             = layout.GridProps
+	Theme                 = theme.Name
+	Mode                  = theme.Mode
+	Density               = theme.Density
+	ThemeConfig           = theme.Config
 )
 
 const (
+	AppearancePlain  = layout.AppearancePlain
+	AppearanceButton = layout.AppearanceButton
 	Primary          = control.Primary
 	Secondary        = control.Secondary
 	Danger           = control.Danger
@@ -207,8 +211,11 @@ func Page(props PageProps) templ.Component                   { return web.Page(p
 func App(props AppProps) templ.Component                     { return layout.App(props) }
 func AppShell(props AppShellProps) templ.Component           { return layout.AppShell(props) }
 func ThemeSwitcher(props ThemeSwitcherProps) templ.Component { return layout.ThemeSwitcher(props) }
-func Stack() templ.Component                                 { return layout.Stack() }
-func Grid(props GridProps) templ.Component                   { return layout.Grid(props) }
+func AppearanceToggle(props AppearanceToggleProps) templ.Component {
+	return layout.AppearanceToggle(props)
+}
+func Stack() templ.Component               { return layout.Stack() }
+func Grid(props GridProps) templ.Component { return layout.Grid(props) }
 
 // Shared HTMX runtime selections preserve the compatibility default.
 const (
