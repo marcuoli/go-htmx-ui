@@ -12,8 +12,8 @@ import templruntime "github.com/a-h/templ/runtime"
 import ui "github.com/marcuoli/go-htmx-ui"
 
 // AlpinePage is a standalone consumer example. The application owns its state,
-// runtime loading, theme, routes and CSP; the shared control supplies bindings.
-func AlpinePage(withRuntime, withAlpineCompat bool) templ.Component {
+// theme, routes and CSP; go-htmx-ui supplies the runtimes and bindings.
+func AlpinePage(htmx ui.HTMXVersion) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,41 +34,11 @@ func AlpinePage(withRuntime, withAlpineCompat bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ui.Head(ui.HeadProps{AssetPrefix: "/assets/", Charts: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ui.Head(ui.HeadProps{AssetPrefix: "/assets/", Charts: true, Frontend: true, HTMX: htmx}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<style>\n body{font:14px/1.5 system-ui,sans-serif;background:#fff;color:#1f2328;margin:40px;--ghtui-success:#1a7f37;--ghtui-status-danger:#b42335;--ghtui-muted:#57606a}button{margin:8px 4px 8px 0}section{margin:24px 0}.demo-static{font-weight:600}\n @layer utilities{.demo-muted{color:#57606a}.demo-ready{color:#1a7f37}.demo-failed{color:#b42335}.demo-info{color:#0969da}}\n </style>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if withRuntime {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<script src=\"/example-runtime/htmx.js\" defer></script> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if withAlpineCompat {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<script src=\"/example-runtime/alpine-compat.js\" defer></script>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " <script src=\"/example-runtime/alpine.js\" defer></script>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</head><body><h1>Alpine status example</h1>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if !withRuntime {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<p>Supply the showcase's runtime-assets flag with an external node_modules directory containing the development dependencies to enable this example.</p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<main x-data=\"{shown:false,text:'Starting',tone:'neutral',active:false,textClass:'demo-muted',overrideVisible:true,overrideTone:'danger',overridePulse:false,overrideClass:'demo-failed'}\"><section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<style>\n body{font:14px/1.5 system-ui,sans-serif;background:#fff;color:#1f2328;margin:40px;--ghtui-success:#1a7f37;--ghtui-status-danger:#b42335;--ghtui-muted:#57606a}button{margin:8px 4px 8px 0}section{margin:24px 0}.demo-static{font-weight:600}\n @layer utilities{.demo-muted{color:#57606a}.demo-ready{color:#1a7f37}.demo-failed{color:#b42335}.demo-info{color:#0969da}}\n </style></head><body><h1>Alpine status example</h1><main x-data=\"{shown:false,text:'Starting',tone:'neutral',active:false,textClass:'demo-muted',overrideVisible:true,overrideTone:'danger',overridePulse:false,overrideClass:'demo-failed'}\"><section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -88,7 +58,7 @@ func AlpinePage(withRuntime, withAlpineCompat bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div><button id=\"mark-ready\" type=\"button\" x-on:click=\"shown=true;text='Ready';tone='success';active=true;textClass='demo-ready'\">Mark ready</button> <button id=\"mark-failed\" type=\"button\" x-on:click=\"shown=true;text='Not ready';tone='danger';active=false;textClass='demo-failed'\">Mark not ready</button> <button id=\"hide-status\" type=\"button\" x-on:click=\"shown=false\">Hide</button></div></section><section><button id=\"load-fragment\" type=\"button\" hx-get=\"/alpine/fragment\" hx-target=\"#alpine-fragment\" hx-swap=\"innerHTML\">Load status fragment</button><div id=\"alpine-fragment\"></div></section></main></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div><button id=\"mark-ready\" type=\"button\" x-on:click=\"shown=true;text='Ready';tone='success';active=true;textClass='demo-ready'\">Mark ready</button> <button id=\"mark-failed\" type=\"button\" x-on:click=\"shown=true;text='Not ready';tone='danger';active=false;textClass='demo-failed'\">Mark not ready</button> <button id=\"hide-status\" type=\"button\" x-on:click=\"shown=false\">Hide</button></div></section><section><button id=\"load-fragment\" type=\"button\" hx-get=\"/alpine/fragment\" hx-target=\"#alpine-fragment\" hx-swap=\"innerHTML\">Load status fragment</button><div id=\"alpine-fragment\"></div></section></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -113,7 +83,7 @@ func AlpineFragment() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div x-data=\"{shown:true,text:'Fragment ready',tone:'success',active:true,textClass:'demo-ready'}\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div x-data=\"{shown:true,text:'Fragment ready',tone:'success',active:true,textClass:'demo-ready'}\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -129,7 +99,7 @@ func AlpineFragment() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<button id=\"update-fragment\" type=\"button\" x-on:click=\"text='Fragment updated';tone='info';active=false;textClass='demo-info'\">Update fragment</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button id=\"update-fragment\" type=\"button\" x-on:click=\"text='Fragment updated';tone='info';active=false;textClass='demo-info'\">Update fragment</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

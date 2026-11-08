@@ -4,18 +4,14 @@ import (
 	"flag"
 	ui "github.com/marcuoli/go-htmx-ui"
 	versioning "github.com/marcuoli/go-versioning"
-	"io/fs"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 	"time"
 )
 
 func main() {
 	addr := flag.String("listen", "127.0.0.1:8099", "HTTP listen address")
-	runtimeDir := flag.String("runtime-assets", "", "optional external node_modules directory for the Alpine/HTMX example")
-	htmx4 := flag.Bool("htmx4", false, "use the development-only htmx4 npm alias in the Alpine example")
+	htmx4 := flag.Bool("htmx4", false, "use the shared official HTMX4 runtime")
 	flag.Parse()
 	// Shared linker metadata is read-only. Validation builds keep an unknown
 	// counter/time; running the example never probes or allocates a live store.
@@ -25,56 +21,24 @@ func main() {
 	}
 	log.Printf("showcase: http://%s", *addr)
 	log.Printf("build: version=%s commit=%s build_time=%q overall_build_number=%d build_counter_id=%q", info.Version, info.Commit, info.BuildTime, info.OverallBuildNumber, info.BuildCounterID)
-	var runtimeAssets fs.FS
-	if *runtimeDir != "" {
-		runtimeAssets = os.DirFS(*runtimeDir)
-		if *htmx4 {
-			runtimeAssets = exampleRuntimeFS{runtimeAssets}
-		}
+	htmx := ui.HTMX2
+	if *htmx4 {
+		htmx = ui.HTMX4
 	}
-	server := http.Server{Addr: *addr, Handler: showcaseHandlerWithRuntime(info, runtimeAssets), ReadHeaderTimeout: 5 * time.Second}
+	server := http.Server{Addr: *addr, Handler: showcaseHandlerForHTMX(info, htmx), ReadHeaderTimeout: 5 * time.Second}
 	log.Fatal(server.ListenAndServe())
 }
 
-// exampleRuntimeFS selects an unmodified official npm alias for the example;
-// framework selection and loading are application concerns, not ui.Head's.
-type exampleRuntimeFS struct{ fs.FS }
-
-func (assets exampleRuntimeFS) Open(name string) (fs.File, error) {
-	if strings.HasPrefix(name, "htmx.org/") {
-		name = "htmx4/" + strings.TrimPrefix(name, "htmx.org/")
-	}
-	return assets.FS.Open(name)
-}
-
 func showcaseHandler(info versioning.Info) http.Handler {
-	return showcaseHandlerWithRuntime(info, nil)
+	return showcaseHandlerForHTMX(info, ui.HTMX2)
 }
 
-func showcaseHandlerWithRuntime(info versioning.Info, runtimeAssets fs.FS) http.Handler {
+func showcaseHandlerForHTMX(info versioning.Info, htmx ui.HTMXVersion) http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("GET /assets/", ui.AssetHandler("/assets/"))
-	// These development-only runtimes are served from an explicitly supplied
-	// external directory. The shared module never bundles or installs them.
-	if runtimeAssets != nil {
-		mux.HandleFunc("GET /example-runtime/alpine.js", func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFileFS(w, r, runtimeAssets, "alpinejs/dist/cdn.min.js")
-		})
-		mux.HandleFunc("GET /example-runtime/htmx.js", func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFileFS(w, r, runtimeAssets, "htmx.org/dist/htmx.min.js")
-		})
-		mux.HandleFunc("GET /example-runtime/alpine-compat.js", func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFileFS(w, r, runtimeAssets, "htmx.org/dist/ext/hx-alpine-compat.js")
-		})
-	}
-	withAlpineCompat := false
-	if runtimeAssets != nil {
-		_, compatError := fs.Stat(runtimeAssets, "htmx.org/dist/ext/hx-alpine-compat.js")
-		withAlpineCompat = compatError == nil
-	}
 	mux.HandleFunc("GET /alpine", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := AlpinePage(runtimeAssets != nil, withAlpineCompat).Render(r.Context(), w); err != nil {
+		if err := AlpinePage(htmx).Render(r.Context(), w); err != nil {
 			log.Print(err)
 		}
 	})
@@ -86,19 +50,19 @@ func showcaseHandlerWithRuntime(info versioning.Info, runtimeAssets fs.FS) http.
 	})
 	mux.HandleFunc("GET /themes", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := ThemesPage(info, runtimeAssets != nil).Render(r.Context(), w); err != nil {
+		if err := ThemesPage(info, htmx).Render(r.Context(), w); err != nil {
 			log.Print(err)
 		}
 	})
 	mux.HandleFunc("GET /metrics", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := MetricsPage(info).Render(r.Context(), w); err != nil {
+		if err := MetricsPage(info, htmx).Render(r.Context(), w); err != nil {
 			log.Print(err)
 		}
 	})
 	mux.HandleFunc("GET /feedback", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := FeedbackPage(info, runtimeAssets != nil).Render(r.Context(), w); err != nil {
+		if err := FeedbackPage(info, htmx).Render(r.Context(), w); err != nil {
 			log.Print(err)
 		}
 	})
@@ -120,9 +84,9 @@ func showcaseHandlerWithRuntime(info versioning.Info, runtimeAssets fs.FS) http.
 			log.Print(err)
 		}
 	})
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := Page(info).Render(r.Context(), w); err != nil {
+		if err := Page(info, htmx).Render(r.Context(), w); err != nil {
 			log.Print(err)
 		}
 	})

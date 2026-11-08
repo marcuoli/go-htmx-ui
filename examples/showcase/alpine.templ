@@ -3,58 +3,57 @@ package main
 import ui "github.com/marcuoli/go-htmx-ui"
 
 // AlpinePage is a standalone consumer example. The application owns its state,
-// runtime loading, theme, routes and CSP; the shared control supplies bindings.
-templ AlpinePage(withRuntime, withAlpineCompat bool) {
- <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>Alpine status example</title>
- @ui.Head(ui.HeadProps{AssetPrefix:"/assets/",Charts:true})
- <style>
+// theme, routes and CSP; go-htmx-ui supplies the runtimes and bindings.
+templ AlpinePage(htmx ui.HTMXVersion) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width"/>
+			<title>Alpine status example</title>
+			@ui.Head(ui.HeadProps{AssetPrefix: "/assets/", Charts: true, Frontend: true, HTMX: htmx})
+			<style>
  body{font:14px/1.5 system-ui,sans-serif;background:#fff;color:#1f2328;margin:40px;--ghtui-success:#1a7f37;--ghtui-status-danger:#b42335;--ghtui-muted:#57606a}button{margin:8px 4px 8px 0}section{margin:24px 0}.demo-static{font-weight:600}
  @layer utilities{.demo-muted{color:#57606a}.demo-ready{color:#1a7f37}.demo-failed{color:#b42335}.demo-info{color:#0969da}}
  </style>
- if withRuntime {
-  <script src="/example-runtime/htmx.js" defer></script>
-  if withAlpineCompat {
-   <script src="/example-runtime/alpine-compat.js" defer></script>
-  }
-  <script src="/example-runtime/alpine.js" defer></script>
- }
- </head><body><h1>Alpine status example</h1>
- if !withRuntime {
-  <p>Supply the showcase's runtime-assets flag with an external node_modules directory containing the development dependencies to enable this example.</p>
- }
- <main x-data="{shown:false,text:'Starting',tone:'neutral',active:false,textClass:'demo-muted',overrideVisible:true,overrideTone:'danger',overridePulse:false,overrideClass:'demo-failed'}">
-  <section>
-   @ui.StatusIndicator(ui.StatusIndicatorProps{
-    Label:"Awaiting client state",LabelClass:"demo-static",PulseStyle:ui.StatusPing,
-    Attributes:templ.Attributes{"id":"alpine-status"},
-    Alpine:&ui.StatusAlpineBindings{Show:"shown",Label:"text",LabelClass:"textClass",Tone:"tone",Pulse:"active"},
-   })
-   @ui.StatusIndicator(ui.StatusIndicatorProps{
-    Label:"Caller overrides",Alpine:&ui.StatusAlpineBindings{Show:"shown",Tone:"tone",Pulse:"active",LabelClass:"textClass"},
-    Attributes:templ.Attributes{"id":"alpine-override","x-show.important":"overrideVisible",":data-tone":"overrideTone",":data-pulse":"overridePulse ? 'true' : 'false'"},
-    LabelAttributes:templ.Attributes{":class":"overrideClass"},
-   })
-   <div>
-    <button id="mark-ready" type="button" x-on:click="shown=true;text='Ready';tone='success';active=true;textClass='demo-ready'">Mark ready</button>
-    <button id="mark-failed" type="button" x-on:click="shown=true;text='Not ready';tone='danger';active=false;textClass='demo-failed'">Mark not ready</button>
-    <button id="hide-status" type="button" x-on:click="shown=false">Hide</button>
-   </div>
-  </section>
-  <section>
-   <button id="load-fragment" type="button" hx-get="/alpine/fragment" hx-target="#alpine-fragment" hx-swap="innerHTML">Load status fragment</button>
-   <div id="alpine-fragment"></div>
-  </section>
- </main></body></html>
+		</head>
+		<body>
+			<h1>Alpine status example</h1>
+			<main x-data="{shown:false,text:'Starting',tone:'neutral',active:false,textClass:'demo-muted',overrideVisible:true,overrideTone:'danger',overridePulse:false,overrideClass:'demo-failed'}">
+				<section>
+					@ui.StatusIndicator(ui.StatusIndicatorProps{
+						Label: "Awaiting client state", LabelClass: "demo-static", PulseStyle: ui.StatusPing,
+						Attributes: templ.Attributes{"id": "alpine-status"},
+						Alpine:     &ui.StatusAlpineBindings{Show: "shown", Label: "text", LabelClass: "textClass", Tone: "tone", Pulse: "active"},
+					})
+					@ui.StatusIndicator(ui.StatusIndicatorProps{
+						Label: "Caller overrides", Alpine: &ui.StatusAlpineBindings{Show: "shown", Tone: "tone", Pulse: "active", LabelClass: "textClass"},
+						Attributes:      templ.Attributes{"id": "alpine-override", "x-show.important": "overrideVisible", ":data-tone": "overrideTone", ":data-pulse": "overridePulse ? 'true' : 'false'"},
+						LabelAttributes: templ.Attributes{":class": "overrideClass"},
+					})
+					<div>
+						<button id="mark-ready" type="button" x-on:click="shown=true;text='Ready';tone='success';active=true;textClass='demo-ready'">Mark ready</button>
+						<button id="mark-failed" type="button" x-on:click="shown=true;text='Not ready';tone='danger';active=false;textClass='demo-failed'">Mark not ready</button>
+						<button id="hide-status" type="button" x-on:click="shown=false">Hide</button>
+					</div>
+				</section>
+				<section>
+					<button id="load-fragment" type="button" hx-get="/alpine/fragment" hx-target="#alpine-fragment" hx-swap="innerHTML">Load status fragment</button>
+					<div id="alpine-fragment"></div>
+				</section>
+			</main>
+		</body>
+	</html>
 }
 
 templ AlpineFragment() {
- <div x-data="{shown:true,text:'Fragment ready',tone:'success',active:true,textClass:'demo-ready'}">
-  @ui.StatusIndicator(ui.StatusIndicatorProps{
-   Label:"Fragment fallback",LabelClass:"demo-static",PulseStyle:ui.StatusPing,
-   Attributes:templ.Attributes{"id":"fragment-status"},
-   Alpine:&ui.StatusAlpineBindings{Show:"shown",Label:"text",LabelClass:"textClass",Tone:"tone",Pulse:"active"},
-  })
-  @ui.WidgetChart(ui.WidgetChartProps{ID:"fragment-chart",Label:"Fragment chart",Option:simpleNativeOption()})
-  <button id="update-fragment" type="button" x-on:click="text='Fragment updated';tone='info';active=false;textClass='demo-info'">Update fragment</button>
- </div>
+	<div x-data="{shown:true,text:'Fragment ready',tone:'success',active:true,textClass:'demo-ready'}">
+		@ui.StatusIndicator(ui.StatusIndicatorProps{
+			Label: "Fragment fallback", LabelClass: "demo-static", PulseStyle: ui.StatusPing,
+			Attributes: templ.Attributes{"id": "fragment-status"},
+			Alpine:     &ui.StatusAlpineBindings{Show: "shown", Label: "text", LabelClass: "textClass", Tone: "tone", Pulse: "active"},
+		})
+		@ui.WidgetChart(ui.WidgetChartProps{ID: "fragment-chart", Label: "Fragment chart", Option: simpleNativeOption()})
+		<button id="update-fragment" type="button" x-on:click="text='Fragment updated';tone='info';active=false;textClass='demo-info'">Update fragment</button>
+	</div>
 }

@@ -5,3 +5,5 @@ web/assets/echarts.min.js -text
 web/assets/*.LICENSE.txt -text
 web/assets/*.NOTICE.txt -text
 web/assets/tslib.CopyrightNotice.txt -text
+web/assets/*.min.js -text
+web/third_party/*.LICENSE.md -text

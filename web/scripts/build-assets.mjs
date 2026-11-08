@@ -5,6 +5,7 @@ import {join,resolve,isAbsolute} from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
 import {themeCSS} from './theme-css.mjs';
+import {copyFrontendAssets} from './frontend-assets.mjs';
 
 const webRoot=fileURLToPath(new URL('../',import.meta.url));
 const modules=process.env.GO_HTMX_UI_NODE_MODULES?resolve(process.env.GO_HTMX_UI_NODE_MODULES):join(webRoot,'node_modules');
@@ -48,7 +49,8 @@ try {
   if(hashes[name]!==sha(join(modules,source)))throw new Error('Upstream asset copy changed bytes.');
  }
  writeFileSync(join(output,'echarts.provenance.json'),JSON.stringify({package:'echarts',version:echarts.version,source:locked.resolved,integrity:locked.integrity,distribution:'dist/echarts.min.js',sha256:hashes},null,2)+'\n');
- if(promote)for(const name of ['ui.css',...Object.keys(files),'echarts.provenance.json'])copyFileSync(join(output,name),join(webRoot,'assets',name));
+ const frontendFiles=copyFrontendAssets({webRoot,modules,output});
+ if(promote)for(const name of ['ui.css',...Object.keys(files),'echarts.provenance.json',...frontendFiles])copyFileSync(join(output,name),join(webRoot,'assets',name));
  process.stdout.write(`ECharts ${echarts.version}: ${readFileSync(join(output,'echarts.min.js')).length} bytes; official assets/notices verified\n`);
 } finally {
  rmSync(scratch,{recursive:true,force:true});

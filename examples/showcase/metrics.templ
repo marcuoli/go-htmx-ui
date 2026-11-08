@@ -5,8 +5,8 @@ import (
 	versioning "github.com/marcuoli/go-versioning"
 )
 
-templ MetricsPage(info versioning.Info) {
-	@ui.Page(ui.PageProps{Title: "Compact metrics", AssetPrefix: "/assets/", Charts: true, App: ui.AppProps{ID: "metrics-app", DisablePersistence: true}}) {
+templ MetricsPage(info versioning.Info, htmx ui.HTMXVersion) {
+	@ui.Page(ui.PageProps{Title: "Compact metrics", AssetPrefix: "/assets/", HTMX: htmx, Charts: true, App: ui.AppProps{ID: "metrics-app", DisablePersistence: true}}) {
 		@ui.AppShell(ui.AppShellProps{Title: "Metric showcase", Description: "Compact rows using existing metric cards", Nav: []ui.NavItem{{Label: "Overview", Href: "/"}, {Label: "Themes", Href: "/themes"}, {Label: "Compact metrics", Href: "/metrics", Active: true}}, Footer: ui.VersionLabel(info)}) {
 			@ui.Stack() {
 				@ui.PageHeader(ui.PageHeaderProps{Title: "Eight compact metrics", Description: "Synthetic values. Desktop cards share one row; smaller viewports wrap. Exact values remain available to assistive technology and through each value's tooltip."})

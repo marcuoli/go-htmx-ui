@@ -24,7 +24,7 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 | Badge / VersionLabel | children / versioning.Info validated by go-versioning |
 | StatusIndicator | StatusIndicatorProps: Label, Tone, Pulse, PulseStyle, Alpine, Class, LabelClass, Attributes, LabelAttributes; dot and text |
 | AuthStatus | AuthStatusProps: State, SignedInLabel, SignedOutLabel, UnknownLabel, Class, LabelClass, Attributes; explicit lock/text presentation |
-| Head / AssetHandler | HeadProps: AssetPrefix, Charts, Interactive, Nonce / application-owned asset route |
+| Head / AssetHandler | HeadProps: AssetPrefix, Charts, Interactive, Frontend, HTMX, DisableAlpine, Nonce / shared assets at the app-selected local route |
 | Page / App | Complete document/assets or scoped appearance; PageProps / AppProps |
 | AppShell / ThemeSwitcher | Optional header, navigation/sidebar, main and footer / inherited theme and appearance selectors |
 | Stack / Grid | Shared vertical spacing / responsive columns |
@@ -69,11 +69,11 @@ Use `StatusIndicatorProps.LabelClass` for label-specific utility classes;
 ## Page assets
 
 Register `ui.AssetHandler("/ui/shared/")` at the same application-owned router
-prefix, then render `@ui.Head(ui.HeadProps{AssetPrefix: "/ui/shared/", Charts: true})`
+prefix, then render `@ui.Head(ui.HeadProps{AssetPrefix: "/ui/shared/", Charts: true, Frontend: true})`
 once inside a full page's `<head>`. With no prefix both helpers use `/assets/ui/`;
 leading/trailing slashes are normalized. Prefixes describe local URL paths.
 
-With `Charts: false` and `Interactive: false`, Head emits only the stylesheet.
+With `Charts`, `Interactive` and `Frontend` all false, Head emits only the stylesheet.
 `Interactive: true` adds the shared theme/navigation and feedback runtimes; Page enables it
 automatically. `Charts: true` additionally
 loads the external deferred engine, formatter and controller in dependency order.
@@ -152,7 +152,7 @@ live pulse binding. `--ghtui-status-pulse-duration` and
 ```
 
 These neutral fields are trusted developer expressions evaluated by the
-application's existing Alpine runtime. They bind visibility, text, text classes,
+shared Alpine runtime enabled through Head/Page. They bind visibility, text, text classes,
 semantic tone and explicit pulse without a consumer rendering/binding adapter.
 Empty fields add no binding. Explicit `Attributes`/`LabelAttributes` override
 equivalent convenience directives, including shorthand (`:class`) and modifiers
@@ -161,16 +161,13 @@ dynamic class binding. Never put untrusted user text in an expression; pass it
 as application state instead. Application state, health/freshness policy,
 transport, CSP and announcement semantics remain application-owned.
 
-The library neither installs Alpine nor bundles its runtime; the ordinary
-component and attributes API work without it. On HTMX 2, Alpine's normal mutation
-observer initializes newly inserted indicators. On HTMX 4, load its official
-`hx-alpine-compat` extension before Alpine to coordinate initialization/settling
-and morph state. No module-global registration or full-document Alpine
-reinitialization is needed. See the standalone `/alpine`
-showcase consumer for direct usage and a server-rendered fragment. Its explicit
-runtime-assets option serves the development-only official Alpine/HTMX packages
-from an external node_modules directory; they are not part of `ui.Assets()`.
-
+The shared frontend option bundles and serves the pinned official Alpine/HTMX
+runtimes. Use `HeadProps.Frontend` or the default `Page`; the component still
+renders ordinary HTML when no runtime is enabled. HTMX 4's official compatibility
+extension is selected and ordered by the shared loader. The `/alpine` showcase
+uses these shared assets directly, with no app-owned framework routes or external
+node_modules argument. See [shared frontend resources](frontend-assets.md) for
+script ordering, CSP, custom CSS builds and consumer migration.
 Qualified runtime combinations: Alpine 3.17.5 with HTMX 2.0.11, and Alpine
 3.17.5 with HTMX 4.0.1 plus its official compatibility extension. Live innerHTML
 fragment swaps initialized bindings and charts; repeated replacements disposed

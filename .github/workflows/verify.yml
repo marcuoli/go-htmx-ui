@@ -5,7 +5,19 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      TEMP: ${{ runner.temp }}/go-htmx-ui/tmp
+      TMP: ${{ runner.temp }}/go-htmx-ui/tmp
+      TMPDIR: ${{ runner.temp }}/go-htmx-ui/tmp
+      GOTMPDIR: ${{ runner.temp }}/go-htmx-ui/tmp/go-build
+      GOCACHE: ${{ runner.temp }}/go-htmx-ui/caches/go-build
+      GOMODCACHE: ${{ runner.temp }}/go-htmx-ui/caches/go-modules
+      npm_config_cache: ${{ runner.temp }}/go-htmx-ui/caches/npm
+      CGO_ENABLED: '0'
+      GOTOOLCHAIN: go1.27.3
+      GOWORK: 'off'
     steps:
+      - run: mkdir -p "$TEMP" "$GOTMPDIR" "$GOCACHE" "$GOMODCACHE"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -25,3 +37,8 @@ jobs:
       - run: go test ./... && go vet ./... && go mod verify
       # Disposable validation output: no production artifact or live reservation.
       - run: go build -o "$RUNNER_TEMP/go-htmx-ui-showcase" ./examples/showcase
+      # Shared compiler integration: validate native Linux with real relative
+      # imports/source discovery and an extra module directory, outside source.
+      - run: |
+          go run ./cmd/go-htmx-ui css --input internal/frontendbuild/testdata/custom/input.css --output "$RUNNER_TEMP/app.css" --cache-dir "$RUNNER_TEMP/tailwindcss" --source internal/frontendbuild/testdata/additional
+          node -e 'const s=require("node:fs").readFileSync(process.argv[1],"utf8");if((require("node:fs").statSync(process.argv[1]).mode&511)!==420)throw new Error("CSS output is not server-readable");for(const c of [".p-7",".grid-cols-3",".bg-emerald-500",".custom-panel"])if(!s.includes(c))throw new Error("Missing "+c)' "$RUNNER_TEMP/app.css"

@@ -1,100 +1,103 @@
 package main
 
 import (
- ui "github.com/marcuoli/go-htmx-ui"
- versioning "github.com/marcuoli/go-versioning"
+	ui "github.com/marcuoli/go-htmx-ui"
+	versioning "github.com/marcuoli/go-versioning"
 )
 
-templ ThemeDemoHead(withRuntime bool) {
- if withRuntime {
-  <script defer src="/example-runtime/htmx.js"></script>
- }
-}
-
-templ ThemesPage(info versioning.Info, withRuntime bool) {
- @ui.Page(ui.PageProps{Title:"Themes and defaults",AssetPrefix:"/assets/",Charts:true,App:ui.AppProps{ID:"theme-app",StorageKey:"go-htmx-ui:showcase-theme"},ExtraHead:ThemeDemoHead(withRuntime)}) {
-  @ui.AppShell(ui.AppShellProps{Title:"Theme showcase",Description:"Shared defaults, paired palettes and page structure",Nav:[]ui.NavItem{{Label:"Overview",Href:"/"},{Label:"Themes and defaults",Href:"/themes",Active:true},{Label:"Alpine / HTMX",Href:"/alpine"}},Footer:ui.VersionLabel(info)}) {
-   @ui.Stack() {
-    @ui.PageHeader(ui.PageHeaderProps{Title:"A complete page with shared defaults",Description:"Change Theme and Appearance in the header. Each preview below keeps its own Light or Dark variant."})
-    @ui.Widget(ui.WidgetProps{}) {
-     @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Live appearance",Description:"Chart colors follow the surrounding app. Theme changes retain this chart instance and native legend selection."})
-     @ui.WidgetChart(ui.WidgetChartProps{ID:"theme-live-chart",Label:"Synthetic requests and warnings",Option:themeOption()})
-    }
-    for _, example := range themeExamples() {
-     @ui.Stack() {
-      @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Label,Description:"The same controls in both palette variants"})
-      @ui.Grid(ui.GridProps{Columns:2}) {
-       @ThemePreview(example,ui.ModeLight)
-       @ThemePreview(example,ui.ModeDark)
-      }
-     }
-    }
-    @ui.Grid(ui.GridProps{Columns:2}) {
-     @ui.Widget(ui.WidgetProps{}) {
-      @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Field and state defaults"})
-      @ui.Stack() {
-       @ui.TextField(ui.TextFieldProps{Label:"Email",Hint:"Label, hint and error are connected automatically",Error:"Enter a valid email address",Input:ui.InputProps{Name:"demo-email",Type:"email",Value:"example"}})
-       @ui.LoadingState(ui.LoadingStateProps{})
-       @ui.EmptyState(ui.EmptyStateProps{Description:"Supply your data and actions; shared components provide the presentation."}) {
-        @ui.Button(ui.ButtonProps{}) { Create item }
-       }
-      }
-     }
-     @ui.App(ui.AppProps{ID:"brand-preview",Theme:ui.ThemeOcean,Accent:"#9333ea",Density:ui.DensityCompact,DisablePersistence:true}) {
-      @ui.Widget(ui.WidgetProps{}) {
-       @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"One custom primary color",Description:"Compact spacing and a validated primary color are optional settings."})
-       @ui.Stack() {
-        @ui.TextField(ui.TextFieldProps{Label:"Project",Input:ui.InputProps{Name:"brand-project",Value:"Example application"}})
-        @ui.Button(ui.ButtonProps{}) { Save changes }
-       }
-      }
-     }
-    }
-    @ui.Widget(ui.WidgetProps{}) {
-     @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Fragment insertion",Description:"A newly loaded fragment receives its own settings and working switcher. Replacements restore its remembered choice."})
-     @ui.Stack() {
-      @ui.Button(ui.ButtonProps{Disabled:!withRuntime,Attributes:templ.Attributes{"hx-get":"/themes/fragment","hx-target":"#theme-fragment-target","hx-swap":"innerHTML","id":"load-theme-fragment"}}) { Load themed fragment }
-      if !withRuntime {
-       <p class="ghtui-note">Start the showcase with its optional runtime assets to exercise the HTMX example.</p>
-      }
-      <div id="theme-fragment-target"></div>
-     }
-    }
-   }
-  }
- }
+templ ThemesPage(info versioning.Info, htmx ui.HTMXVersion) {
+	@ui.Page(ui.PageProps{Title: "Themes and defaults", AssetPrefix: "/assets/", Charts: true, App: ui.AppProps{ID: "theme-app", StorageKey: "go-htmx-ui:showcase-theme"}, HTMX: htmx}) {
+		@ui.AppShell(ui.AppShellProps{Title: "Theme showcase", Description: "Shared defaults, paired palettes and page structure", Nav: []ui.NavItem{{Label: "Overview", Href: "/"}, {Label: "Themes and defaults", Href: "/themes", Active: true}, {Label: "Alpine / HTMX", Href: "/alpine"}}, Footer: ui.VersionLabel(info)}) {
+			@ui.Stack() {
+				@ui.PageHeader(ui.PageHeaderProps{Title: "A complete page with shared defaults", Description: "Change Theme and Appearance in the header. Each preview below keeps its own Light or Dark variant."})
+				@ui.Widget(ui.WidgetProps{}) {
+					@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "Live appearance", Description: "Chart colors follow the surrounding app. Theme changes retain this chart instance and native legend selection."})
+					@ui.WidgetChart(ui.WidgetChartProps{ID: "theme-live-chart", Label: "Synthetic requests and warnings", Option: themeOption()})
+				}
+				for _, example := range themeExamples() {
+					@ui.Stack() {
+						@ui.WidgetHeader(ui.WidgetHeaderProps{Title: example.Label, Description: "The same controls in both palette variants"})
+						@ui.Grid(ui.GridProps{Columns: 2}) {
+							@ThemePreview(example, ui.ModeLight)
+							@ThemePreview(example, ui.ModeDark)
+						}
+					}
+				}
+				@ui.Grid(ui.GridProps{Columns: 2}) {
+					@ui.Widget(ui.WidgetProps{}) {
+						@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "Field and state defaults"})
+						@ui.Stack() {
+							@ui.TextField(ui.TextFieldProps{Label: "Email", Hint: "Label, hint and error are connected automatically", Error: "Enter a valid email address", Input: ui.InputProps{Name: "demo-email", Type: "email", Value: "example"}})
+							@ui.LoadingState(ui.LoadingStateProps{})
+							@ui.EmptyState(ui.EmptyStateProps{Description: "Supply your data and actions; shared components provide the presentation."}) {
+								@ui.Button(ui.ButtonProps{}) {
+									Create item
+								}
+							}
+						}
+					}
+					@ui.App(ui.AppProps{ID: "brand-preview", Theme: ui.ThemeOcean, Accent: "#9333ea", Density: ui.DensityCompact, DisablePersistence: true}) {
+						@ui.Widget(ui.WidgetProps{}) {
+							@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "One custom primary color", Description: "Compact spacing and a validated primary color are optional settings."})
+							@ui.Stack() {
+								@ui.TextField(ui.TextFieldProps{Label: "Project", Input: ui.InputProps{Name: "brand-project", Value: "Example application"}})
+								@ui.Button(ui.ButtonProps{}) {
+									Save changes
+								}
+							}
+						}
+					}
+				}
+				@ui.Widget(ui.WidgetProps{}) {
+					@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "Fragment insertion", Description: "A newly loaded fragment receives its own settings and working switcher. Replacements restore its remembered choice."})
+					@ui.Stack() {
+						@ui.Button(ui.ButtonProps{Attributes: templ.Attributes{"hx-get": "/themes/fragment", "hx-target": "#theme-fragment-target", "hx-swap": "innerHTML", "id": "load-theme-fragment"}}) {
+							Load themed fragment
+						}
+						<div id="theme-fragment-target"></div>
+					}
+				}
+			}
+		}
+	}
 }
 
 templ ThemePreview(example themeExample, mode ui.Mode) {
- @ui.App(ui.AppProps{ID:"preview-"+string(example.Name)+"-"+string(mode),Theme:example.Name,Mode:mode,DisablePersistence:true}) {
-  @ui.Widget(ui.WidgetProps{}) {
-   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Label+" · "+string(mode)})
-   @ui.Stack() {
-    @ui.Actions() {
-     @ui.StatusIndicator(ui.StatusIndicatorProps{Label:"Connected",Tone:ui.StatusSuccess,Pulse:true})
-     @ui.AuthStatus(ui.AuthStatusProps{State:ui.AuthSignedIn})
-    }
-    @ui.TextField(ui.TextFieldProps{Label:"Project name",Input:ui.InputProps{Name:string(example.Name)+"-"+string(mode)+"-project",Value:"Example"}})
-    @ui.SelectField(ui.SelectFieldProps{Label:"Environment",Select:ui.SelectProps{Name:string(example.Name)+"-"+string(mode)+"-environment",Options:[]ui.Option{{Value:"development",Label:"Development"},{Value:"production",Label:"Production"}}}})
-    @ui.Actions() {
-     @ui.Button(ui.ButtonProps{}) { Save }
-     @ui.Button(ui.ButtonProps{Kind:ui.Secondary,Disabled:true}) { Disabled }
-     @ui.Button(ui.ButtonProps{Loading:true}) { Save }
-    }
-    @ui.WidgetChart(ui.WidgetChartProps{ID:string(example.Name)+"-"+string(mode)+"-chart",Label:example.Label+" "+string(mode)+" synthetic chart",Option:themeOption()})
-   }
-  }
- }
+	@ui.App(ui.AppProps{ID: "preview-" + string(example.Name) + "-" + string(mode), Theme: example.Name, Mode: mode, DisablePersistence: true}) {
+		@ui.Widget(ui.WidgetProps{}) {
+			@ui.WidgetHeader(ui.WidgetHeaderProps{Title: example.Label + " · " + string(mode)})
+			@ui.Stack() {
+				@ui.Actions() {
+					@ui.StatusIndicator(ui.StatusIndicatorProps{Label: "Connected", Tone: ui.StatusSuccess, Pulse: true})
+					@ui.AuthStatus(ui.AuthStatusProps{State: ui.AuthSignedIn})
+				}
+				@ui.TextField(ui.TextFieldProps{Label: "Project name", Input: ui.InputProps{Name: string(example.Name) + "-" + string(mode) + "-project", Value: "Example"}})
+				@ui.SelectField(ui.SelectFieldProps{Label: "Environment", Select: ui.SelectProps{Name: string(example.Name) + "-" + string(mode) + "-environment", Options: []ui.Option{{Value: "development", Label: "Development"}, {Value: "production", Label: "Production"}}}})
+				@ui.Actions() {
+					@ui.Button(ui.ButtonProps{}) {
+						Save
+					}
+					@ui.Button(ui.ButtonProps{Kind: ui.Secondary, Disabled: true}) {
+						Disabled
+					}
+					@ui.Button(ui.ButtonProps{Loading: true}) {
+						Save
+					}
+				}
+				@ui.WidgetChart(ui.WidgetChartProps{ID: string(example.Name) + "-" + string(mode) + "-chart", Label: example.Label + " " + string(mode) + " synthetic chart", Option: themeOption()})
+			}
+		}
+	}
 }
 
 templ ThemeFragment() {
- @ui.App(ui.AppProps{ID:"theme-fragment",Theme:ui.ThemeOcean,StorageKey:"go-htmx-ui:showcase-fragment"}) {
-  @ui.Widget(ui.WidgetProps{}) {
-   @ui.Stack() {
-    @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"A themed fragment"})
-    @ui.ThemeSwitcher(ui.ThemeSwitcherProps{})
-    @ui.WidgetChart(ui.WidgetChartProps{ID:"theme-fragment-chart",Label:"Fragment chart",Option:themeOption()})
-   }
-  }
- }
+	@ui.App(ui.AppProps{ID: "theme-fragment", Theme: ui.ThemeOcean, StorageKey: "go-htmx-ui:showcase-fragment"}) {
+		@ui.Widget(ui.WidgetProps{}) {
+			@ui.Stack() {
+				@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "A themed fragment"})
+				@ui.ThemeSwitcher(ui.ThemeSwitcherProps{})
+				@ui.WidgetChart(ui.WidgetChartProps{ID: "theme-fragment-chart", Label: "Fragment chart", Option: themeOption()})
+			}
+		}
+	}
 }

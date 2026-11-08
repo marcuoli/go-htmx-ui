@@ -14,6 +14,9 @@ templ Page(props PageProps) {
    if props.ExtraHead != nil {
     @props.ExtraHead
    }
+   if !props.DisableFrontend {
+    @frontendScripts(HeadProps{AssetPrefix:props.AssetPrefix,HTMX:props.HTMX,DisableAlpine:props.DisableAlpine,Nonce:props.Nonce})
+   }
   </head>
   <body class="ghtui-document">
    @layout.App(props.App) {

@@ -3,104 +3,127 @@ package main
 import ui "github.com/marcuoli/go-htmx-ui"
 import versioning "github.com/marcuoli/go-versioning"
 
-templ FeedbackPage(info versioning.Info, withRuntime bool) {
- @ui.Page(ui.PageProps{Title:"Modals and messages",AssetPrefix:"/assets/",DisableToasts:true,ExtraHead:ThemeDemoHead(withRuntime)}) {
-  @ui.AppShell(ui.AppShellProps{Title:"Feedback showcase",Description:"Reusable modals, alerts and toast notifications",Nav:[]ui.NavItem{{Label:"Overview",Href:"/"},{Label:"Themes",Href:"/themes"},{Label:"Modals and messages",Href:"/feedback",Active:true}},Footer:ui.VersionLabel(info)}) {
-   @ui.Stack() {
-    @ui.PageHeader(ui.PageHeaderProps{Title:"Modals and messages",Description:"Shared defaults, accessible controls and theme-aware feedback"})
-    @ui.Alert(ui.AlertProps{Tone:ui.AlertInfo,Message:"Your next report is scheduled for tomorrow."})
-    @ui.Alert(ui.AlertProps{Tone:ui.AlertSuccess,Title:"Changes saved",Message:"The project is ready to use.",Dismissible:true})
-    @ui.Alert(ui.AlertProps{Tone:ui.AlertWarning,Title:"Check your settings",Message:"Review the destination before continuing.",Dismissible:true})
-    @ui.Alert(ui.AlertProps{Tone:ui.AlertDanger,Title:"Unable to connect",Message:"Try again when the service is available."})
-    @ui.Widget(ui.WidgetProps{}) {
-     @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Ready-to-use modals",Description:"Native focus containment, Escape and return focus; backdrop dismissal is optional"})
-     @ui.Actions() {
-      @ui.ModalTrigger(ui.ModalTriggerProps{Target:"edit-project"}) { Edit project }
-      @ui.ModalTrigger(ui.ModalTriggerProps{Target:"confirm-project",Button:ui.ButtonProps{Kind:ui.Danger}}) { Confirmation }
-      @ui.ModalTrigger(ui.ModalTriggerProps{Target:"large-modal",Button:ui.ButtonProps{Kind:ui.Secondary}}) { Long content }
-      @ui.ModalTrigger(ui.ModalTriggerProps{Target:"backdrop-modal",Button:ui.ButtonProps{Kind:ui.Secondary}}) { Backdrop dismissal }
-     }
-    }
-    @ui.Widget(ui.WidgetProps{}) {
-     @ui.WidgetHeader(ui.WidgetHeaderProps{Title:"Toast notifications",Description:"Messages persist by default. This server-rendered example opts into five seconds, paused during hover, focus or a hidden page."})
-     @ui.Stack() {
-      @ui.Actions() {
-       @ui.Button(ui.ButtonProps{Disabled:!withRuntime,Attributes:templ.Attributes{"id":"show-server-toast","hx-get":"/feedback/toast","hx-target":"#feedback-toasts [data-ui-toast-items]","hx-swap":"beforeend"}}) { Show success toast }
-       @ui.Button(ui.ButtonProps{Disabled:!withRuntime,Attributes:templ.Attributes{"id":"load-feedback-fragment","hx-get":"/feedback/fragment","hx-target":"#feedback-fragment-target","hx-swap":"innerHTML"}}) { Load modal fragment }
-      }
-      if !withRuntime {
-       <p>Start the showcase with its optional runtime assets for server-driven toast and fragment examples.</p>
-      }
-      <div id="feedback-fragment-target"></div>
-     }
-    }
-    for _, example := range themeExamples() {
-     @ui.Grid(ui.GridProps{Columns:2}) {
-      @FeedbackPreview(example,ui.ModeLight)
-      @FeedbackPreview(example,ui.ModeDark)
-     }
-    }
-   }
-  }
-  @ui.Modal(ui.ModalProps{ID:"edit-project",Title:"Edit project",Description:"A native form closes this example; application actions stay in your app.",Footer:FeedbackFormFooter()}) {
-   @ui.Stack() {
-    <form id="feedback-form" method="dialog">
-     @ui.TextField(ui.TextFieldProps{Label:"Project name",Input:ui.InputProps{ID:"modal-project",Name:"project",Value:"Example project",Required:true,Attributes:templ.Attributes{"autofocus":true}}})
-    </form>
-    @ui.ModalTrigger(ui.ModalTriggerProps{Target:"nested-modal",Button:ui.ButtonProps{Kind:ui.Secondary}}) { Open nested details }
-    @ui.Modal(ui.ModalProps{ID:"nested-modal",Title:"Nested details",Size:ui.ModalSmall}) {
-     <p>Closing this dialog returns focus to its trigger in the parent dialog.</p>
-    }
-   }
-  }
-  @ui.Modal(ui.ModalProps{ID:"confirm-project",Title:"Delete example project?",Description:"This synthetic confirmation performs no destructive action.",Size:ui.ModalSmall,Footer:FeedbackConfirmationFooter()}) {
-   @ui.Alert(ui.AlertProps{Tone:ui.AlertWarning,Message:"Keep a copy of any information you need."})
-  }
-  @ui.Modal(ui.ModalProps{ID:"large-modal",Title:"Long content",Size:ui.ModalLarge}) {
-   @ui.Stack() {
-    for i := 0; i < 20; i++ {
-     <p>Shared modal content scrolls within the viewport. Applications can compose forms, messages and other shared components here.</p>
-    }
-   }
-  }
-  @ui.Modal(ui.ModalProps{ID:"backdrop-modal",Title:"Click outside to close",CloseOnBackdrop:true,Size:ui.ModalSmall}) {
-   <p>Ordinary modals require an explicit close action or Escape. This one opts into backdrop dismissal.</p>
-  }
-  @ui.ToastRegion(ui.ToastRegionProps{ID:"feedback-toasts"})
- }
+templ FeedbackPage(info versioning.Info, htmx ui.HTMXVersion) {
+	@ui.Page(ui.PageProps{Title: "Modals and messages", AssetPrefix: "/assets/", DisableToasts: true, HTMX: htmx}) {
+		@ui.AppShell(ui.AppShellProps{Title: "Feedback showcase", Description: "Reusable modals, alerts and toast notifications", Nav: []ui.NavItem{{Label: "Overview", Href: "/"}, {Label: "Themes", Href: "/themes"}, {Label: "Modals and messages", Href: "/feedback", Active: true}}, Footer: ui.VersionLabel(info)}) {
+			@ui.Stack() {
+				@ui.PageHeader(ui.PageHeaderProps{Title: "Modals and messages", Description: "Shared defaults, accessible controls and theme-aware feedback"})
+				@ui.Alert(ui.AlertProps{Tone: ui.AlertInfo, Message: "Your next report is scheduled for tomorrow."})
+				@ui.Alert(ui.AlertProps{Tone: ui.AlertSuccess, Title: "Changes saved", Message: "The project is ready to use.", Dismissible: true})
+				@ui.Alert(ui.AlertProps{Tone: ui.AlertWarning, Title: "Check your settings", Message: "Review the destination before continuing.", Dismissible: true})
+				@ui.Alert(ui.AlertProps{Tone: ui.AlertDanger, Title: "Unable to connect", Message: "Try again when the service is available."})
+				@ui.Widget(ui.WidgetProps{}) {
+					@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "Ready-to-use modals", Description: "Native focus containment, Escape and return focus; backdrop dismissal is optional"})
+					@ui.Actions() {
+						@ui.ModalTrigger(ui.ModalTriggerProps{Target: "edit-project"}) {
+							Edit project
+						}
+						@ui.ModalTrigger(ui.ModalTriggerProps{Target: "confirm-project", Button: ui.ButtonProps{Kind: ui.Danger}}) {
+							Confirmation
+						}
+						@ui.ModalTrigger(ui.ModalTriggerProps{Target: "large-modal", Button: ui.ButtonProps{Kind: ui.Secondary}}) {
+							Long content
+						}
+						@ui.ModalTrigger(ui.ModalTriggerProps{Target: "backdrop-modal", Button: ui.ButtonProps{Kind: ui.Secondary}}) {
+							Backdrop dismissal
+						}
+					}
+				}
+				@ui.Widget(ui.WidgetProps{}) {
+					@ui.WidgetHeader(ui.WidgetHeaderProps{Title: "Toast notifications", Description: "Messages persist by default. This server-rendered example opts into five seconds, paused during hover, focus or a hidden page."})
+					@ui.Stack() {
+						@ui.Actions() {
+							@ui.Button(ui.ButtonProps{Attributes: templ.Attributes{"id": "show-server-toast", "hx-get": "/feedback/toast", "hx-target": "#feedback-toasts [data-ui-toast-items]", "hx-swap": "beforeend"}}) {
+								Show success toast
+							}
+							@ui.Button(ui.ButtonProps{Attributes: templ.Attributes{"id": "load-feedback-fragment", "hx-get": "/feedback/fragment", "hx-target": "#feedback-fragment-target", "hx-swap": "innerHTML"}}) {
+								Load modal fragment
+							}
+						}
+						<div id="feedback-fragment-target"></div>
+					}
+				}
+				for _, example := range themeExamples() {
+					@ui.Grid(ui.GridProps{Columns: 2}) {
+						@FeedbackPreview(example, ui.ModeLight)
+						@FeedbackPreview(example, ui.ModeDark)
+					}
+				}
+			}
+		}
+		@ui.Modal(ui.ModalProps{ID: "edit-project", Title: "Edit project", Description: "A native form closes this example; application actions stay in your app.", Footer: FeedbackFormFooter()}) {
+			@ui.Stack() {
+				<form id="feedback-form" method="dialog">
+					@ui.TextField(ui.TextFieldProps{Label: "Project name", Input: ui.InputProps{ID: "modal-project", Name: "project", Value: "Example project", Required: true, Attributes: templ.Attributes{"autofocus": true}}})
+				</form>
+				@ui.ModalTrigger(ui.ModalTriggerProps{Target: "nested-modal", Button: ui.ButtonProps{Kind: ui.Secondary}}) {
+					Open nested details
+				}
+				@ui.Modal(ui.ModalProps{ID: "nested-modal", Title: "Nested details", Size: ui.ModalSmall}) {
+					<p>Closing this dialog returns focus to its trigger in the parent dialog.</p>
+				}
+			}
+		}
+		@ui.Modal(ui.ModalProps{ID: "confirm-project", Title: "Delete example project?", Description: "This synthetic confirmation performs no destructive action.", Size: ui.ModalSmall, Footer: FeedbackConfirmationFooter()}) {
+			@ui.Alert(ui.AlertProps{Tone: ui.AlertWarning, Message: "Keep a copy of any information you need."})
+		}
+		@ui.Modal(ui.ModalProps{ID: "large-modal", Title: "Long content", Size: ui.ModalLarge}) {
+			@ui.Stack() {
+				for i := 0; i < 20; i++ {
+					<p>Shared modal content scrolls within the viewport. Applications can compose forms, messages and other shared components here.</p>
+				}
+			}
+		}
+		@ui.Modal(ui.ModalProps{ID: "backdrop-modal", Title: "Click outside to close", CloseOnBackdrop: true, Size: ui.ModalSmall}) {
+			<p>Ordinary modals require an explicit close action or Escape. This one opts into backdrop dismissal.</p>
+		}
+		@ui.ToastRegion(ui.ToastRegionProps{ID: "feedback-toasts"})
+	}
 }
 
 templ FeedbackFormFooter() {
- @ui.ModalClose(ui.ModalCloseProps{Button:ui.ButtonProps{Kind:ui.Secondary}}) { Cancel }
- @ui.Button(ui.ButtonProps{Type:"submit",Attributes:templ.Attributes{"form":"feedback-form","value":"saved"}}) { Save changes }
+	@ui.ModalClose(ui.ModalCloseProps{Button: ui.ButtonProps{Kind: ui.Secondary}}) {
+		Cancel
+	}
+	@ui.Button(ui.ButtonProps{Type: "submit", Attributes: templ.Attributes{"form": "feedback-form", "value": "saved"}}) {
+		Save changes
+	}
 }
 
 templ FeedbackConfirmationFooter() {
- @ui.ModalClose(ui.ModalCloseProps{Value:"cancel",Button:ui.ButtonProps{Kind:ui.Secondary}}) { Cancel }
- @ui.ModalClose(ui.ModalCloseProps{Value:"confirm",Button:ui.ButtonProps{Kind:ui.Danger}}) { Confirm }
+	@ui.ModalClose(ui.ModalCloseProps{Value: "cancel", Button: ui.ButtonProps{Kind: ui.Secondary}}) {
+		Cancel
+	}
+	@ui.ModalClose(ui.ModalCloseProps{Value: "confirm", Button: ui.ButtonProps{Kind: ui.Danger}}) {
+		Confirm
+	}
 }
 
 templ FeedbackPreview(example themeExample, mode ui.Mode) {
- @ui.App(ui.AppProps{ID:"feedback-"+string(example.Name)+"-"+string(mode),Theme:example.Name,Mode:mode,DisablePersistence:true}) {
-  @ui.Stack() {
-   @ui.WidgetHeader(ui.WidgetHeaderProps{Title:example.Label+" · "+string(mode)})
-   @ui.Alert(ui.AlertProps{Tone:ui.AlertSuccess,Title:"Ready",Message:"Messages inherit the surrounding app's palette."})
-   @ui.ModalTrigger(ui.ModalTriggerProps{Target:"modal-"+string(example.Name)+"-"+string(mode),Button:ui.ButtonProps{Kind:ui.Secondary}}) { Open themed modal }
-   @ui.Modal(ui.ModalProps{ID:"modal-"+string(example.Name)+"-"+string(mode),Title:example.Label+" · "+string(mode),Size:ui.ModalSmall}) {
-    @ui.Alert(ui.AlertProps{Tone:ui.AlertInfo,Message:"No per-component theme configuration is needed."})
-   }
-  }
- }
+	@ui.App(ui.AppProps{ID: "feedback-" + string(example.Name) + "-" + string(mode), Theme: example.Name, Mode: mode, DisablePersistence: true}) {
+		@ui.Stack() {
+			@ui.WidgetHeader(ui.WidgetHeaderProps{Title: example.Label + " · " + string(mode)})
+			@ui.Alert(ui.AlertProps{Tone: ui.AlertSuccess, Title: "Ready", Message: "Messages inherit the surrounding app's palette."})
+			@ui.ModalTrigger(ui.ModalTriggerProps{Target: "modal-" + string(example.Name) + "-" + string(mode), Button: ui.ButtonProps{Kind: ui.Secondary}}) {
+				Open themed modal
+			}
+			@ui.Modal(ui.ModalProps{ID: "modal-" + string(example.Name) + "-" + string(mode), Title: example.Label + " · " + string(mode), Size: ui.ModalSmall}) {
+				@ui.Alert(ui.AlertProps{Tone: ui.AlertInfo, Message: "No per-component theme configuration is needed."})
+			}
+		}
+	}
 }
 
 templ FeedbackFragment() {
- <section id="feedback-fragment">
-  @ui.Stack() {
-   @ui.Alert(ui.AlertProps{Title:"Fragment loaded",Message:"Delegated controls also work after an HTMX replacement.",Tone:ui.AlertSuccess,Dismissible:true})
-   @ui.ModalTrigger(ui.ModalTriggerProps{Target:"fragment-modal"}) { Open fragment modal }
-   @ui.Modal(ui.ModalProps{ID:"fragment-modal",Title:"Dynamically inserted modal"}) {
-    <p>Escape and return focus work without fragment-specific JavaScript.</p>
-   }
-  }
- </section>
+	<section id="feedback-fragment">
+		@ui.Stack() {
+			@ui.Alert(ui.AlertProps{Title: "Fragment loaded", Message: "Delegated controls also work after an HTMX replacement.", Tone: ui.AlertSuccess, Dismissible: true})
+			@ui.ModalTrigger(ui.ModalTriggerProps{Target: "fragment-modal"}) {
+				Open fragment modal
+			}
+			@ui.Modal(ui.ModalProps{ID: "fragment-modal", Title: "Dynamically inserted modal"}) {
+				<p>Escape and return focus work without fragment-specific JavaScript.</p>
+			}
+		}
+	</section>
 }

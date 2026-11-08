@@ -29,7 +29,7 @@ mux.Handle("GET /assets/ui/", ui.AssetHandler("/assets/ui/"))
 
 ```templ
 // Render once inside the full page's <head>.
-@ui.Head(ui.HeadProps{AssetPrefix: "/assets/ui/", Charts: true})
+@ui.Head(ui.HeadProps{AssetPrefix: "/assets/ui/", Charts: true, Frontend: true})
 ```
 
 Use `Charts: false` (the default) for CSS-only components. Both helpers share
@@ -87,19 +87,19 @@ Open `/feedback` in the showcase; existing low-level Dialog APIs remain supporte
 go run ./examples/showcase -listen 127.0.0.1:8099
 ```
 
-Open `http://127.0.0.1:8099` for synthetic dark/light widgets, forms, a modal, an updating chart and composition with published `go-htmx-table v0.2.0`. Example page layout and table styling belong to the example.
+Open `http://127.0.0.1:8099` for synthetic dark/light widgets, forms, a modal, an updating chart and composition with published `go-htmx-table 0.2.1+20261106.21`. Example page layout and table styling belong to the example.
 
-For the neutral standalone Alpine/HTMX consumer at `/alpine`, run the showcase
-with `-runtime-assets /external/node_modules` pointing to installed development
-dependencies. The example application serves those official runtimes itself;
-the library does not bundle them or register Alpine globally. See the component
-guide for `StatusAlpineBindings`, live classes/visibility and pulse styles.
+Shared frontend resources are owned by this module: `ui.Page` includes HTMX and
+Alpine by default, and `ui.Head` opts in with `Frontend: true`. Embedded official
+files are served by `ui.AssetHandler`; consuming apps remove their own framework
+tags, copies and download hooks. Tailwind custom CSS builds use the shared
+`go-htmx-ui css` command, with no app-owned Tailwind npm dependency. See
+[frontend resources and CSS builds](docs/frontend-assets.md).
 
-The same example supports HTMX 4.0.1 with `-htmx4`, selecting the development-only
-official npm alias and loading its `hx-alpine-compat` extension before Alpine.
-The chart controller supports both HTMX 2 and 4 lifecycle events. Frameworks
-are still application-owned; selecting HTMX 4 is a separate application
-migration, particularly for inherited attributes and event/error handling.
+Open `/alpine`, `/themes` and `/feedback` without an external node_modules
+argument. `-htmx4` explicitly selects the shared HTMX 4 core and official Alpine
+compatibility extension; the default remains HTMX 2. App-specific request, CSP,
+streaming and major-version migration checks stay with the app owner.
 
 Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). The latest UI release's full identity is `0.11.0+20261106.31`, with immutable tag `v0.11.0+20261106.31`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
 
@@ -159,7 +159,7 @@ v0.6.0 chart API migration is documented separately in the migration guide.
 ## Compatibility
 
 Requires **Go 1.27.3 and templ v0.3.1100**, with matching generated sources and
-published `go-htmx-table v0.2.0`. Upgrade the runtime and regenerate consuming
+published `go-htmx-table 0.2.1+20261106.21`. Upgrade the runtime and regenerate consuming
 applications together; older generated caller templates may reference APIs
 removed by templ v0.3.1100. The earlier v0.6.0 release remains unchanged.
 
@@ -186,11 +186,11 @@ fonts; complete-page defaults are scoped to the opt-in App/Page helpers.
 Component rules use the standard components layer so downstream utilities and
 custom classes can override defaults. The build scopes Tailwind initialization
 and namespaces internal custom properties. Preserve those isolation steps when
-adapting the sources into an application pipeline.
+maintaining the shared asset pipeline. Apps compile custom styles through the shared build command.
 
 The latest official Go and frontend releases are checked during dependency
-reviews. Current direct versions: templ v0.3.1100, go-htmx-table v0.2.0,
-go-versioning 0.3.1+20261106.13, Tailwind 4.3.4 and ECharts 6.1.0. The generator is pinned as
+reviews. Current direct versions: templ v0.3.1100, go-htmx-table 0.2.1+20261106.21,
+go-versioning 0.3.1+20261106.13, Tailwind 4.3.5 and ECharts 6.1.0. The generator is pinned as
 a Go tool. Retain official parse v0.0.0-20250122154542-74294addb73e: the newer
 v0.0.0-20261027111828-db2689052003 adds `Parser.Match`, which templ's generator
 does not implement. Recheck that upstream exception on the next review.

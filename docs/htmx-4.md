@@ -1,8 +1,8 @@
 # HTMX 2 and 4 compatibility
 
-The library does not bundle or choose an application's HTMX runtime. Its controls
-emit ordinary HTML/attributes, optional Alpine bindings, and native chart hosts.
-The chart controller listens to both HTMX 2 and 4 lifecycle events.
+The module owns the official HTMX runtimes, local asset serving and load order.
+HTMX2 remains the compatibility default; explicit HTMX4 selection is a consuming
+app migration. Its chart controller supports both lifecycle event contracts.
 
 ## Verified scope
 
@@ -11,19 +11,19 @@ The chart controller listens to both HTMX 2 and 4 lifecycle events.
 | HTMX 2.0.11 | Alpine 3.17.5 | Initial/live status bindings, real innerHTML fragment swaps, chart initialization/replacement/disposal |
 | HTMX 4.0.1 | Alpine 3.17.5 and official hx-alpine-compat | Same fragment/status/chart lifecycle checks |
 
-For HTMX 4, load the core, its official compatibility extension, then Alpine.
-The standalone example does so with external deferred scripts:
+Select `HTMX: ui.HTMX4` on `HeadProps{Frontend:true}` or `PageProps`. The shared
+loader emits the core, official compatibility extension, then Alpine, using
+embedded local assets. `DisableAlpine:true` omits Alpine and its compatibility
+extension. Apps do not add those script tags or download packages themselves.
 
 ```sh
-go run ./examples/showcase -runtime-assets /external/node_modules -htmx4
+go run ./examples/showcase -htmx4
 ```
 
-Open `/alpine`. Development dependencies include the official `htmx4` npm alias;
-the default example continues to use the HTMX 2 package. Neither framework nor
-the compatibility extension is copied into shared `ui.Assets()` or added to Head.
-The upstream extension coordinates Alpine's mutation observer with swap settling
-and supports Alpine-aware morphing; see its [official documentation](https://four.htmx.org/extensions/hx-alpine-compat).
-
+Open `/alpine`. No node_modules/runtime-assets argument is needed. The official
+extension coordinates Alpine mutation observation with swap settling and morph
+state; see its [documentation](https://four.htmx.org/extensions/hx-alpine-compat).
+See [shared frontend resources](frontend-assets.md) for setup and CSS ownership.
 The controller retains HTMX 2's `htmx:beforeCleanupElement`/`htmx:afterSwap` hooks
 and additionally supports HTMX 4's `htmx:before:cleanup`/`htmx:after:swap`.
 HTMX 4 cleanup uses `event.target`; post-swap discovery scans the document to
