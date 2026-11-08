@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.12.0+20261108.33
+
+- Upgrade the existing table dependency to official 0.2.1+20261106.21.
+
+- Centralize official HTMX2/4, Alpine, compatibility scripts and notices in shared
+  assets. Head opts in; complete Page loads frontend defaults, with HTMX-only and
+  static options, deferred/nonce-aware ordering and explicit HTMX4 selection.
+- Add the shared CSS build command with a pinned, checksum-verified official
+  standalone Tailwind compiler. Apps keep custom input/scan sources and remove
+  framework copies, CDN tags, downloads and Tailwind npm maintenance.
+- Make showcase interactions work with embedded assets alone and document the
+  browser/build ownership and consumer migration contract.
+
 ## 0.11.0+20261106.31
 
 - Add opt-in WidgetMetricStrip for compact responsive dashboard cards, including

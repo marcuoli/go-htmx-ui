@@ -70,6 +70,12 @@ func Page(props PageProps) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
+		if !props.DisableFrontend {
+			templ_7745c5c3_Err = frontendScripts(HeadProps{AssetPrefix: props.AssetPrefix, HTMX: props.HTMX, DisableAlpine: props.DisableAlpine, Nonce: props.Nonce}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</head><body class=\"ghtui-document\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

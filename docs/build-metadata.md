@@ -29,7 +29,9 @@ Runtime has no dependency on Git or a counter authority.
 Current tests, import/dependency compilation, generated-source/asset checks and
 temporary CI/showcase verification executables are non-allocating validation.
 Version inspection, tag creation and the hosting service's automatic source
-archives also do not reserve a build number. This repository currently has no
+archives also do not reserve a build number. The source-distributed CSS helper downloads a verified upstream compiler and produces
+application CSS within the consuming app's build transaction; that app retains its
+production identity/reservation. This repository publishes no helper binaries and has no
 owned executable/package/archive production entry point, published binary assets
 or live project counter authority. Do not create an unused authority or independent
 CI stores for those validation jobs. Ordinary users importing this module never

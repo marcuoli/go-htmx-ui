@@ -5,7 +5,26 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      CGO_ENABLED: '0'
+      GOTOOLCHAIN: go1.27.3
+      GOWORK: 'off'
     steps:
+      # runner.temp exists after job allocation. Export paths for later actions
+      # rather than using the runner context in job-level env expressions.
+      - name: Scope generated storage
+        run: |
+          ui_task_root="$RUNNER_TEMP/go-htmx-ui"
+          mkdir -p "$ui_task_root/tmp/go-build" "$ui_task_root/caches/go-build" "$ui_task_root/caches/go-modules" "$ui_task_root/caches/npm"
+          {
+            echo "TEMP=$ui_task_root/tmp"
+            echo "TMP=$ui_task_root/tmp"
+            echo "TMPDIR=$ui_task_root/tmp"
+            echo "GOTMPDIR=$ui_task_root/tmp/go-build"
+            echo "GOCACHE=$ui_task_root/caches/go-build"
+            echo "GOMODCACHE=$ui_task_root/caches/go-modules"
+            echo "npm_config_cache=$ui_task_root/caches/npm"
+          } >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -25,3 +44,7 @@ jobs:
       - run: go test ./... && go vet ./... && go mod verify
       # Disposable validation output: no production artifact or live reservation.
       - run: go build -o "$RUNNER_TEMP/go-htmx-ui-showcase" ./examples/showcase
+      - name: Qualify native shared CSS compiler
+        run: |
+          go run ./cmd/go-htmx-ui css --input internal/frontendbuild/testdata/custom/input.css --output "$RUNNER_TEMP/app.css" --cache-dir "$RUNNER_TEMP/tailwindcss" --source internal/frontendbuild/testdata/additional
+          node -e 'const fs=require("node:fs");const s=fs.readFileSync(process.argv[1],"utf8");if((fs.statSync(process.argv[1]).mode&511)!==420)throw new Error("CSS output is not server-readable");for(const c of [".p-7",".grid-cols-3",".bg-emerald-500",".custom-panel"])if(!s.includes(c))throw new Error("Missing "+c)' "$RUNNER_TEMP/app.css"

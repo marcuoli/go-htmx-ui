@@ -4,14 +4,33 @@ package web
 // It uses external deferred scripts, leaves CSP policy to the application, and
 // does not insert a page shell, inline code, fonts or global routes.
 templ Head(props HeadProps) {
- <link rel="stylesheet" href={ templ.URL(assetPrefix(props.AssetPrefix)+"ui.css") }/>
- if props.Interactive {
-  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"ui-runtime.js") } defer { headNonceAttributes(props.Nonce)... }></script>
-  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"ui-feedback.js") } defer { headNonceAttributes(props.Nonce)... }></script>
- }
- if props.Charts {
-  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"echarts.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
-  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"echarts-format.js") } defer { headNonceAttributes(props.Nonce)... }></script>
-  <script src={ templ.URL(assetPrefix(props.AssetPrefix)+"ui-htmx-charts.js") } defer { headNonceAttributes(props.Nonce)... }></script>
- }
+	<link rel="stylesheet" href={ templ.URL(assetPrefix(props.AssetPrefix) + "ui.css") }/>
+	if props.Interactive {
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "ui-runtime.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "ui-feedback.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+	}
+	if props.Charts {
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "echarts.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "echarts-format.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "ui-htmx-charts.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+	}
+	if props.Frontend {
+		@frontendScripts(props)
+	}
+}
+
+// Shared dependency loading stays here. Unmodified HTMX4's official Alpine
+// compatibility extension must run between the core and Alpine startup.
+templ frontendScripts(props HeadProps) {
+	if props.HTMX == HTMX4 {
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "htmx4.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+		if !props.DisableAlpine {
+			<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "htmx4-alpine-compat.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+		}
+	} else {
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "htmx.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+	}
+	if !props.DisableAlpine {
+		<script src={ templ.URL(assetPrefix(props.AssetPrefix) + "alpine.min.js") } defer { headNonceAttributes(props.Nonce)... }></script>
+	}
 }

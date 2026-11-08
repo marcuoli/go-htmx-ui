@@ -12,7 +12,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import ui "github.com/marcuoli/go-htmx-ui"
 import versioning "github.com/marcuoli/go-versioning"
 
-func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
+func FeedbackPage(info versioning.Info, htmx ui.HTMXVersion) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -125,7 +125,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Edit project ")
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Edit project")
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -147,7 +147,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "Confirmation ")
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "Confirmation")
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -169,7 +169,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Long content ")
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Long content")
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -191,7 +191,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 									}()
 								}
 								ctx = templ.InitializeContext(ctx)
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "Backdrop dismissal ")
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "Backdrop dismissal")
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -265,13 +265,13 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 										}()
 									}
 									ctx = templ.InitializeContext(ctx)
-									templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "Show success toast ")
+									templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "Show success toast")
 									if templ_7745c5c3_Err != nil {
 										return templ_7745c5c3_Err
 									}
 									return nil
 								})
-								templ_7745c5c3_Err = ui.Button(ui.ButtonProps{Disabled: !withRuntime, Attributes: templ.Attributes{"id": "show-server-toast", "hx-get": "/feedback/toast", "hx-target": "#feedback-toasts [data-ui-toast-items]", "hx-swap": "beforeend"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = ui.Button(ui.ButtonProps{Attributes: templ.Attributes{"id": "show-server-toast", "hx-get": "/feedback/toast", "hx-target": "#feedback-toasts [data-ui-toast-items]", "hx-swap": "beforeend"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -287,13 +287,13 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 										}()
 									}
 									ctx = templ.InitializeContext(ctx)
-									templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "Load modal fragment ")
+									templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "Load modal fragment")
 									if templ_7745c5c3_Err != nil {
 										return templ_7745c5c3_Err
 									}
 									return nil
 								})
-								templ_7745c5c3_Err = ui.Button(ui.ButtonProps{Disabled: !withRuntime, Attributes: templ.Attributes{"id": "load-feedback-fragment", "hx-get": "/feedback/fragment", "hx-target": "#feedback-fragment-target", "hx-swap": "innerHTML"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+								templ_7745c5c3_Err = ui.Button(ui.ButtonProps{Attributes: templ.Attributes{"id": "load-feedback-fragment", "hx-get": "/feedback/fragment", "hx-target": "#feedback-fragment-target", "hx-swap": "innerHTML"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 								if templ_7745c5c3_Err != nil {
 									return templ_7745c5c3_Err
 								}
@@ -303,13 +303,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
-							if !withRuntime {
-								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<p>Start the showcase with its optional runtime assets for server-driven toast and fragment examples.</p>")
-								if templ_7745c5c3_Err != nil {
-									return templ_7745c5c3_Err
-								}
-							}
-							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " <div id=\"feedback-fragment-target\"></div>")
+							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"feedback-fragment-target\"></div>")
 							if templ_7745c5c3_Err != nil {
 								return templ_7745c5c3_Err
 							}
@@ -389,7 +383,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<form id=\"feedback-form\" method=\"dialog\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<form id=\"feedback-form\" method=\"dialog\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -397,7 +391,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</form>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</form>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -413,7 +407,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Open nested details ")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Open nested details")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -435,7 +429,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Closing this dialog returns focus to its trigger in the parent dialog.</p>")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<p>Closing this dialog returns focus to its trigger in the parent dialog.</p>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -504,7 +498,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 					}
 					ctx = templ.InitializeContext(ctx)
 					for i := 0; i < 20; i++ {
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Shared modal content scrolls within the viewport. Applications can compose forms, messages and other shared components here.</p>")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Shared modal content scrolls within the viewport. Applications can compose forms, messages and other shared components here.</p>")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -533,7 +527,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>Ordinary modals require an explicit close action or Escape. This one opts into backdrop dismissal.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Ordinary modals require an explicit close action or Escape. This one opts into backdrop dismissal.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -549,7 +543,7 @@ func FeedbackPage(info versioning.Info, withRuntime bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = ui.Page(ui.PageProps{Title: "Modals and messages", AssetPrefix: "/assets/", DisableToasts: true, ExtraHead: ThemeDemoHead(withRuntime)}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ui.Page(ui.PageProps{Title: "Modals and messages", AssetPrefix: "/assets/", DisableToasts: true, HTMX: htmx}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -586,7 +580,7 @@ func FeedbackFormFooter() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Cancel ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Cancel")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -608,7 +602,7 @@ func FeedbackFormFooter() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Save changes ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Save changes")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -651,7 +645,7 @@ func FeedbackConfirmationFooter() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Cancel ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Cancel")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -673,7 +667,7 @@ func FeedbackConfirmationFooter() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Confirm ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Confirm")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -748,7 +742,7 @@ func FeedbackPreview(example themeExample, mode ui.Mode) templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Open themed modal ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Open themed modal")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -813,7 +807,7 @@ func FeedbackFragment() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section id=\"feedback-fragment\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"feedback-fragment\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -845,7 +839,7 @@ func FeedbackFragment() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "Open fragment modal ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "Open fragment modal")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -867,7 +861,7 @@ func FeedbackFragment() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<p>Escape and return focus work without fragment-specific JavaScript.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<p>Escape and return focus work without fragment-specific JavaScript.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -883,7 +877,7 @@ func FeedbackFragment() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

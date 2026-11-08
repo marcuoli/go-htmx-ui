@@ -10,7 +10,8 @@ import (
 //go:embed assets/*
 var embeddedAssets embed.FS
 
-// Assets serves ui.css, shared appearance/feedback runtimes, the official
+// Assets serves compiled Tailwind CSS, official HTMX2/4 and Alpine runtimes,
+// their compatibility scripts/notices/provenance, shared UI behavior, and the official
 // echarts.min.js and first-party chart helpers without a repository-layout prefix.
 // Serve with http.FileServer and http.StripPrefix at the application-owned URL.
 // The former echarts-ui.js filename remains an alias to the same controller.

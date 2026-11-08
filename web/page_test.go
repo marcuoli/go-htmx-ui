@@ -14,7 +14,7 @@ func TestPageProvidesCompleteDefaultsAndExternalRuntime(t *testing.T) {
 			t.Errorf("missing %s: %s", want, body)
 		}
 	}
-	if strings.Count(body, "<script") != 2 || strings.Contains(body, "<style") || !strings.Contains(body, "/assets/ui/ui-feedback.js") || strings.Count(body, "data-ui-toast-region") != 1 {
+	if strings.Count(body, "<script") != 4 || strings.Contains(body, "<style") || !strings.Contains(body, "/assets/ui/ui-feedback.js") || strings.Count(body, "data-ui-toast-region") != 1 {
 		t.Fatal(body)
 	}
 }

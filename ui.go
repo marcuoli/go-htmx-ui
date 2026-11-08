@@ -74,6 +74,7 @@ type (
 	EChartsConfig        = chart.EChartsConfig
 
 	HeadProps          = web.HeadProps
+	HTMXVersion        = web.HTMXVersion
 	PageProps          = web.PageProps
 	AppProps           = layout.AppProps
 	AppShellProps      = layout.AppShellProps
@@ -208,3 +209,9 @@ func AppShell(props AppShellProps) templ.Component           { return layout.App
 func ThemeSwitcher(props ThemeSwitcherProps) templ.Component { return layout.ThemeSwitcher(props) }
 func Stack() templ.Component                                 { return layout.Stack() }
 func Grid(props GridProps) templ.Component                   { return layout.Grid(props) }
+
+// Shared HTMX runtime selections preserve the compatibility default.
+const (
+	HTMX2 = web.HTMX2
+	HTMX4 = web.HTMX4
+)
