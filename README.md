@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.11.0+20261106.31
+go get github.com/marcuoli/go-htmx-ui@v0.12.0+20261108.33
 ```
 
 ## Render a widget
@@ -101,7 +101,7 @@ argument. `-htmx4` explicitly selects the shared HTMX 4 core and official Alpine
 compatibility extension; the default remains HTMX 2. App-specific request, CSP,
 streaming and major-version migration checks stay with the app owner.
 
-Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). The latest UI release's full identity is `0.11.0+20261106.31`, with immutable tag `v0.11.0+20261106.31`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
+Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). The latest UI release's full identity is `0.12.0+20261108.33`, with immutable tag `v0.12.0+20261108.33`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
 
 ## Repository layout
 
@@ -206,10 +206,10 @@ Use this checkout's pinned official go-versioning tool rather than a separate ba
 
 ```sh
 go tool go-versioning inspect --repo . --json
-go tool go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 29 --bump patch --json
+go tool go-versioning next --repo . --branch main --commit FULL_MERGE_COMMIT --pr 33 --bump minor --json
 ```
 
-`next` is read-only. This release selects a patch bump from the previous
+`next` is read-only. This release selects a minor bump from the previous
 full-identity tag; ordinary later allocations inherit the previous core unless
 an explicit bump is selected. After verifying the merged commit and plan, an authorized
 release uses the same arguments with `tag --push --remote origin`. The allocator

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.12.0+20261108.33
 
 - Upgrade the existing table dependency to official 0.2.1+20261106.21.
 
