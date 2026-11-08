@@ -22,7 +22,27 @@ type AppProps struct {
 	Attributes         templ.Attributes
 }
 
-type ThemeSwitcherProps struct{ Class, ThemeLabel, ModeLabel string }
+// AppearanceToggleStyle selects plain icons by default or an explicit boxed button.
+type AppearanceToggleStyle string
+
+const (
+	AppearancePlain  AppearanceToggleStyle = "plain"
+	AppearanceButton AppearanceToggleStyle = "button"
+)
+
+// AppearanceToggleProps localizes the next action, rather than the current mode.
+// LightLabel defaults to "Switch to light mode"; DarkLabel to "Switch to dark mode".
+type AppearanceToggleProps struct {
+	Class, LightLabel, DarkLabel string
+	Style                        AppearanceToggleStyle
+}
+
+// ModeLabel labels the appearance group; LightLabel/DarkLabel label its action.
+type ThemeSwitcherProps struct {
+	Class, ThemeLabel, ModeLabel string
+	LightLabel, DarkLabel        string
+	AppearanceStyle              AppearanceToggleStyle
+}
 
 type NavItem struct {
 	Label, Href string
@@ -37,6 +57,7 @@ type AppShellProps struct {
 	Nav                                      []NavItem
 	Sidebar, Actions, Footer                 templ.Component
 	HideThemeSwitcher                        bool
+	AppearanceStyle                          AppearanceToggleStyle
 }
 
 // GridProps.Columns is 1–4 for a fixed responsive column count; zero/invalid
@@ -81,6 +102,13 @@ func fallback(value, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+func appearanceLabel(dark bool, lightLabel, darkLabel string) string {
+	if dark {
+		return lightLabel
+	}
+	return darkLabel
 }
 
 func shellID(p AppShellProps) string       { return fallback(p.ID, "ghtui-shell") }

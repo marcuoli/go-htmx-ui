@@ -55,6 +55,15 @@
  .ghtui-theme-switcher { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
  .ghtui-theme-switcher label { display:grid; gap:3px; font-size:12px; }
  .ghtui-theme-switcher .ghtui-input { width:auto; min-width:100px; }
+ /* Match the scoped Button specificity: inherited padding otherwise squeezes
+    the 20px glyph inside a square control, particularly in compact density. */
+ .ghtui-mode-toggle,.ghtui-app .ghtui-mode-toggle { width:var(--ghtui-control-height,36px); height:var(--ghtui-control-height,36px); padding:6px; flex:none; }
+ .ghtui-mode-toggle [data-ui-mode-icon] { display:block; width:20px; height:20px; flex:none; }
+ .ghtui-mode-toggle [hidden] { display:none!important; }
+ .ghtui-mode-toggle-plain { color:var(--ghtui-text,#f0f6fc); background:transparent; border-color:transparent; box-shadow:none; }
+ /* Inline shell labels keep neighboring action buttons on the same row (#34).
+    Standalone switchers retain their stacked labels. */
+ .ghtui-shell-header .ghtui-theme-switcher label { display:flex; align-items:center; gap:8px; }
  .ghtui-shell { min-height:100dvh; display:flex; flex-direction:column; }
  .ghtui-shell-header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--ghtui-gap); padding:16px 24px; background:var(--ghtui-surface); border-bottom:1px solid var(--ghtui-border); }
  .ghtui-shell-brand,.ghtui-shell-actions { display:flex; flex-wrap:wrap; align-items:center; gap:16px; min-width:0; }

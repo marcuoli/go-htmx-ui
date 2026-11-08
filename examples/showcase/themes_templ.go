@@ -498,7 +498,11 @@ func ThemePreview(example themeExample, mode ui.Mode) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = ui.StatusIndicator(ui.StatusIndicatorProps{Label: "Connected", Tone: ui.StatusSuccess, Pulse: true}).Render(ctx, templ_7745c5c3_Buffer)
+						templ_7745c5c3_Err = ui.StatusIndicator(ui.StatusIndicatorProps{Label: "Live updates", Description: "Live updates: connected", Tone: ui.StatusSuccess, Pulse: true}).Render(ctx, templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						templ_7745c5c3_Err = ui.AppearanceToggle(ui.AppearanceToggleProps{}).Render(ctx, templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}

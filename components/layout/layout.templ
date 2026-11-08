@@ -9,6 +9,19 @@ templ App(props AppProps) {
  <div class={ "ghtui-app", props.Class } data-ui-app data-ui-theme={ string(config.Theme) } data-ui-mode={ string(config.Mode) } data-ui-density={ string(config.Density) } { appAttributes(props)... }>{ children... }</div>
 }
 
+// AppearanceToggle keeps System mode until the first explicit native activation.
+// Both decorative glyphs are rendered so the shared runtime can reconcile scoped
+// controls without injecting markup or depending on a frontend framework.
+templ AppearanceToggle(props AppearanceToggleProps) {
+ {{ dark := theme.FromContext(ctx).Mode == theme.Dark }}
+ {{ lightLabel := fallback(props.LightLabel,"Switch to light mode") }}
+ {{ darkLabel := fallback(props.DarkLabel,"Switch to dark mode") }}
+ <button type="button" class={ "ghtui-button ghtui-mode-toggle", templ.KV("ghtui-button-secondary",props.Style == AppearanceButton), templ.KV("ghtui-mode-toggle-plain",props.Style != AppearanceButton), props.Class } data-ui-mode-toggle data-ui-light-label={ lightLabel } data-ui-dark-label={ darkLabel } aria-label={ appearanceLabel(dark,lightLabel,darkLabel) } title={ appearanceLabel(dark,lightLabel,darkLabel) } disabled>
+  <svg data-ui-mode-icon="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" hidden?={ dark }><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg>
+  <svg data-ui-mode-icon="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" hidden?={ !dark }><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path></svg>
+ </button>
+}
+
 templ ThemeSwitcher(props ThemeSwitcherProps) {
  {{ config := theme.FromContext(ctx) }}
  <div class={ "ghtui-theme-switcher", props.Class }>
@@ -17,11 +30,9 @@ templ ThemeSwitcher(props ThemeSwitcherProps) {
    <option value="ocean" selected?={ config.Theme == theme.Ocean }>Ocean</option>
    <option value="forest" selected?={ config.Theme == theme.Forest }>Forest</option>
   </select></label>
-  <label><span>{ fallback(props.ModeLabel,"Appearance") }</span><select class="ghtui-input" data-ui-mode-select disabled>
-   <option value="system" selected?={ config.Mode == theme.System }>System</option>
-   <option value="light" selected?={ config.Mode == theme.Light }>Light</option>
-   <option value="dark" selected?={ config.Mode == theme.Dark }>Dark</option>
-  </select></label>
+  <div role="group" aria-label={ fallback(props.ModeLabel,"Appearance") }>
+   @AppearanceToggle(AppearanceToggleProps{LightLabel: props.LightLabel, DarkLabel: props.DarkLabel, Style: props.AppearanceStyle})
+  </div>
  </div>
 }
 
@@ -44,7 +55,7 @@ templ AppShell(props AppShellProps) {
      @props.Actions
     }
     if !props.HideThemeSwitcher {
-     @ThemeSwitcher(ThemeSwitcherProps{})
+     @ThemeSwitcher(ThemeSwitcherProps{AppearanceStyle: props.AppearanceStyle})
     }
    </div>
   </header>

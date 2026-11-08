@@ -9,6 +9,37 @@ import (
 	"github.com/marcuoli/go-htmx-ui/internal/testutil"
 )
 
+func TestStatusDescriptionIncludesFullStateWithoutChangingVisibleLabel(t *testing.T) {
+	props := StatusIndicatorProps{Label: "Live updates", Description: `Live updates: <connected>`, Alpine: &StatusAlpineBindings{Description: "fullState"}}
+	body := testutil.Render(t, StatusIndicator(props), "")
+	for _, want := range []string{`role="group"`, `title="Live updates: &lt;connected&gt;"`, `aria-label="Live updates: &lt;connected&gt;"`, `x-bind:title="fullState"`, `x-bind:aria-label="fullState"`, `>Live updates</span>`} {
+		if !strings.Contains(body, want) {
+			t.Errorf("missing %s: %s", want, body)
+		}
+	}
+	props.Attributes = templ.Attributes{"title": "Caller title", "aria-label": "Caller name"}
+	body = testutil.Render(t, StatusIndicator(props), "")
+	if strings.Contains(body, `x-bind:title=`) || strings.Contains(body, `x-bind:aria-label=`) || !strings.Contains(body, `title="Caller title"`) || !strings.Contains(body, `aria-label="Caller name"`) {
+		t.Fatal(body)
+	}
+	props.Attributes = templ.Attributes{"title": "Caller title", "aria-label": "Caller name", ":title": "callerState", "x-bind:aria-label.camel": "callerName"}
+	body = testutil.Render(t, StatusIndicator(props), "")
+	if strings.Contains(body, `x-bind:title=`) || strings.Contains(body, `x-bind:aria-label=`) || strings.Contains(body, "fullState") {
+		t.Fatal(body)
+	}
+	if len(props.Attributes) != 4 {
+		t.Fatal("caller attributes changed")
+	}
+	static := testutil.Render(t, StatusIndicator(StatusIndicatorProps{Label: "Live updates", Description: "Live updates: paused"}), "")
+	if !strings.Contains(static, `aria-label="Live updates: paused"`) {
+		t.Fatal(static)
+	}
+	live := testutil.Render(t, StatusIndicator(StatusIndicatorProps{Label: "Live updates", Description: "Live updates: paused", Attributes: templ.Attributes{"role": "status"}}), "")
+	if strings.Count(live, `role=`) != 1 || !strings.Contains(live, `role="status"`) {
+		t.Fatal(live)
+	}
+}
+
 func TestStatusIndicatorAlpineBindingsAndCallerPrecedence(t *testing.T) {
 	root := templ.Attributes{"id": "status", "x-show": "callerVisible"}
 	label := templ.Attributes{"x-text": "callerLabel"}

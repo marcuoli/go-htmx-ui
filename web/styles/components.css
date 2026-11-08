@@ -71,7 +71,7 @@
 .ghtui-status[data-pulse="true"] .ghtui-status-dot::after { animation:var(--ghtui-status-animation,ghtui-status-pulse 2s ease-out infinite); }
 .ghtui-status[data-pulse-style="ping"] { --ghtui-status-animation:ghtui-status-ping var(--ghtui-status-pulse-duration,1s) var(--ghtui-status-pulse-easing,cubic-bezier(0,0,.2,1)) infinite; }
 .ghtui-status[data-pulse-style="ping"] .ghtui-status-dot::after { inset:0; border:0; background:currentColor; }
-.ghtui-status-label { color:var(--ghtui-status-label-color,inherit); }
+.ghtui-status-label { color:var(--ghtui-status-label-color,var(--ghtui-text,#f0f6fc)); }
 @keyframes ghtui-status-pulse { 0% { transform:scale(.75); opacity:.75; } 100% { transform:scale(1.5); opacity:0; } }
 @keyframes ghtui-status-ping { 0% { transform:scale(1); opacity:.75; } 75%,100% { transform:scale(2); opacity:0; } }
 @media (prefers-reduced-motion:reduce) { .ghtui-status[data-pulse="true"] .ghtui-status-dot::after { animation:none; } }

@@ -26,7 +26,7 @@ All components are in package `ui`. Children are ordinary templ children slots. 
 | AuthStatus | AuthStatusProps: State, SignedInLabel, SignedOutLabel, UnknownLabel, Class, LabelClass, Attributes; explicit lock/text presentation |
 | Head / AssetHandler | HeadProps: AssetPrefix, Charts, Interactive, Frontend, HTMX, DisableAlpine, Nonce / shared assets at the app-selected local route |
 | Page / App | Complete document/assets or scoped appearance; PageProps / AppProps |
-| AppShell / ThemeSwitcher | Optional header, navigation/sidebar, main and footer / inherited theme and appearance selectors |
+| AppShell / ThemeSwitcher / AppearanceToggle | Optional shell / theme selector / reusable sun/moon appearance action |
 | Stack / Grid | Shared vertical spacing / responsive columns |
 | TextField / SelectField | Label, Hint, Error and typed Input/Select props; connected accessibility attributes |
 | LoadingState / EmptyState | Default state labels, custom text/classes and optional empty-state actions |
@@ -86,19 +86,24 @@ inline JavaScript or arbitrary existing HTML is changed by these helpers.
 
 ```templ
 @ui.StatusIndicator(ui.StatusIndicatorProps{
-    Label: "Connected", Tone: ui.StatusSuccess, Pulse: true,
+    Label: "Live updates", Description: "Live updates: connected",
+    Tone: ui.StatusSuccess, Pulse: true,
     Attributes: templ.Attributes{"id": "connection-status", "role": "status"},
 })
 ```
 
 `StatusNeutral` (the default), `StatusSuccess`, `StatusWarning`, `StatusDanger`
-and `StatusInfo` select the color. `Pulse` explicitly enables a two-second
+and `StatusInfo` select the dot/ring color; label text defaults to the neutral
+theme text color. `Description` supplies both the tooltip and accessible name;
+include the visible label in it. Described indicators use a non-live named group;
+an explicit caller role wins. For live updates keep `Label: "Live updates"`
+stable as Description, tone and pulse change. `Pulse` explicitly enables a two-second
 expanding ring; a solid dot and the visible label remain steady. Reduced-motion
 preferences disable the ring. Only `ui.css` is needed; there is no JavaScript,
 Alpine, HTMX or chart dependency for the indicator itself.
 
 Applications own state, freshness and text. For a stale observation, render
-`Label: "Updates paused", Tone: ui.StatusNeutral, Pulse: false`. A failure can
+`Label: "Live updates", Description: "Live updates: paused", Tone: ui.StatusNeutral, Pulse: false`. A failure can
 stay solid or pulse as the application requires; tone never implies animation.
 Unrecognized Go tone values fall back to neutral.
 
@@ -128,7 +133,7 @@ tables and repeated indicators. Supply a meaningful visible label.
 Override inherited `--ghtui-success`, `--ghtui-warning`,
 `--ghtui-status-danger` or `--ghtui-accent` for the semantic colors. The status
 danger token is separate from the existing button background token.
-`--ghtui-status-color` overrides all tones, `--ghtui-status-label-color` can give
+`--ghtui-status-color` overrides dot/ring tones; `--ghtui-status-label-color` can give
 the text its own color, and `--ghtui-status-dot-size` changes the solid dot's
 diameter (default `10px`). Custom `Class` rules can change typography and spacing.
 
@@ -147,6 +152,7 @@ live pulse binding. `--ghtui-status-pulse-duration` and
     Alpine: &ui.StatusAlpineBindings{
         Show: "visible", Label: "statusText", LabelClass: "statusTextClass",
         Tone: "statusTone", Pulse: "active",
+        Description: "'Live updates: ' + connectionState",
     },
 })
 ```

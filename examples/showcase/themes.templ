@@ -68,7 +68,8 @@ templ ThemePreview(example themeExample, mode ui.Mode) {
 			@ui.WidgetHeader(ui.WidgetHeaderProps{Title: example.Label + " · " + string(mode)})
 			@ui.Stack() {
 				@ui.Actions() {
-					@ui.StatusIndicator(ui.StatusIndicatorProps{Label: "Connected", Tone: ui.StatusSuccess, Pulse: true})
+					@ui.StatusIndicator(ui.StatusIndicatorProps{Label: "Live updates", Description: "Live updates: connected", Tone: ui.StatusSuccess, Pulse: true})
+					@ui.AppearanceToggle(ui.AppearanceToggleProps{})
 					@ui.AuthStatus(ui.AuthStatusProps{State: ui.AuthSignedIn})
 				}
 				@ui.TextField(ui.TextFieldProps{Label: "Project name", Input: ui.InputProps{Name: string(example.Name) + "-" + string(mode) + "-project", Value: "Example"}})

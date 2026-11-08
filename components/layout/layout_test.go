@@ -50,10 +50,50 @@ func TestThemeSwitcherReflectsServerConfigurationAndEscapesLabels(t *testing.T) 
 	if err := ThemeSwitcher(ThemeSwitcherProps{ThemeLabel: "<Theme>"}).Render(ctx, &output); err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{`value="forest" selected`, `value="dark" selected`, "&lt;Theme&gt;", `data-ui-theme-select`, `data-ui-mode-select`} {
+	for _, want := range []string{`value="forest" selected`, `aria-label="Switch to light mode"`, "&lt;Theme&gt;", `data-ui-theme-select`, `data-ui-mode-toggle`} {
 		if !strings.Contains(output.String(), want) {
 			t.Errorf("missing %s: %s", want, output.String())
 		}
+	}
+	if strings.Contains(output.String(), `data-ui-mode-select`) {
+		t.Fatal("appearance dropdown was not replaced")
+	}
+}
+
+func TestAppearanceToggleDefaultsAndLocalizedActions(t *testing.T) {
+	for _, mode := range []theme.Mode{theme.System, theme.Light, theme.Dark} {
+		ctx := theme.WithConfig(context.Background(), theme.Config{Mode: mode})
+		var output bytes.Buffer
+		if err := AppearanceToggle(AppearanceToggleProps{LightLabel: "Light <now>", DarkLabel: "Dark <now>"}).Render(ctx, &output); err != nil {
+			t.Fatal(err)
+		}
+		want := `aria-label="Dark &lt;now&gt;"`
+		if mode == theme.Dark {
+			want = `aria-label="Light &lt;now&gt;"`
+		}
+		for _, marker := range []string{want, `type="button"`, ` disabled`, `width="20" height="20"`, `aria-hidden="true"`, `focusable="false"`, `data-ui-light-label="Light &lt;now&gt;"`} {
+			if !strings.Contains(output.String(), marker) {
+				t.Errorf("missing %s: %s", marker, output.String())
+			}
+		}
+	}
+}
+
+func TestAppearancePresentationDefaultsPlainAndBoxedStyleIsExplicit(t *testing.T) {
+	for _, style := range []AppearanceToggleStyle{"", AppearancePlain, "unknown", AppearanceButton} {
+		body := testutil.Render(t, AppearanceToggle(AppearanceToggleProps{Style: style}), "")
+		boxed := style == AppearanceButton
+		if strings.Contains(body, "ghtui-button-secondary") != boxed || strings.Contains(body, "ghtui-mode-toggle-plain") == boxed {
+			t.Fatal(body)
+		}
+	}
+	body := testutil.Render(t, ThemeSwitcher(ThemeSwitcherProps{AppearanceStyle: AppearanceButton}), "")
+	if !strings.Contains(body, "ghtui-button-secondary") {
+		t.Fatal(body)
+	}
+	body = testutil.Render(t, AppShell(AppShellProps{AppearanceStyle: AppearanceButton}), "")
+	if !strings.Contains(body, "ghtui-button-secondary") || strings.Contains(body, "ghtui-mode-toggle-plain") {
+		t.Fatal(body)
 	}
 }
 

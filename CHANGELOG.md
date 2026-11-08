@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0+20261108.35
+
+- Replace the Appearance dropdown with a reusable, accessible plain sun/moon
+  action, with an explicit boxed button option;
+  preserve scoped System mode, persistence and legacy mode-select integration.
+- Keep header actions aligned in both densities and appearance glyphs 20px square.
+- Default status labels to neutral text and add full-state Description/Alpine
+  bindings for stable Live updates labels. Pulse remains opt-in.
+- Establish the bidirectional Go/Rust UI feature, pattern and defaults contract.
+
 ## 0.12.0+20261108.33
 
 - Upgrade the existing table dependency to official 0.2.1+20261106.21.
