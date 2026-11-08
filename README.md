@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.12.0+20261108.33
+go get github.com/marcuoli/go-htmx-ui@v0.13.0+20261108.35
 ```
 
 ## Render a widget

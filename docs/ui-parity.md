@@ -92,16 +92,34 @@ commit `7c8786cabd7727b24638912421559fdf8501b346`,
 Policy baseline: `05fd7530f06b81298959004924e0f9a7249054a3`,
 [PR #8](https://github.com/marcuoli/rust-htmx-ui/pull/8).
 
-Go's appearance/status port is tracked in [#34](https://github.com/marcuoli/go-htmx-ui/issues/34).
-Its release record supplies the exact tested Go commit, immutable full release
-identity and browser matrix. Until that record reports publication, this source
-is an implementation awaiting qualification. The pre-port resource baseline is
+Go's appearance/status port is `0.13.0+20261108.35`,
+[PR #35](https://github.com/marcuoli/go-htmx-ui/pull/35), with delivery tracked in
+[#34](https://github.com/marcuoli/go-htmx-ui/issues/34). That issue records final
+merge/tag/module/source-byte verification and publication state; do not infer
+publication from the source version alone. The qualified implementation commit
+is `442d43812b8a634aee426c3a50e2e4409b2097f5`; later release metadata changes
+do not change its runtime. The pre-port resource baseline is
 Go `0.12.0+20261108.33`, commit `f2d7f827ad3cfc0dcbdb5d5f682c2af06c7ba697`.
 Rust's header geometry correction is published in
 [v0.3.1](https://github.com/marcuoli/rust-htmx-ui/releases/tag/v0.3.1), commit
 `18fca443d34328b0d05850bd4c1cf52a8520651b`, tracked in
 [Rust #9](https://github.com/marcuoli/rust-htmx-ui/issues/9). Its owner records
 60 width/density/palette/appearance browser cases; Go records its own checks.
+
+Go qualification: Go 1.27.3 windows/amd64, CGO disabled, all Go tests/vet/module
+verification and 130 JavaScript tests; clean source/binary advisory scans and
+full npm audit; reproducible assets; independent source review. Real Edge checks
+cover HTMX 2.0.11 and 4.0.1, Enter/Space/SVG activation, OS/System/explicit modes,
+cross-tab and blocked storage, nested/repeated/inserted roots and controls,
+Alpine full-state descriptions and caller precedence, named-group accessibility,
+plain/boxed styling and keyboard focus. All 48 width/density/palette/mode cases
+(360, 480, 768 and 1280px) preserve header rows and 20px glyphs; status tones,
+pulse-off, reduced motion and server-only System defaults pass. No browser
+external requests, page errors or failed assets occurred in that matrix.
+Linux regeneration/native compiler/Go checks run in the release's hosted CI;
+the issue links their actual results. Other browsers/platforms are not qualified
+by these checks. Rust's plain/boxed counterpart must have its own tested release
+record before that new presentation default is claimed as released parity.
 
 This contract establishes the appearance/status/default pattern, not complete
 historical API parity. Rust's existing Go numeric compact/unit formatting gap

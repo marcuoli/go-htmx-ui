@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.13.0+20261108.35
 
 - Replace the Appearance dropdown with a reusable, accessible plain sun/moon
   action, with an explicit boxed button option;
