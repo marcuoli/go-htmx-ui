@@ -42,7 +42,7 @@ decorative icons and an accessible action name/title.
 The default has no persistent background, visible border or shadow. Preserve a
 usable hit target and visible keyboard focus. Go's explicit boxed alternative is
 `AppearanceToggleProps{Style: ui.AppearanceButton}`; ThemeSwitcher exposes
-`AppearanceStyle`. Zero/unknown styles remain plain. Both presentations retain
+`AppearanceStyle`, as does AppShell for its built-in switcher. Zero/unknown styles remain plain. Both presentations retain
 the same action, runtime and geometry contract.
 
 Multiple controls within one root synchronize; nested roots remain independent.
@@ -96,9 +96,8 @@ Go's appearance/status port is `0.13.0+20261108.35`,
 [PR #35](https://github.com/marcuoli/go-htmx-ui/pull/35), with delivery tracked in
 [#34](https://github.com/marcuoli/go-htmx-ui/issues/34). That issue records final
 merge/tag/module/source-byte verification and publication state; do not infer
-publication from the source version alone. The qualified implementation commit
-is `442d43812b8a634aee426c3a50e2e4409b2097f5`; later release metadata changes
-do not change its runtime. The pre-port resource baseline is
+publication from the source version alone. The issue and immutable full tag
+identify the exact final tested merge commit. The pre-port resource baseline is
 Go `0.12.0+20261108.33`, commit `f2d7f827ad3cfc0dcbdb5d5f682c2af06c7ba697`.
 Rust's header geometry correction is published in
 [v0.3.1](https://github.com/marcuoli/rust-htmx-ui/releases/tag/v0.3.1), commit
@@ -118,8 +117,11 @@ pulse-off, reduced motion and server-only System defaults pass. No browser
 external requests, page errors or failed assets occurred in that matrix.
 Linux regeneration/native compiler/Go checks run in the release's hosted CI;
 the issue links their actual results. Other browsers/platforms are not qualified
-by these checks. Rust's plain/boxed counterpart must have its own tested release
-record before that new presentation default is claimed as released parity.
+by these checks. Rust's plain/boxed counterpart is independently qualified in
+[v0.4.0](https://github.com/marcuoli/rust-htmx-ui/releases/tag/v0.4.0), commit
+`e6345bedd4fc3f40059edc44a83e4165f94eb9c5`. Its owner records native/browser
+checks for both styles and 60 geometry combinations. This release includes the
+v0.3.1 header correction and is the current pattern baseline.
 
 This contract establishes the appearance/status/default pattern, not complete
 historical API parity. Rust's existing Go numeric compact/unit formatting gap

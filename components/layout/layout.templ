@@ -55,7 +55,7 @@ templ AppShell(props AppShellProps) {
      @props.Actions
     }
     if !props.HideThemeSwitcher {
-     @ThemeSwitcher(ThemeSwitcherProps{})
+     @ThemeSwitcher(ThemeSwitcherProps{AppearanceStyle: props.AppearanceStyle})
     }
    </div>
   </header>

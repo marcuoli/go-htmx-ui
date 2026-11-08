@@ -555,7 +555,7 @@ func AppShell(props AppShellProps) templ.Component {
 			}
 		}
 		if !props.HideThemeSwitcher {
-			templ_7745c5c3_Err = ThemeSwitcher(ThemeSwitcherProps{}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ThemeSwitcher(ThemeSwitcherProps{AppearanceStyle: props.AppearanceStyle}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

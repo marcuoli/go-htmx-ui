@@ -98,7 +98,8 @@ Native buttons support keyboard and SVG clicks without app JavaScript.
 The default icon has no persistent background, border or shadow, with a full
 control-height hit area and visible keyboard focus. Opt into the boxed style
 with `AppearanceToggleProps{Style: ui.AppearanceButton}` or
-`ThemeSwitcherProps{AppearanceStyle: ui.AppearanceButton}`.
+`ThemeSwitcherProps{AppearanceStyle: ui.AppearanceButton}`. AppShellProps exposes
+the same AppearanceStyle for its built-in switcher.
 
 `AppearanceToggleProps.LightLabel` and `DarkLabel` localize the next action.
 ThemeSwitcher exposes the same props; its existing ModeLabel labels the

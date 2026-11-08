@@ -57,6 +57,7 @@ type AppShellProps struct {
 	Nav                                      []NavItem
 	Sidebar, Actions, Footer                 templ.Component
 	HideThemeSwitcher                        bool
+	AppearanceStyle                          AppearanceToggleStyle
 }
 
 // GridProps.Columns is 1–4 for a fixed responsive column count; zero/invalid

@@ -91,6 +91,10 @@ func TestAppearancePresentationDefaultsPlainAndBoxedStyleIsExplicit(t *testing.T
 	if !strings.Contains(body, "ghtui-button-secondary") {
 		t.Fatal(body)
 	}
+	body = testutil.Render(t, AppShell(AppShellProps{AppearanceStyle: AppearanceButton}), "")
+	if !strings.Contains(body, "ghtui-button-secondary") || strings.Contains(body, "ghtui-mode-toggle-plain") {
+		t.Fatal(body)
+	}
 }
 
 func TestShellKeepsSlotsNavigationAndAccessibleDefaults(t *testing.T) {
