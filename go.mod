@@ -3,14 +3,14 @@ module github.com/marcuoli/go-htmx-ui
 go 1.27.4
 
 require (
-	github.com/a-h/templ v0.3.1100
-	github.com/marcuoli/go-htmx-table v0.2.2-0.20261106102521-77e95fbe228a
+	github.com/a-h/templ v0.3.1118
+	github.com/marcuoli/go-htmx-table v0.2.2-0.20261117150223-61157d2ef968
 	github.com/marcuoli/go-versioning v0.3.2-0.20261106100520-4c3c478eb827
 )
 
 require (
-	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
-	github.com/andybalholm/brotli v1.2.8 // indirect
+	github.com/a-h/parse v0.0.42 // indirect
+	github.com/andybalholm/brotli v1.3.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cli/browser v1.3.0 // indirect
 	github.com/fatih/color v1.19.0 // indirect
@@ -18,10 +18,10 @@ require (
 	github.com/mattn/go-colorable v0.1.16 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/natefinch/atomic v1.0.1 // indirect
-	golang.org/x/mod v0.42.0 // indirect
+	golang.org/x/mod v0.43.0 // indirect
 	golang.org/x/net v0.62.0 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
 	golang.org/x/tools v0.52.0 // indirect
 )
 

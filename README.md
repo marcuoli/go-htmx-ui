@@ -3,7 +3,7 @@
 Composable **Go + templ + Tailwind** UI components with embedded styles and optional charts. Designed to work with HTMX, server-rendered pages and application-owned SSE updates.
 
 ```sh
-go get github.com/marcuoli/go-htmx-ui@v0.13.1+20261117.37
+go get github.com/marcuoli/go-htmx-ui@v0.13.2+20261117.39
 ```
 
 ## Render a widget
@@ -168,10 +168,23 @@ v0.6.0 chart API migration is documented separately in the migration guide.
 
 ## Compatibility
 
-Requires **Go 1.27.4 and templ v0.3.1100**, with matching generated sources and
-published `go-htmx-table 0.2.1+20261106.21`. Upgrade the runtime and regenerate consuming
+Requires **Go 1.27.4 and templ v0.3.1118**, with matching generated sources and
+published `go-htmx-table 0.2.1+20261117.26`. Upgrade the runtime and regenerate consuming
 applications together; older generated caller templates may reference APIs
 removed by templ v0.3.1100. The earlier v0.6.0 release remains unchanged.
+
+**Module/build requirement:** Go 1.27.4, as declared in `go.mod` and selected by CI.
+**Source compatibility:** verified with the exact Go 1.27.3 compiler on
+Windows/amd64 with CGO disabled. An isolated source snapshot changed only the
+root `go` directive; tests, stdversion vet, module verification, showcase/CSS CLI
+builds and templ generation passed with `GOTOOLCHAIN=local`. The unchanged
+published module still requires Go 1.27.4.
+
+Mingo v0.18.0 (`-deps all -tests -v .`) reports a Go 1.27 minor-version candidate.
+Go 1.27.2 cannot resolve the selected table dependency, which declares Go 1.27.3,
+as does go-versioning. That manifest rejection does not establish source
+incompatibility; the absolute lower source boundary remains unverified. Go
+1.27.3 is the earliest verified source configuration, not the security/build target.
 
 The canonical first-party chart controller is `ui-htmx-charts.js`.
 `Assets()` also serves its previous `echarts-ui.js` name as an alias to the same
@@ -199,11 +212,12 @@ and namespaces internal custom properties. Preserve those isolation steps when
 maintaining the shared asset pipeline. Apps compile custom styles through the shared build command.
 
 The latest official Go and frontend releases are checked during dependency
-reviews. Current direct versions: templ v0.3.1100, go-htmx-table 0.2.1+20261106.21,
+reviews. Current direct versions: templ v0.3.1118, go-htmx-table 0.2.1+20261117.26,
 go-versioning 0.3.1+20261106.13, Tailwind 4.3.5 and ECharts 6.1.0. The generator is pinned as
-a Go tool. Retain official parse v0.0.0-20250122154542-74294addb73e: the newer
-v0.0.0-20261027111828-db2689052003 adds `Parser.Match`, which templ's generator
-does not implement. Recheck that upstream exception on the next review.
+a Go tool. Stable parse v0.0.42 now works with the matching templ generator;
+the previous parser compatibility hold is removed. See the
+[Go dependency review](docs/go-dependencies.md) for the complete update scope
+and upstream graph/major-version constraints.
 ECharts' exact transitive versions and Tailwind's bundled WASI dependencies
 remain as upstream ships them; no dependency sources or bundles are patched.
 
