@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.13.2+20261117.39
 
 - Update templ runtime/CLI to v0.3.1118 and regenerate every template; stable parse v0.0.42 removes the previous generator compatibility hold.
 - Adopt published go-htmx-table 0.2.1+20261117.26 and current compatible Brotli, x/mod, x/sync and x/sys releases.
