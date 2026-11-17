@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.13.1+20261117.37
+
+- Give exact metric values valid, non-live accessible names without duplicate compact text.
+- Escape all shared asset URL paths while preserving the decoded AssetHandler prefix.
+- Remove asset-builder scratch after output-directory setup failures.
+- Keep current installation guidance in one place and strengthen chart-config round-trip checks.
+- Pin Go 1.27.4, including CI, for the official GO-2026-6859 compiler fix.
+- Add focused regressions and a repeatable native-browser metric check; track Rust's pending compact metric parity in rust-htmx-ui#16.
+
 ## 0.13.0+20261108.35
 
 - Replace the Appearance dropdown with a reusable, accessible plain sun/moon

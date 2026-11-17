@@ -4,6 +4,7 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"net/url"
 	"path"
 )
 
@@ -53,4 +54,10 @@ func assetPrefix(prefix string) string {
 		return prefix
 	}
 	return prefix + "/"
+}
+
+// Escape the decoded handler path as a URL path. Raw delimiters and backslashes
+// in a configured prefix must not become a query, fragment or browser authority.
+func assetURL(prefix, name string) string {
+	return (&url.URL{Path: assetPrefix(prefix) + name}).String()
 }

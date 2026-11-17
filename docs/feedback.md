@@ -1,7 +1,7 @@
 # Modals, alerts and toast notifications
 
-Available since `0.10.0+20261105.20`. Pin the current full release tag:
-`go get github.com/marcuoli/go-htmx-ui@v0.10.5+20261106.29`.
+Available since `0.10.0+20261105.20`. Use the
+[current full release installation command](../README.md#go-htmx-ui).
 These components use the shared Light/Dark palettes and standalone color
 fallbacks, with no new dependencies. `Page` supplies the
 external feedback runtime and an empty toast region automatically. Register

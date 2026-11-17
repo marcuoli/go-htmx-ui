@@ -16,6 +16,7 @@ const (
 // this module, in dependency order. DisableAlpine supports HTMX-only pages.
 // Charts includes the engine, formatter and controller. Nonce applies to every
 // emitted script; the application supplies its CSP and request configuration.
+// AssetPrefix is a decoded local path; Head URL-escapes it for the browser.
 type HeadProps struct {
 	AssetPrefix string
 	Charts      bool

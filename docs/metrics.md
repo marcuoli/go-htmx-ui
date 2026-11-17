@@ -60,7 +60,9 @@ keeps the strip's compact sizing. Existing standalone metrics retain their defau
 
 Pass raw decimal strings to `WidgetMetricValue` for shared numeric compaction;
 large integers are formatted without a JavaScript number conversion. Supply an
-exact string for the tooltip and accessible label. Duration and other text remain
+exact string for the tooltip and accessible label. The value is a named,
+non-live group; its compact visual text is hidden from assistive technology to
+avoid a duplicate reading. Duration and other text remain
 text, for example `11h 47m 27s`. Applications still own data, permissions, optional
 fields, updates and stable DOM keys. The strip adds no JavaScript and does not
 replace chart hosts, SSE connections or native ECharts instances.
@@ -70,3 +72,14 @@ nested keyed card wrappers and an independent chart. Edge validation covered
 375–3840 CSS-pixel viewports, including 1632px of content at 1920px and 3552px at
 3840px. These are measured examples, not a promise that arbitrary text fits on one
 line in every custom layout.
+
+The exact accessible-name correction in [#36](https://github.com/marcuoli/go-htmx-ui/issues/36)
+was checked with Go 1.27.4 and native Edge: exact integer/duration group names,
+no duplicate compact announcements, and 24 combinations of 375/1280px widths,
+all palettes, Light/Dark modes and both densities. Run the source-owned browser
+check against the showcase's `/metrics` route using Playwright CLI:
+
+```sh
+playwright-cli open http://127.0.0.1:8099/metrics --browser=msedge
+playwright-cli run-code --filename /absolute/path/to/go-htmx-ui/web/scripts/check-browser.js
+```

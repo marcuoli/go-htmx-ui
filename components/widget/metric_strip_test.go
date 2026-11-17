@@ -45,7 +45,7 @@ func TestMetricStripValuesKeepExactNumericAndDurationText(t *testing.T) {
 		{"11h 47m 27s", "11 hours 47 minutes 27 seconds", "11h 47m 27s"},
 	} {
 		body := testutil.Render(t, WidgetMetricValue(tc.value, tc.exact), "")
-		for _, want := range []string{tc.visible, `title="` + tc.exact + `"`, `aria-label="` + tc.exact + `"`} {
+		for _, want := range []string{`role="group"`, `<span aria-hidden="true">` + tc.visible + `</span>`, `title="` + tc.exact + `"`, `aria-label="` + tc.exact + `"`} {
 			if !strings.Contains(body, want) {
 				t.Fatal(body)
 			}

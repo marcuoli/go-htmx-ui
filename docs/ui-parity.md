@@ -126,7 +126,14 @@ v0.3.1 header correction and is the current pattern baseline.
 This contract establishes the appearance/status/default pattern, not complete
 historical API parity. Rust's existing Go numeric compact/unit formatting gap
 and broader API inventory remain counterpart-owner work under
-[Rust #7](https://github.com/marcuoli/rust-htmx-ui/issues/7).
+[Rust #16](https://github.com/marcuoli/rust-htmx-ui/issues/16).
+Go's exact metric accessible-name correction is tracked in
+[Go #36](https://github.com/marcuoli/go-htmx-ui/issues/36): a non-live named group
+exposes the exact value while hiding its compact visual child from assistive
+technology. Rust v0.4.0 at `e6345bedd4fc3f40059edc44a83e4165f94eb9c5`
+renders exact metric text directly and has no separate compact/exact API; its
+pending compact-formatting port remains under Rust #16 and must retain exact
+accessible values. This comparison does not establish browser parity for that port.
 Storage namespaces differ (`go-htmx-ui:appearance` / `rust-htmx-ui:appearance`)
 to avoid accidental cross-application settings. Apps can select an explicit
 shared key deliberately. HTMX morph/history/SSE and deployment platforms beyond
