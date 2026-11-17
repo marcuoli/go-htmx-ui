@@ -111,7 +111,7 @@ argument. `-htmx4` explicitly selects the shared HTMX 4 core and official Alpine
 compatibility extension; the default remains HTMX 2. App-specific request, CSP,
 streaming and major-version migration checks stay with the app owner.
 
-Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). The latest UI release's full identity is `0.12.0+20261108.33`, with immutable tag `v0.12.0+20261108.33`. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
+Release and application metadata use [go-versioning 0.3.1+20261106.13](https://github.com/marcuoli/go-versioning/releases/tag/v0.3.1%2B20261106.13). Use the full release tag from the installation command above. Pass the consuming application's own validated build information to `ui.VersionLabel`; the component never probes Git, the working directory or the UI dependency's version. An unversioned example correctly displays `0.0.0+unknown`. See the [shared canonical-main contract](docs/build-metadata.md#canonical-version-placement-and-shared-validation). Location is N/A for this source-only library; it creates no unused operational files or authority.
 
 ## Repository layout
 
@@ -168,7 +168,7 @@ v0.6.0 chart API migration is documented separately in the migration guide.
 
 ## Compatibility
 
-Requires **Go 1.27.3 and templ v0.3.1100**, with matching generated sources and
+Requires **Go 1.27.4 and templ v0.3.1100**, with matching generated sources and
 published `go-htmx-table 0.2.1+20261106.21`. Upgrade the runtime and regenerate consuming
 applications together; older generated caller templates may reference APIs
 removed by templ v0.3.1100. The earlier v0.6.0 release remains unchanged.

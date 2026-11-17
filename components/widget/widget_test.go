@@ -77,6 +77,17 @@ func TestNativeChartEscapesOptionsAndConfig(t *testing.T) {
 	if !reflect.DeepEqual(actual, want) {
 		t.Fatal("Native options changed", body)
 	}
+	configMatch := regexp.MustCompile(`data-ui-echarts-config="([^"]*)"`).FindStringSubmatch(body)
+	var config chart.EChartsConfig
+	if len(configMatch) != 2 {
+		t.Fatal("missing chart config", body)
+	}
+	if err := json.Unmarshal([]byte(html.UnescapeString(configMatch[1])), &config); err != nil {
+		t.Fatal(err)
+	}
+	if config.Locale != "pt_BR" || config.Messages.Unavailable != "<missing>" {
+		t.Fatalf("chart config changed: %+v", config)
+	}
 	for _, value := range []string{`data-ui-echarts-config=`, `id="stable-chart"`, `ghtui-chart-compact`, `role="img"`, `aria-label="Usage &#34;quoted&#34;"`, "No retained history.", "<noscript>", "Open the data table."} {
 		if !strings.Contains(body, value) {
 			t.Errorf("Missing %q", value)

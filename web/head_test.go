@@ -1,12 +1,41 @@
 package web
 
 import (
+	"html"
 	"net/http/httptest"
+	"net/url"
+	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/marcuoli/go-htmx-ui/internal/testutil"
 )
+
+func TestHeadEscapesLocalAssetPathsAndMatchesHandler(t *testing.T) {
+	for _, prefix := range []string{`\example.com/ui`, "/\t/example.com/ui", "/\n/example.com/ui", "/ui?query#fragment", "/space and café/100%"} {
+		t.Run(prefix, func(t *testing.T) {
+			for _, generation := range []HTMXVersion{HTMX2, HTMX4} {
+				body := testutil.Render(t, Head(HeadProps{AssetPrefix: prefix, Interactive: true, Charts: true, Frontend: true, HTMX: generation}), "")
+				matches := regexp.MustCompile(`(?:href|src)="([^"]+)"`).FindAllStringSubmatch(body, -1)
+				if len(matches) < 8 {
+					t.Fatal("missing shared asset URLs", body)
+				}
+				for _, match := range matches {
+					address := html.UnescapeString(match[1])
+					u, err := url.Parse(address)
+					if err != nil || u.IsAbs() || u.Host != "" || u.RawQuery != "" || u.Fragment != "" || strings.ContainsAny(address, "\\\t\n\r") || !strings.HasPrefix(address, "/") || strings.HasPrefix(address, "//") {
+						t.Fatalf("asset URL is not an escaped local path: %q (%v)", address, err)
+					}
+					response := httptest.NewRecorder()
+					AssetHandler(prefix).ServeHTTP(response, httptest.NewRequest("GET", address, nil))
+					if response.Code != 200 || response.Body.Len() == 0 {
+						t.Fatalf("asset %q returned %d", address, response.Code)
+					}
+				}
+			}
+		})
+	}
+}
 
 func TestHeadOptionalChartsAndPrefix(t *testing.T) {
 	t.Parallel()

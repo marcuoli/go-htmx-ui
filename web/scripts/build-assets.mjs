@@ -18,10 +18,10 @@ for(let i=0;i<args.length;i++) {
 // Stage every generated/copied asset in the caller's configured temp/artifact
 // directory, then deliberately promote tracked snapshots. No source patching.
 const scratch=mkdtempSync(join(tmpdir(),'go-htmx-ui-assets-'));
-output=output||join(scratch,'output');mkdirSync(output,{recursive:true});
 const input=join(scratch,'components.css');
 const sha=path=>createHash('sha256').update(readFileSync(path)).digest('hex');
 try {
+ output=output||join(scratch,'output');mkdirSync(output,{recursive:true});
  const reference=JSON.stringify(join(modules,'tailwindcss/index.css').replaceAll('\\','/'));
  const palettes=JSON.parse(readFileSync(join(webRoot,'styles/themes.json'),'utf8'));
  const styles=readFileSync(join(webRoot,'styles/components.css'),'utf8')+'\n'+themeCSS(palettes)+'\n'+readFileSync(join(webRoot,'styles/layout.css'),'utf8')+'\n'+readFileSync(join(webRoot,'styles/feedback.css'),'utf8');

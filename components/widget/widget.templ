@@ -61,8 +61,10 @@ templ WidgetMetric(label, value, note string) {
 	}
 }
 
+// A named group exposes the exact value without announcing the compact visual
+// text a second time. Paragraph semantics alone prohibit an accessible name.
 templ WidgetMetricValue(value, exact string) {
-	<p class="ghtui-metric-value" title={ widgetExactLabel(value, exact) } aria-label={ widgetExactLabel(value, exact) }>{ metric.MetricText(value) }</p>
+	<p class="ghtui-metric-value" role="group" title={ widgetExactLabel(value, exact) } aria-label={ widgetExactLabel(value, exact) }><span aria-hidden="true">{ metric.MetricText(value) }</span></p>
 }
 
 // The stable native ECharts host and its fallback remain siblings. Preserve the

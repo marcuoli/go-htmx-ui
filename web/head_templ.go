@@ -34,9 +34,9 @@ func Head(props HeadProps) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "ui.css")).ResolveURL(ctx)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "ui.css"))).ResolveURL(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 7, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 7, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -56,9 +56,9 @@ func Head(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var3 string
-				templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "ui-runtime.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "ui-runtime.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 9, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 9, Col: 71}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 				if templ_7745c5c3_Err != nil {
@@ -95,9 +95,9 @@ func Head(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "ui-feedback.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "ui-feedback.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 10, Col: 76}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 10, Col: 72}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 				if templ_7745c5c3_Err != nil {
@@ -136,9 +136,9 @@ func Head(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "echarts.min.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "echarts.min.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 13, Col: 76}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 13, Col: 72}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 				if templ_7745c5c3_Err != nil {
@@ -175,9 +175,9 @@ func Head(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "echarts-format.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "echarts-format.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 14, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 14, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 				if templ_7745c5c3_Err != nil {
@@ -214,9 +214,9 @@ func Head(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "ui-htmx-charts.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "ui-htmx-charts.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 15, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 15, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 				if templ_7745c5c3_Err != nil {
@@ -284,9 +284,9 @@ func frontendScripts(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "htmx4.min.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "htmx4.min.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 26, Col: 74}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 26, Col: 70}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 				if templ_7745c5c3_Err != nil {
@@ -324,9 +324,9 @@ func frontendScripts(props HeadProps) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var10 string
-					templ_7745c5c3_Var10, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "htmx4-alpine-compat.min.js")).ResolveURL(ctx)
+					templ_7745c5c3_Var10, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "htmx4-alpine-compat.min.js"))).ResolveURL(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 28, Col: 89}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 28, Col: 85}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 					if templ_7745c5c3_Err != nil {
@@ -365,9 +365,9 @@ func frontendScripts(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "htmx.min.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "htmx.min.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 31, Col: 73}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 31, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 				if templ_7745c5c3_Err != nil {
@@ -406,9 +406,9 @@ func frontendScripts(props HeadProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetPrefix(props.AssetPrefix) + "alpine.min.js")).ResolveURL(ctx)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.URL(assetURL(props.AssetPrefix, "alpine.min.js"))).ResolveURL(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 34, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/head.templ`, Line: 34, Col: 71}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 				if templ_7745c5c3_Err != nil {
