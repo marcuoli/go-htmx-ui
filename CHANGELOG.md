@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.13.1+20261117.37
 
 - Give exact metric values valid, non-live accessible names without duplicate compact text.
 - Escape all shared asset URL paths while preserving the decoded AssetHandler prefix.
